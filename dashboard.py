@@ -212,6 +212,17 @@ def resolve_col(df: pd.DataFrame, base: str, suffixes=("_student", "", "_status"
     return None
 
 
+def norm_text(series: pd.Series) -> pd.Series:
+    """
+    Normalisasi teks untuk matching: strip spasi + lowercase.
+    .isin() pandas itu exact-match & case-sensitive, jadi kalau data mentah
+    ada beda kapitalisasi/spasi ('Sistem Informasi ' vs 'sistem informasi'),
+    semua match bakal gagal walau isinya "sama" secara makna. Ini nyebabin
+    SEMUA talent request keliatan 0 kandidat padahal datanya sebenarnya ada.
+    """
+    return series.astype(str).str.strip().str.lower()
+
+
 # ---------------------------------------------------------------------------
 # LOAD DATA
 # ---------------------------------------------------------------------------
@@ -596,17 +607,22 @@ def compute_match_summary(talent_request_df: pd.DataFrame, student_all_df: pd.Da
     prodi_col = resolve_col(pool, "program_studi") or "program_studi"
     semester_col = resolve_col(pool, "semester") or "semester"
 
+    pool["_prodi_norm"] = norm_text(pool[prodi_col])
+    pool["_ketersediaan_norm"] = norm_text(pool["ketersediaan"]) if "ketersediaan" in pool.columns else ""
+    pool["_status_norm"] = norm_text(pool["status"]) if "status" in pool.columns else ""
+
     rows = []
     for _, tr in talent_request_df.iterrows():
         bidang = [x.strip() for x in str(tr.get("bidang_studi_dibutuhkan", "")).split(",") if x.strip() != ""]
+        bidang_norm = [b.lower() for b in bidang]
         min_sem = tr.get("minimum_semester", 0)
         if pd.isna(min_sem):
             min_sem = 0
 
-        cocok_prodi = pool[pool[prodi_col].isin(bidang)] if bidang else pool.iloc[0:0]
+        cocok_prodi = pool[pool["_prodi_norm"].isin(bidang_norm)] if bidang_norm else pool.iloc[0:0]
         cocok_semester = cocok_prodi[cocok_prodi[semester_col] >= min_sem]
         cocok_final = cocok_semester[
-            (cocok_semester["ketersediaan"] == "Tersedia") & (cocok_semester["status"] == "Aktif")
+            (cocok_semester["_ketersediaan_norm"] == "tersedia") & (cocok_semester["_status_norm"] == "aktif")
         ]
 
         rows.append({
@@ -668,6 +684,48 @@ with tab5:
                 "kandidat_final": "Kandidat Final",
             },
         )
+
+        if int((match_summary["cocok_prodi"] == 0).sum()) == len(match_summary):
+            with st.expander("🔍 Debug: kenapa 'Cocok Prodi' 0 di semua baris?"):
+                st.caption(
+                    "Kalau daftar nilai program_studi mahasiswa TIDAK PERNAH muncul persis "
+                    "di daftar bidang_studi_dibutuhkan (walau kelihatan 'sama' secara arti), "
+                    "berarti penulisannya beda (typo, singkatan, urutan kata, dll) — bukan bug matching. "
+                    "Samakan dulu nilainya di sumber data (CSV/Sheet), baru refresh dashboard."
+                )
+                _prodi_col_dbg = resolve_col(
+                    student_all.merge(status_student, on="nim", how="inner", suffixes=("_student", "_status")),
+                    "program_studi",
+                ) or "program_studi"
+                col_x, col_y = st.columns(2)
+                with col_x:
+                    st.markdown("**Nilai unik `program_studi` (mahasiswa):**")
+                    st.dataframe(
+                        pd.Series(sorted(student_all["program_studi"].dropna().unique()), name="program_studi"),
+                        use_container_width=True, hide_index=True,
+                    )
+                with col_y:
+                    st.markdown("**Nilai unik `bidang_studi_dibutuhkan` (talent request):**")
+                    bidang_unik = (
+                        talent_request["bidang_studi_dibutuhkan"]
+                        .dropna().str.split(",").explode().str.strip()
+                        .drop_duplicates().sort_values()
+                    )
+                    st.dataframe(bidang_unik.rename("bidang_studi_dibutuhkan"), use_container_width=True, hide_index=True)
+
+        if int((match_summary["cocok_prodi"] > 0).sum()) > 0 and int((match_summary["kandidat_final"] == 0).sum()) == len(match_summary):
+            with st.expander("🔍 Debug: kenapa 'Kandidat Final' 0 padahal 'Cocok Prodi' > 0?"):
+                st.caption(
+                    "Berarti masalahnya di kolom `ketersediaan` / `status` — nilainya bukan persis "
+                    "'Tersedia' / 'Aktif'. Cek daftar nilai unik di bawah."
+                )
+                col_x, col_y = st.columns(2)
+                with col_x:
+                    st.markdown("**Nilai unik `ketersediaan`:**")
+                    st.dataframe(status_student["ketersediaan"].value_counts().rename("jumlah"), use_container_width=True)
+                with col_y:
+                    st.markdown("**Nilai unik `status`:**")
+                    st.dataframe(status_student["status"].value_counts().rename("jumlah"), use_container_width=True)
 
     with st.container(border=True):
         section(
@@ -737,11 +795,16 @@ with tab5:
         semester_col = resolve_col(candidates, "semester") or "semester"
         nama_col = resolve_col(candidates, "nama") or "nama"
 
-        cocok_prodi_df = candidates[candidates[prodi_col].isin(bidang_dibutuhkan)]
+        bidang_dibutuhkan_norm = [b.lower() for b in bidang_dibutuhkan]
+        candidates["_prodi_norm"] = norm_text(candidates[prodi_col])
+        candidates["_ketersediaan_norm"] = norm_text(candidates["ketersediaan"])
+        candidates["_status_norm"] = norm_text(candidates["status"])
+
+        cocok_prodi_df = candidates[candidates["_prodi_norm"].isin(bidang_dibutuhkan_norm)]
         cocok_semester_df = cocok_prodi_df[cocok_prodi_df[semester_col] >= min_semester]
         candidates = cocok_semester_df[
-            (cocok_semester_df["ketersediaan"] == "Tersedia")
-            & (cocok_semester_df["status"] == "Aktif")
+            (cocok_semester_df["_ketersediaan_norm"] == "tersedia")
+            & (cocok_semester_df["_status_norm"] == "aktif")
         ].copy()
 
         if len(candidates) > 0:
