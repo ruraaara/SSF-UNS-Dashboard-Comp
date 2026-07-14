@@ -120,6 +120,23 @@ button[data-baseweb="tab"] {{
     font-weight: 600;
 }}
 
+/* Reskin semua native alert (st.info/warning/success/error) biar nyatu
+   sama tema earthy, bukan biru/hijau default Streamlit */
+div[data-testid="stAlertContainer"], div[data-testid="stAlert"] {{
+    background-color: {COLOR_BG_CARD} !important;
+    border: 1px solid #EAD9BB !important;
+    border-left: 5px solid {COLOR_COCOA} !important;
+    border-radius: 10px !important;
+}}
+div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
+    color: {COLOR_DRAB_DARK} !important;
+}}
+
+.match-summary-row-zero {{
+    color: {COLOR_SIENNA} !important;
+    font-weight: 700;
+}}
+
 #MainMenu, footer {{visibility: hidden;}}
 </style>
 """, unsafe_allow_html=True)
@@ -568,7 +585,90 @@ with tab4:
 # ---------------------------------------------------------------------------
 # TAB 5 — MATCHING TALENT (ML: placement probability)
 # ---------------------------------------------------------------------------
+@st.cache_data
+def compute_match_summary(talent_request_df: pd.DataFrame, student_all_df: pd.DataFrame, status_student_df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Hitung jumlah kandidat cocok untuk SEMUA talent request sekaligus, bertahap
+    (cocok prodi -> cocok semester -> cocok status & ketersediaan), supaya kalau
+    hasil akhirnya 0 kita tau persis di tahap mana kandidat hilang.
+    """
+    pool = student_all_df.merge(status_student_df, on="nim", how="inner", suffixes=("_student", "_status"))
+    prodi_col = resolve_col(pool, "program_studi") or "program_studi"
+    semester_col = resolve_col(pool, "semester") or "semester"
+
+    rows = []
+    for _, tr in talent_request_df.iterrows():
+        bidang = [x.strip() for x in str(tr.get("bidang_studi_dibutuhkan", "")).split(",") if x.strip() != ""]
+        min_sem = tr.get("minimum_semester", 0)
+        if pd.isna(min_sem):
+            min_sem = 0
+
+        cocok_prodi = pool[pool[prodi_col].isin(bidang)] if bidang else pool.iloc[0:0]
+        cocok_semester = cocok_prodi[cocok_prodi[semester_col] >= min_sem]
+        cocok_final = cocok_semester[
+            (cocok_semester["ketersediaan"] == "Tersedia") & (cocok_semester["status"] == "Aktif")
+        ]
+
+        rows.append({
+            "id_talent_req": tr.get("id_talent_req"),
+            "nama_posisi": tr.get("nama_posisi", "-"),
+            "nama_perusahaan": tr.get("nama_perusahaan", "-"),
+            "bidang_dibutuhkan": ", ".join(bidang) if bidang else "(kosong)",
+            "min_semester": min_sem,
+            "cocok_prodi": len(cocok_prodi),
+            "cocok_prodi_semester": len(cocok_semester),
+            "kandidat_final": len(cocok_final),
+        })
+
+    return pd.DataFrame(rows)
+
+
 with tab5:
+    match_summary = compute_match_summary(talent_request, student_all, status_student)
+
+    with st.container(border=True):
+        section(
+            "Ringkasan Kecocokan — Semua Talent Request",
+            "Biar nggak perlu klik satu-satu buat tau mana yang 0 kandidat. Urut dari yang paling krisis kandidat.",
+        )
+        n_zero = int((match_summary["kandidat_final"] == 0).sum())
+        col_a, col_b = st.columns(2)
+        col_a.metric("Total Talent Request", f"{len(match_summary):,}")
+        col_b.metric("Request Tanpa Kandidat Cocok", f"{n_zero:,}")
+
+        if n_zero > 0:
+            insight(
+                f"Ada **{n_zero} talent request** dengan 0 kandidat cocok. "
+                "Cek kolom bertahap di tabel: kalau 'cocok_prodi' sudah 0, berarti tidak ada mahasiswa "
+                "dari bidang studi yang diminta. Kalau baru drop di 'kandidat_final', "
+                "biasanya penyebabnya mahasiswa yang cocok prodi & semester belum submit status "
+                "kesiapan (belum 'Aktif' / belum 'Tersedia').",
+                kind="warning" if n_zero < len(match_summary) else "error",
+            )
+        else:
+            insight("Semua talent request punya minimal 1 kandidat cocok.", kind="success")
+
+        display_summary = match_summary.sort_values("kandidat_final").reset_index(drop=True)
+
+        def _highlight_zero(row):
+            return ["color: %s; font-weight: 700;" % COLOR_SIENNA if row["kandidat_final"] == 0 else "" for _ in row]
+
+        st.dataframe(
+            display_summary.style.apply(_highlight_zero, axis=1),
+            use_container_width=True,
+            hide_index=True,
+            column_config={
+                "id_talent_req": "ID",
+                "nama_posisi": "Posisi",
+                "nama_perusahaan": "Perusahaan",
+                "bidang_dibutuhkan": "Bidang Dibutuhkan",
+                "min_semester": "Min. Semester",
+                "cocok_prodi": "Cocok Prodi",
+                "cocok_prodi_semester": "Cocok Prodi + Semester",
+                "kandidat_final": "Kandidat Final",
+            },
+        )
+
     with st.container(border=True):
         section(
             "Cari Kandidat Terbaik untuk Talent Request",
@@ -590,24 +690,28 @@ with tab5:
                 kind="warning",
             )
 
-        tr_options = talent_request.copy()
-        tr_options["label"] = (
-            tr_options["nama_posisi"].fillna("-")
+        # Urutkan pilihan: yang kandidatnya paling banyak di atas, biar nggak
+        # nyasar milih request yang bakal 0 hasil.
+        tr_sorted = match_summary.sort_values("kandidat_final", ascending=False).copy()
+        tr_sorted["label"] = (
+            tr_sorted["nama_posisi"].fillna("-")
             + " — "
-            + tr_options["nama_perusahaan"].fillna("-")
+            + tr_sorted["nama_perusahaan"].fillna("-")
             + " ("
-            + tr_options["id_talent_req"].astype(str)
-            + ")"
+            + tr_sorted["id_talent_req"].astype(str)
+            + ") — "
+            + tr_sorted["kandidat_final"].astype(str)
+            + " kandidat"
+            + tr_sorted["kandidat_final"].apply(lambda x: " ⚠️" if x == 0 else "")
         )
 
         pilihan_label = st.selectbox(
             "Pilih Talent Request",
-            tr_options["label"].tolist()
+            tr_sorted["label"].tolist()
         )
 
-        selected = tr_options[
-            tr_options["label"] == pilihan_label
-        ].iloc[0]
+        selected_id = tr_sorted.loc[tr_sorted["label"] == pilihan_label, "id_talent_req"].iloc[0]
+        selected = talent_request[talent_request["id_talent_req"] == selected_id].iloc[0]
 
         bidang_dibutuhkan = [
             x.strip()
@@ -633,11 +737,11 @@ with tab5:
         semester_col = resolve_col(candidates, "semester") or "semester"
         nama_col = resolve_col(candidates, "nama") or "nama"
 
-        candidates = candidates[
-            (candidates[prodi_col].isin(bidang_dibutuhkan))
-            & (candidates[semester_col] >= min_semester)
-            & (candidates["ketersediaan"] == "Tersedia")
-            & (candidates["status"] == "Aktif")
+        cocok_prodi_df = candidates[candidates[prodi_col].isin(bidang_dibutuhkan)]
+        cocok_semester_df = cocok_prodi_df[cocok_prodi_df[semester_col] >= min_semester]
+        candidates = cocok_semester_df[
+            (cocok_semester_df["ketersediaan"] == "Tersedia")
+            & (cocok_semester_df["status"] == "Aktif")
         ].copy()
 
         if len(candidates) > 0:
@@ -705,7 +809,16 @@ with tab5:
         st.markdown(f"**{len(candidates)} kandidat cocok ditemukan:**")
 
         if len(candidates) == 0:
-            st.info("Tidak ada kandidat yang memenuhi syarat.")
+            if len(cocok_prodi_df) == 0:
+                sebab = f"tidak ada mahasiswa terdaftar dari bidang studi **{', '.join(bidang_dibutuhkan) or '(kosong)'}**."
+            elif len(cocok_semester_df) == 0:
+                sebab = f"ada {len(cocok_prodi_df)} mahasiswa dari bidang yang cocok, tapi semuanya di bawah minimum semester ({int(min_semester)})."
+            else:
+                sebab = (
+                    f"ada {len(cocok_semester_df)} mahasiswa yang cocok bidang & semester, "
+                    "tapi belum ada yang berstatus 'Aktif' dan 'Tersedia' di data status kesiapan."
+                )
+            insight(f"Tidak ada kandidat yang memenuhi syarat — {sebab}", kind="error")
         else:
             show_cols = [
                 c for c in [
