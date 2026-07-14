@@ -5,6 +5,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+
 st.set_page_config(
     page_title="SSDC 2026 — Student Placement Dashboard",
     layout="wide",
@@ -33,7 +37,8 @@ FUNNEL_STAGES = [
     "Placement",
 ]
 
-# Aturan resmi status follow-up / Ghosting
+# Aturan resmi status follow-up / Ghosting (BT-05) — RULE-BASED, bukan ML.
+# Definisi ini datang dari panitia, jadi tidak perlu (dan tidak boleh) dimodelkan.
 FU1_DAYS = 7          # > 1 minggu tanpa respons -> FU 1
 FU2_DAYS = 14         # > 2 minggu tanpa respons -> FU 2
 FU3_DAYS = 21         # > 3 minggu tanpa respons -> FU 3
@@ -177,6 +182,19 @@ def hitung_status_followup(hari_sejak_kirim, sudah_direspon) -> str:
     return "Menunggu Respons (Normal)"
 
 
+def resolve_col(df: pd.DataFrame, base: str, suffixes=("_student", "", "_status")):
+    """
+    Cari nama kolom yang benar setelah merge dengan suffixes.
+    Ini yang bikin KeyError kalau dipanggil pakai nama kolom mentah
+    (mis. 'program_studi') padahal hasil merge-nya jadi 'program_studi_student'.
+    """
+    for suf in suffixes:
+        cand = f"{base}{suf}"
+        if cand in df.columns:
+            return cand
+    return None
+
+
 # ---------------------------------------------------------------------------
 # LOAD DATA
 # ---------------------------------------------------------------------------
@@ -294,10 +312,10 @@ tanggal_acuan = st.sidebar.date_input(
 tanggal_acuan = pd.Timestamp(tanggal_acuan)
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Peta Business Task → Tab: Matching · Funnel · Mitra · Kesiapan · Laporan")
+st.sidebar.caption("Peta Business Task → Tab: Overview · Ghosting · Mitra · Kesiapan · Matching (ML) · Laporan")
 
 # ---------------------------------------------------------------------------
-# GHOSTING LOGIC
+# GHOSTING LOGIC (RULE-BASED — BT-05, TIDAK PAKAI ML)
 # ---------------------------------------------------------------------------
 respon_per_tc = tracking_student.groupby("id_tracking_company").agg(
     ada_progress_lanjut=("progress_student", lambda s: (s != "Selecting Student by Company").any()),
@@ -324,10 +342,85 @@ if jenis_pilihan and jenis_col_status in tc_status.columns:
     tc_status = tc_status[tc_status[jenis_col_status].isin(jenis_pilihan)]
 
 # ---------------------------------------------------------------------------
+# ML MODEL — MATCHING TALENT (RandomForest, prediksi peluang placement)
+# Dilatih dari histori keputusan (Placement vs Rejected). Kalau data histori
+# belum cukup / hanya 1 kelas, otomatis fallback ke skor AHP (weighted sum)
+# supaya tab tetap jalan dan tidak error.
+# ---------------------------------------------------------------------------
+ML_FEATURE_BASE = ["program_studi", "semester", "ipk", "cv", "portofolio", "domisili"]
+MIN_TRAIN_ROWS = 50
+
+
+@st.cache_resource
+def train_matching_model(student_all_df: pd.DataFrame, status_student_df: pd.DataFrame, tracking_student_df: pd.DataFrame):
+    base = student_all_df.merge(status_student_df, on="nim", how="inner", suffixes=("_student", "_status"))
+    base = base.merge(
+        tracking_student_df[["nim", "rejection"]].dropna(subset=["rejection"]),
+        on="nim", how="inner",
+    )
+    base = base[base["rejection"].isin(["Placement", "Rejected"])].copy()
+    base["target"] = (base["rejection"] == "Placement").astype(int)
+
+    resolved_cols = {}
+    for feat in ML_FEATURE_BASE:
+        col = resolve_col(base, feat)
+        if col is not None:
+            resolved_cols[feat] = col
+
+    feature_cols = list(resolved_cols.values())
+    if len(base) < MIN_TRAIN_ROWS or base["target"].nunique() < 2 or not feature_cols:
+        return None  # data belum cukup -> caller fallback ke AHP
+
+    X = base[feature_cols].copy()
+    y = base["target"]
+
+    encoders = {}
+    numeric_feats = {"semester", "ipk"}
+    for feat, col in resolved_cols.items():
+        if feat in numeric_feats:
+            X[col] = pd.to_numeric(X[col], errors="coerce")
+            X[col] = X[col].fillna(X[col].median())
+        else:
+            X[col] = X[col].astype(str).fillna("Unknown")
+            le = LabelEncoder()
+            X[col] = le.fit_transform(X[col])
+            encoders[col] = le
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42,
+        stratify=y if y.nunique() > 1 else None,
+    )
+    model = RandomForestClassifier(
+        n_estimators=300, max_depth=8, min_samples_leaf=5,
+        random_state=42, class_weight="balanced",
+    )
+    model.fit(X_train, y_train)
+    test_accuracy = model.score(X_test, y_test) if len(X_test) > 0 else np.nan
+
+    feature_importance = pd.DataFrame({
+        "fitur": feature_cols,
+        "importance": model.feature_importances_,
+    }).sort_values("importance", ascending=False)
+
+    return {
+        "model": model,
+        "encoders": encoders,
+        "feature_cols": feature_cols,
+        "resolved_cols": resolved_cols,
+        "numeric_feats": numeric_feats,
+        "feature_importance": feature_importance,
+        "test_accuracy": test_accuracy,
+        "n_train": len(base),
+    }
+
+
+ml_bundle = train_matching_model(student_all, status_student, tracking_student)
+
+# ---------------------------------------------------------------------------
 # TABS DECLARATION
 # ---------------------------------------------------------------------------
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📊 Overview", "🔻 Funnel & Ghosting", "🤝 Mitra", "🎓 Kesiapan", "🔍 Matching Talent", "📁 Laporan"
+    "📊 Overview", "🔻 Funnel & Ghosting", "🤝 Mitra", "🎓 Kesiapan", "🔍 Matching Talent (ML)", "📁 Laporan"
 ])
 
 # ---------------------------------------------------------------------------
@@ -364,7 +457,7 @@ with tab1:
             insight("Data belum cukup untuk membandingkan tren antar bulan pada rentang filter ini.")
 
 # ---------------------------------------------------------------------------
-# TAB 2 — FUNNEL & GHOSTING
+# TAB 2 — FUNNEL & GHOSTING (rule-based)
 # ---------------------------------------------------------------------------
 with tab2:
     with st.container(border=True):
@@ -382,7 +475,7 @@ with tab2:
         st.plotly_chart(style_fig(fig_funnel), use_container_width=True)
 
     with st.container(border=True):
-        section("Deteksi Ghosting Perusahaan")
+        section("Deteksi Ghosting Perusahaan", "Rule resmi BT-05: >7 hari FU1, >14 FU2, >21 FU3, >28 Ghosting (dihitung dari tanggal acuan di sidebar).")
         total_tc_diproses = len(tc_status)
         total_ghosting_tc = int((tc_status["status_followup"] == "Ghosting").sum())
         ghosting_rate = (total_ghosting_tc / total_tc_diproses * 100) if total_tc_diproses > 0 else 0
@@ -450,7 +543,7 @@ with tab4:
         demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand"
         supply = student_all["program_studi"].dropna().value_counts().reset_index()
         supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply"
-        
+
         gap_melt = pd.concat([demand, supply], ignore_index=True)
         top_bidang = gap_melt.groupby("bidang_studi")["jumlah"].sum().sort_values(ascending=False).head(10).index
         gap_melt = gap_melt[gap_melt["bidang_studi"].isin(top_bidang)]
@@ -473,11 +566,29 @@ with tab4:
         st.metric("Total Mahasiswa Layak Kirim Saat Ini", f"{len(eligible):,}")
 
 # ---------------------------------------------------------------------------
-# TAB 5 — MATCHING TALENT
+# TAB 5 — MATCHING TALENT (ML: placement probability)
 # ---------------------------------------------------------------------------
 with tab5:
     with st.container(border=True):
-        section("Cari Kandidat Terbaik untuk Talent Request")
+        section(
+            "Cari Kandidat Terbaik untuk Talent Request",
+            "Skor kandidat = probabilitas placement dari model ML (RandomForest), "
+            "dilatih dari histori keputusan Placement/Rejected. Kalau histori belum cukup, "
+            "otomatis fallback ke skor AHP (weighted sum) supaya tetap ada hasil.",
+        )
+
+        if ml_bundle is not None:
+            insight(
+                f"Model aktif: RandomForest, dilatih dari {ml_bundle['n_train']:,} baris histori "
+                f"keputusan, akurasi test ≈ {ml_bundle['test_accuracy']*100:.1f}%.",
+                kind="success",
+            )
+        else:
+            insight(
+                "Histori keputusan (Placement/Rejected) belum cukup atau hanya 1 kelas — "
+                "dashboard fallback ke skor AHP (bukan ML) untuk tab ini.",
+                kind="warning",
+            )
 
         tr_options = talent_request.copy()
         tr_options["label"] = (
@@ -517,23 +628,10 @@ with tab5:
             suffixes=("_student", "_status")
         )
 
-        prodi_col = (
-            "program_studi_student"
-            if "program_studi_student" in candidates.columns
-            else "program_studi"
-        )
-
-        semester_col = (
-            "semester_student"
-            if "semester_student" in candidates.columns
-            else "semester"
-        )
-
-        nama_col = (
-            "nama_student"
-            if "nama_student" in candidates.columns
-            else "nama"
-        )
+        # resolve_col menangani KeyError akibat suffix _student/_status setelah merge
+        prodi_col = resolve_col(candidates, "program_studi") or "program_studi"
+        semester_col = resolve_col(candidates, "semester") or "semester"
+        nama_col = resolve_col(candidates, "nama") or "nama"
 
         candidates = candidates[
             (candidates[prodi_col].isin(bidang_dibutuhkan))
@@ -543,52 +641,66 @@ with tab5:
         ].copy()
 
         if len(candidates) > 0:
-            candidates["prodi_score"] = 1.0
-            candidates["ipk_score"] = (
-                candidates["ipk"] / candidates["ipk"].max()
-                if candidates["ipk"].max() > 0
-                else 0
-            )
-            candidates["semester_score"] = (
-                candidates[semester_col]
-                / candidates[semester_col].max()
-            )
+            if ml_bundle is not None:
+                # ---- Skor ML: placement_probability ----
+                model = ml_bundle["model"]
+                encoders = ml_bundle["encoders"]
+                resolved_cols = ml_bundle["resolved_cols"]
+                numeric_feats = ml_bundle["numeric_feats"]
+                feature_cols = ml_bundle["feature_cols"]
 
-            candidates["cv_score"] = (
-                candidates["cv"]
-                .astype(str)
-                .str.lower()
-                .eq("ada")
-                .astype(int)
-            )
+                X_cand = pd.DataFrame(index=candidates.index)
+                for feat, train_col in resolved_cols.items():
+                    cand_col = resolve_col(candidates, feat) or train_col
+                    if cand_col not in candidates.columns:
+                        # fitur tidak tersedia di candidates -> isi netral
+                        X_cand[train_col] = 0
+                        continue
+                    if feat in numeric_feats:
+                        vals = pd.to_numeric(candidates[cand_col], errors="coerce")
+                        X_cand[train_col] = vals.fillna(vals.median() if vals.notna().any() else 0)
+                    else:
+                        le = encoders.get(train_col)
+                        vals = candidates[cand_col].astype(str).fillna("Unknown")
+                        if le is not None:
+                            known = set(le.classes_)
+                            vals = vals.apply(lambda v: v if v in known else le.classes_[0])
+                            X_cand[train_col] = le.transform(vals)
+                        else:
+                            X_cand[train_col] = 0
 
-            candidates["portfolio_score"] = (
-                candidates["portofolio"]
-                .astype(str)
-                .str.lower()
-                .eq("ada")
-                .astype(int)
-            )
+                X_cand = X_cand[feature_cols]
+                candidates["recommendation_score"] = model.predict_proba(X_cand)[:, 1]
+                candidates["metode_skor"] = "ML (placement probability)"
+            else:
+                # ---- Fallback AHP kalau data histori belum cukup ----
+                candidates["prodi_score"] = 1.0
+                candidates["ipk_score"] = (
+                    candidates["ipk"] / candidates["ipk"].max()
+                    if candidates["ipk"].max() > 0
+                    else 0
+                )
+                candidates["semester_score"] = (
+                    candidates[semester_col] / candidates[semester_col].max()
+                )
+                candidates["cv_score"] = (
+                    candidates["cv"].astype(str).str.lower().eq("ada").astype(int)
+                )
+                candidates["portfolio_score"] = (
+                    candidates["portofolio"].astype(str).str.lower().eq("ada").astype(int)
+                )
 
-            # Bobot awal berbasis expert judgement (AHP dapat disesuaikan)
-            w_prodi = 0.40
-            w_ipk = 0.30
-            w_portfolio = 0.15
-            w_semester = 0.10
-            w_cv = 0.05
+                w_prodi, w_ipk, w_portfolio, w_semester, w_cv = 0.40, 0.30, 0.15, 0.10, 0.05
+                candidates["recommendation_score"] = (
+                    w_prodi * candidates["prodi_score"]
+                    + w_ipk * candidates["ipk_score"]
+                    + w_portfolio * candidates["portfolio_score"]
+                    + w_semester * candidates["semester_score"]
+                    + w_cv * candidates["cv_score"]
+                )
+                candidates["metode_skor"] = "AHP (fallback)"
 
-            candidates["recommendation_score"] = (
-                w_prodi * candidates["prodi_score"]
-                + w_ipk * candidates["ipk_score"]
-                + w_portfolio * candidates["portfolio_score"]
-                + w_semester * candidates["semester_score"]
-                + w_cv * candidates["cv_score"]
-            )
-
-            candidates = candidates.sort_values(
-                "recommendation_score",
-                ascending=False
-            )
+            candidates = candidates.sort_values("recommendation_score", ascending=False)
 
         st.markdown(f"**{len(candidates)} kandidat cocok ditemukan:**")
 
@@ -605,7 +717,8 @@ with tab5:
                     "cv",
                     "portofolio",
                     "domisili",
-                    "recommendation_score"
+                    "recommendation_score",
+                    "metode_skor",
                 ]
                 if c in candidates.columns
             ]
@@ -615,6 +728,17 @@ with tab5:
                 use_container_width=True,
                 hide_index=True
             )
+
+    if ml_bundle is not None:
+        with st.container(border=True):
+            section("Feature Importance Model", "Fitur mana yang paling berpengaruh terhadap peluang placement menurut model.")
+            fig_fi = px.bar(
+                ml_bundle["feature_importance"],
+                x="importance", y="fitur", orientation="h",
+                title="Feature Importance — RandomForest",
+                color_discrete_sequence=[COLOR_SEAL_BROWN],
+            )
+            st.plotly_chart(style_fig(fig_fi), use_container_width=True)
 
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
@@ -641,69 +765,3 @@ with tab6:
         st.metric("Mahasiswa Belum Ada Data Status (Belum Sync)", f"{len(belum_sync):,}")
         if len(belum_sync) > 0:
             st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20), use_container_width=True, hide_index=True)
-
-
-# =========================
-# PREDICTIVE ANALYTICS MODULE (ADD TO A NEW TAB)
-# =========================
-# Contoh penggunaan:
-#
-# with tab7:
-#     from sklearn.ensemble import RandomForestClassifier
-#     from sklearn.model_selection import train_test_split
-#     from sklearn.preprocessing import LabelEncoder
-#
-#     ml = tracking_student.copy()
-#     if "progress" in ml.columns:
-#         ml["placement_target"] = (
-#             ml["progress"].astype(str)
-#             .str.contains("Placement", case=False, na=False)
-#         ).astype(int)
-#
-#         features = []
-#         for c in [
-#             "ipk","semester","program_studi",
-#             "cv","portofolio","domisili"
-#         ]:
-#             if c in student_all.columns:
-#                 features.append(c)
-#
-#         st.info(
-#             "Gunakan model RandomForest/XGBoost setelah "
-#             "dataset placement final dibentuk melalui merge "
-#             "tracking_student + student_all."
-#         )
-#
-
-
-
-# =========================
-# GHOSTING RULE (BT-05)
-# =========================
-if "send_date" in tracking_company.columns:
-    tracking_company["send_date"] = pd.to_datetime(
-        tracking_company["send_date"],
-        errors="coerce"
-    )
-
-    today = pd.Timestamp.today().normalize()
-
-    tracking_company["days_no_response"] = (
-        today - tracking_company["send_date"]
-    ).dt.days
-
-    tracking_company["ghosting_status"] = np.select(
-        [
-            tracking_company["days_no_response"] > 28,
-            tracking_company["days_no_response"] > 21,
-            tracking_company["days_no_response"] > 14,
-            tracking_company["days_no_response"] > 7,
-        ],
-        [
-            "Ghosting",
-            "FU 3",
-            "FU 2",
-            "FU 1",
-        ],
-        default="Normal"
-    )
