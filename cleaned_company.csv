@@ -1,0 +1,1501 @@
+id_company,company_name,company_type,industry_sector,kota,skala_perusahaan,pic_name,pic_phone,created_at
+C001,PT Solusi Analitika,Startup,Manufaktur,Surakarta,Lokal,Budi Setiawan,082238908386,2024-05-14
+C002,CV Makmur Abadi,BUMN,Teknologi Informasi,Semarang,Nasional,Vina Permana,082135116155,2022-11-23
+C003,PT Inti Terapan,Startup,Retail,Yogyakarta,Lokal,Maulana Handoko,081695931034,2024-02-15
+C004,PT Digital Bangsa,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Wulan Sari,085341928327,2022-11-30
+C005,PT Jaya Systems,UMKM,Manufaktur,Semarang,Lokal,Bima Nugroho,081556413953,2022-04-25
+C006,PT Gemilang Bersama,NGO,Retail,Surakarta,Lokal,Nurul Febriani,087853287101,2023-06-23
+C007,CV Bumi Terapan,UMKM,E-commerce,Jakarta,Nasional,Ratna Pratama,085318451462,2024-12-19
+C008,PT Inovasi Analitika,BUMN,Konsultan Manajemen,Depok,Nasional,Erlangga Cahyani,085789325288,2023-01-01
+C009,PT Bakti Inovasi,Startup,FMCG,Malang,Lokal,Dimas Wijaya,085211718227,2023-09-22
+C010,PT Bumi Abadi,Corporate,Asuransi,Depok,Nasional,Amelia Rahmawati,085357871331,2023-02-16
+C011,PT Solusi Makmur,Corporate,Manufaktur,Surakarta,Lokal,Erlangga Suryadi,081383473829,2022-05-19
+C012,PT Andalas Sejahtera,BUMN,Asuransi,Surakarta,Nasional,Wulan Prasetya,087870106513,2022-07-18
+C013,CV Sinergi Konsultan,Corporate,Asuransi,Surakarta,Multinasional,Devi Wardani,081308013267,2022-06-04
+C014,PT Kreasi Bangsa,Corporate,Keuangan & Perbankan,Surakarta,Multinasional,Anisa Anggara,085768723430,2024-03-10
+C015,PT Mitra Analitika,Startup,Keuangan & Perbankan,Bandung,Lokal,Dafa Utami,081391361939,2022-04-27
+C016,PT Cipta Global,Startup,Otomotif,Jakarta,Nasional,Amelia Ramadhani,085347510799,2023-05-04
+C017,PT Karya Konsultan,Startup,Konsultan Manajemen,Surakarta,Lokal,Sari Putra,087784980841,2023-05-16
+C018,CV Inti Nusantara,BUMN,Travel & Hospitality,Surakarta,Nasional,Bagus Suryadi,082248740164,2023-08-01
+C019,PT Inovasi Utama,UMKM,Konsultan Manajemen,Surakarta,Nasional,Eka Fitriani,082180598262,2022-01-20
+C020,PT Sentosa Pratama,BUMN,Keuangan & Perbankan,Malang,Nasional,Hafiz Hidayat,085886923226,2023-03-07
+C021,PT Nusa Analitika,NGO,Asuransi,Surabaya,Multinasional,Kartika Fitriani,081360733754,2023-05-24
+C022,CV Digital Media,Startup,Properti & Konstruksi,Jakarta,Nasional,Ika Pangestu,085801429401,2023-12-21
+C023,PT Perkasa Pratama,UMKM,Properti & Konstruksi,Jakarta,Lokal,Nurul Safitri,082240608835,2022-08-25
+C024,PT Karya Media,NGO,Properti & Konstruksi,Bandung,Lokal,Hasna Gunawan,085864823662,2023-09-08
+C025,PT Sentosa Konsultan,BUMN,Telekomunikasi,Jakarta,Nasional,Intan Mahendra,087738721489,2024-05-30
+C026,PT Techno Karya,Pemerintah,Manufaktur,Semarang,Lokal,Budi Nugroho,082279176936,2023-02-12
+C027,PT Gemilang Sejahtera,Startup,Teknologi Informasi,Malang,Lokal,Olivia Utami,081587083172,2022-08-07
+C028,PT Esa Konsultan,Corporate,Retail,Bandung,Nasional,Farhan Hartono,087743487347,2024-07-02
+C029,PT Mandiri Sejahtera,Startup,Properti & Konstruksi,Malang,Lokal,Lina Firmansyah,085631665876,2023-04-19
+C030,PT Kreasi Karya,Corporate,Teknologi Informasi,Malang,Nasional,Tika Ardiansyah,087868893734,2022-01-13
+C031,PT Bangkit Digital,Corporate,Energi & Pertambangan,Semarang,Multinasional,Arif Febriani,085201627204,2024-12-29
+C032,PT Bakti Kreatif,Corporate,Properti & Konstruksi,Semarang,Multinasional,Galuh Setiawan,087708053100,2024-05-13
+C033,CV Sinergi Karya,Startup,Kesehatan & Farmasi,Jakarta,Lokal,Lina Kusuma,081552991241,2023-03-23
+C034,PT Solusi Mandiri,Corporate,Energi & Pertambangan,Jakarta,Lokal,Aldi Nugraha,085791905865,2023-05-13
+C035,PT Daya Systems,Startup,Asuransi,Surabaya,Nasional,Dani Utami,085684987769,2024-07-30
+C036,PT Bakti Bangsa,Startup,E-commerce,Jakarta,Nasional,Bella Firdaus,081652735454,2024-02-16
+C037,PT Jaya Konsultan,Startup,Pendidikan & EdTech,Surakarta,Lokal,Aldi Hartono,085377014363,2024-09-27
+C038,PT Sukses Inovasi,Corporate,FMCG,Jakarta,Nasional,Tika Kusuma,082213518233,2024-07-18
+C039,PT Jaya Analitika,Corporate,Otomotif,Bandung,Multinasional,Yoga Utami,085708240084,2023-08-30
+C040,CV Bangkit Nusantara,BUMN,Telekomunikasi,Yogyakarta,Nasional,Lestari Wibowo,085771167190,2024-06-21
+C041,CV Indo Terapan,Corporate,Telekomunikasi,Surakarta,Multinasional,Ilham Adriansyah,087877496499,2024-05-02
+C042,PT Global Cerdas,Startup,Pendidikan & EdTech,Jakarta,Lokal,Kevin Pratama,087879740344,2022-12-22
+C043,CV Inti Terapan,BUMN,Pendidikan & EdTech,Jakarta,Nasional,Rizky Firmansyah,081302499471,2023-04-06
+C044,PT Sentosa Logistik,Corporate,Konsultan Manajemen,Yogyakarta,Lokal,Riska Prabowo,085240139904,2022-03-23
+C045,PT Cipta Cerdas,UMKM,Agribisnis,Yogyakarta,Nasional,Dinda Firdaus,081375655125,2023-01-07
+C046,PT Bangkit Mandiri,UMKM,Energi & Pertambangan,Surabaya,Nasional,Qonita Prabowo,081368087603,2022-06-30
+C047,PT Sukses Global,UMKM,Retail,Semarang,Lokal,Lutfia Fitriani,087710932480,2023-08-13
+C048,PT Cakra Data,Startup,Logistik & Supply Chain,Yogyakarta,Lokal,Mega Handayani,085767737826,2024-10-17
+C049,CV Daya Analitika,BUMN,E-commerce,Jakarta,Nasional,Anisa Maulana,085704499727,2024-04-29
+C050,PT Andalas Pratama,Startup,Travel & Hospitality,Jakarta,Lokal,Nanda Cahyono,082260576627,2023-01-22
+C051,PT Prima Informatika,Pemerintah,Properti & Konstruksi,Malang,Multinasional,Krisna Anggara,081226217459,2024-06-20
+C052,PT Techno Bangsa,Startup,Travel & Hospitality,Jakarta,Nasional,Pandu Cahyani,085343161172,2022-03-15
+C053,PT Solusi Teknologi,Startup,Keuangan & Perbankan,Jakarta,Lokal,Sinta Ningsih,081522219693,2023-05-16
+C054,PT Indo Sejahtera,Corporate,Konsultan Manajemen,Yogyakarta,Multinasional,Ika Pangestu,082117594647,2024-08-10
+C055,PT Sinergi Sentosa,BUMN,Logistik & Supply Chain,Jakarta,Nasional,Lina Handoko,081264090974,2024-01-06
+C056,CV Media Sejahtera,UMKM,Konsultan Manajemen,Semarang,Lokal,Guntur Cahyani,085304709521,2022-10-08
+C057,PT Bakti Analitika,Corporate,Pendidikan & EdTech,Surakarta,Multinasional,Galuh Putra,085774517123,2024-12-23
+C058,PT Sukses Data,BUMN,Teknologi Informasi,Jakarta,Nasional,Yuni Ningsih,085649651370,2022-09-11
+C059,PT Bakti Global,Startup,E-commerce,Bandung,Nasional,Irfan Nugroho,081247113826,2024-04-16
+C060,PT Sukses Media,NGO,Travel & Hospitality,Jakarta,Nasional,Farah Hidayat,081679640537,2022-11-13
+C061,PT Bina Bangsa,Corporate,FMCG,Yogyakarta,Nasional,Maya Kurniawan,081671390053,2024-03-26
+C062,CV Kreasi Data,BUMN,Travel & Hospitality,Jakarta,Nasional,Vino Nugraha,082190422842,2023-03-19
+C063,PT Solusi Indonesia,Startup,Manufaktur,Bandung,Nasional,Farhan Gunawan,083811775891,2022-04-18
+C064,PT Daya Sejahtera,NGO,Keuangan & Perbankan,Semarang,Multinasional,Intan Oktaviani,081207661771,2024-12-03
+C065,CV Karya Indonesia,Startup,Travel & Hospitality,Semarang,Nasional,Gita Fitriani,081383673657,2024-07-18
+C066,PT Cakra Analitika,Startup,Asuransi,Jakarta,Lokal,Fajar Setiawan,081361528098,2024-08-29
+C067,PT Graha Media,Startup,FMCG,Malang,Lokal,Satria Anggraeni,085751983273,2024-05-16
+C068,PT Media Bangsa,Corporate,Logistik & Supply Chain,Semarang,Multinasional,Bella Utami,085745502296,2022-02-23
+C069,PT Indo Analitika,UMKM,Teknologi Informasi,Surakarta,Nasional,Vina Putra,085845991022,2024-05-09
+C070,PT Mitra Media,Startup,Retail,Bandung,Nasional,Nisa Ardiansyah,083815614978,2024-04-28
+C071,PT Cipta Sejahtera,Corporate,Keuangan & Perbankan,Surakarta,Multinasional,Gibran Kusuma,085751076226,2023-03-09
+C072,PT Digital Informatika,Corporate,FMCG,Surakarta,Lokal,Eka Prabowo,085269664160,2022-02-08
+C073,PT Bumi Terapan,NGO,Retail,Surabaya,Multinasional,Hesti Hidayat,082269681645,2022-06-30
+C074,CV Graha Cerdas,Startup,Otomotif,Bandung,Lokal,Nadia Oktaviani,081623124329,2023-12-17
+C075,CV Karya Solusi,Pemerintah,Agribisnis,Yogyakarta,Nasional,Isna Cahyani,085827177449,2024-07-08
+C076,PT Media Informatika,Startup,Retail,Yogyakarta,Nasional,Rafi Anggraeni,083867980793,2022-06-07
+C077,PT Andalas Informatika,Startup,Keuangan & Perbankan,Yogyakarta,Lokal,Januar Oktaviani,082103778892,2023-12-05
+C078,PT Sukses Mandiri,Corporate,Properti & Konstruksi,Semarang,Multinasional,Vino Hidayat,083864492519,2023-11-17
+C079,CV Media Mandiri,Pemerintah,Energi & Pertambangan,Surakarta,Nasional,Ratna Cahyono,085352816850,2022-06-23
+C080,PT Sentosa Solusi,Pemerintah,Properti & Konstruksi,Bekasi,Nasional,Joko Santoso,085718880592,2023-04-09
+C081,PT Abadi Indonesia,Startup,Media & Kreatif,Semarang,Nasional,Anggi Handoko,081573834735,2023-05-02
+C082,PT Makmur Gemilang,UMKM,Energi & Pertambangan,Yogyakarta,Lokal,Erlangga Kusuma,081275818141,2023-02-13
+C083,CV Jaya Gemilang,NGO,Kesehatan & Farmasi,Surabaya,Lokal,Lutfia Hakim,081260685361,2023-03-31
+C084,PT Digital Utama,NGO,Properti & Konstruksi,Surabaya,Lokal,Lina Ramadhani,081577901043,2023-08-11
+C085,CV Esa Perkasa,Startup,Telekomunikasi,Jakarta,Lokal,Eka Kurniawan,081679808932,2024-05-09
+C086,PT Perkasa Digital,UMKM,Manufaktur,Bandung,Lokal,Eka Adriansyah,083888806706,2024-12-08
+C087,PT Inti Analitika,Startup,E-commerce,Jakarta,Lokal,Indah Nugroho,085885277221,2022-08-01
+C088,PT Cipta Mandiri,Startup,Pendidikan & EdTech,Malang,Nasional,Elsa Pangestu,087740345054,2024-11-21
+C089,PT Sukses Perkasa,BUMN,Retail,Malang,Nasional,Lestari Firdaus,085675841616,2024-03-02
+C090,PT Nusa Konsultan,Startup,Logistik & Supply Chain,Surakarta,Lokal,Winda Handayani,087827570596,2023-09-20
+C091,PT Mitra Data,UMKM,Energi & Pertambangan,Jakarta,Lokal,Joko Anggraeni,085370213556,2022-11-24
+C092,CV Makmur Pratama,Corporate,E-commerce,Bandung,Nasional,Hendra Saputra,085627868144,2023-07-25
+C093,PT Kreasi Global,Startup,Agribisnis,Jakarta,Lokal,Guntur Handayani,087715518844,2024-07-14
+C094,CV Nusa Terapan,Corporate,Manufaktur,Surakarta,Multinasional,Rendy Firdaus,081258957829,2022-10-12
+C095,PT Karya Mandiri,Corporate,Agribisnis,Yogyakarta,Multinasional,Umar Oktaviani,081377852892,2022-06-01
+C096,CV Perkasa Informatika,NGO,Keuangan & Perbankan,Surabaya,Nasional,Kevin Prabowo,085635841438,2023-09-15
+C097,PT Prima Systems,Startup,Travel & Hospitality,Surakarta,Lokal,Hafiz Puspitasari,085695900109,2022-11-12
+C098,PT Kreasi Cerdas,Corporate,Teknologi Informasi,Yogyakarta,Lokal,Putri Ningsih,087847102767,2023-09-11
+C099,PT Kreasi Utama,UMKM,Properti & Konstruksi,Malang,Nasional,Gibran Ramadhan,083881537147,2024-03-27
+C100,CV Indo Nusantara,Startup,Energi & Pertambangan,Malang,Lokal,Maya Ardiansyah,082178774701,2023-11-02
+C101,PT Daya Gemilang,Pemerintah,Pendidikan & EdTech,Bandung,Lokal,Winda Oktaviani,085374801624,2023-07-31
+C102,PT Gemilang Pratama,Startup,Keuangan & Perbankan,Bandung,Nasional,Mega Mahendra,081584991216,2022-05-31
+C103,PT Graha Konsultan,NGO,Kesehatan & Farmasi,Surakarta,Nasional,Cahyo Nugroho,082157872982,2024-10-21
+C104,PT Bakti Solusi,Corporate,Telekomunikasi,Bandung,Nasional,Kirana Saputra,085851694097,2024-09-30
+C105,PT Digital Analitika,Startup,Agribisnis,Surakarta,Lokal,Bima Ningsih,082209130756,2024-02-18
+C106,CV Cakra Logistik,Startup,Otomotif,Surabaya,Lokal,Krisna Sari,083857865278,2022-05-08
+C107,PT Media Cerdas,BUMN,Konsultan Manajemen,Bandung,Nasional,Rizky Wardani,085734437575,2023-01-29
+C108,PT Jaya Mandiri,Startup,Travel & Hospitality,Jakarta,Lokal,Satria Nugroho,085715747338,2023-12-08
+C109,PT Jaya Indonesia,Startup,Manufaktur,Jakarta,Lokal,Surya Dewi,081216571208,2024-12-23
+C110,CV Cakra Systems,NGO,Agribisnis,Yogyakarta,Lokal,Sari Oktaviani,081219380262,2023-08-12
+C111,PT Gemilang Terapan,Corporate,Telekomunikasi,Malang,Multinasional,Sari Anggara,085388728743,2022-08-08
+C112,PT Graha Solusi,UMKM,Konsultan Manajemen,Semarang,Nasional,Lukman Puspitasari,081666851612,2023-08-28
+C113,CV Andalas Utama,NGO,Teknologi Informasi,Jakarta,Lokal,Tika Febriani,085690453017,2023-07-01
+C114,PT Bumi Sentosa,UMKM,Telekomunikasi,Semarang,Lokal,Anggi Dewi,082227279568,2023-08-28
+C115,CV Techno Informatika,Corporate,FMCG,Surakarta,Lokal,Nanda Pangestu,082125871397,2024-11-01
+C116,PT Sejahtera Indonesia,Corporate,Retail,Yogyakarta,Nasional,Arif Kusuma,081603910651,2023-09-24
+C117,PT Mitra Bersama,Startup,Agribisnis,Surakarta,Lokal,Nurul Cahyono,087766182512,2024-05-10
+C118,PT Gemilang Informatika,Startup,Manufaktur,Surabaya,Lokal,Ika Wulandari,083868633752,2023-09-04
+C119,PT Sinergi Bersama,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Naufal Santoso,081390790306,2022-02-02
+C120,PT Digital Konsultan,Startup,Keuangan & Perbankan,Surakarta,Lokal,Sinta Anggraeni,081553428364,2023-04-25
+C121,PT Mitra Konsultan,NGO,Media & Kreatif,Bandung,Nasional,Wahyu Oktaviani,085368566246,2024-10-12
+C122,CV Andalas Sejahtera,BUMN,Telekomunikasi,Malang,Nasional,Dewi Wardani,087868826343,2022-10-23
+C123,PT Techno Gemilang,BUMN,E-commerce,Yogyakarta,Nasional,Rizky Cahyono,085399013983,2023-01-26
+C124,PT Sentosa Digital,Startup,Pendidikan & EdTech,Depok,Nasional,Arif Wijaya,083854678544,2023-05-12
+C125,PT Daya Bersama,Corporate,Logistik & Supply Chain,Surabaya,Nasional,Yoga Prabowo,087809320489,2023-10-18
+C126,PT Cakra Mandiri,Startup,Properti & Konstruksi,Jakarta,Lokal,Qonita Ardiansyah,081677725228,2024-10-19
+C127,PT Nusa Bersama,Corporate,Keuangan & Perbankan,Yogyakarta,Lokal,Bayu Ramadhani,081631203875,2022-04-10
+C128,PT Andalas Media,Corporate,Teknologi Informasi,Yogyakarta,Lokal,Bella Maulana,081662118233,2023-07-17
+C129,PT Esa Abadi,BUMN,Konsultan Manajemen,Surabaya,Nasional,Amelia Anggara,085233410166,2022-06-11
+C130,PT Andalas Teknologi,UMKM,Media & Kreatif,Surakarta,Lokal,Guntur Adriansyah,081233974014,2023-11-10
+C131,PT Cipta Solusi,NGO,Properti & Konstruksi,Surakarta,Lokal,Eka Budiman,082193968562,2022-10-23
+C132,PT Daya Analitika,Pemerintah,Keuangan & Perbankan,Surakarta,Lokal,Winda Nugraha,085296504773,2022-06-05
+C133,PT Abadi Perkasa,Startup,Energi & Pertambangan,Surakarta,Lokal,Fajar Permana,082162655110,2023-05-20
+C134,PT Makmur Pratama,UMKM,Logistik & Supply Chain,Surakarta,Nasional,Gita Saputra,081358199560,2024-11-15
+C135,PT Cakra Sentosa,UMKM,Travel & Hospitality,Tangerang,Lokal,Rangga Cahyono,082124447212,2024-12-03
+C136,PT Jaya Perkasa,Startup,E-commerce,Jakarta,Lokal,Gilang Hidayat,082140659657,2024-10-12
+C137,PT Perkasa Karya,BUMN,Kesehatan & Farmasi,Jakarta,Nasional,Ulfa Utami,087854793564,2023-02-16
+C138,PT Sukses Nusantara,NGO,Pendidikan & EdTech,Bandung,Nasional,Mira Sari,087741672434,2022-02-25
+C139,CV Perkasa Terapan,Corporate,Retail,Bogor,Nasional,Prita Nugroho,081558911352,2024-11-03
+C140,PT Cipta Makmur,Pemerintah,Energi & Pertambangan,Depok,Nasional,Ahmad Hidayat,085738889937,2024-05-31
+C141,PT Gemilang Cerdas,UMKM,Otomotif,Surakarta,Lokal,Satria Gunawan,081312545738,2024-09-15
+C142,PT Media Inovasi,Startup,Retail,Jakarta,Lokal,Farah Hidayat,085323828258,2022-02-16
+C143,PT Sejahtera Terapan,Corporate,Media & Kreatif,Surakarta,Nasional,Tiara Prasetya,087803341918,2023-02-09
+C144,CV Sukses Utama,Startup,Logistik & Supply Chain,Jakarta,Lokal,Winda Cahyono,085269155792,2024-12-16
+C145,PT Techno Media,Startup,Logistik & Supply Chain,Jakarta,Nasional,Bunga Anggraeni,082196627828,2022-10-17
+C146,CV Bangkit Mandiri,Startup,Properti & Konstruksi,Surabaya,Lokal,Ivan Ramadhani,082268876767,2024-01-06
+C147,PT Bumi Data,Corporate,Manufaktur,Jakarta,Multinasional,Ilham Anggara,085278819148,2023-08-15
+C148,PT Kreasi Perkasa,Startup,Manufaktur,Jakarta,Lokal,Wulan Setiawan,087713395962,2024-07-10
+C149,PT Prima Terapan,Startup,Pendidikan & EdTech,Surabaya,Nasional,Mira Handoko,085794812604,2022-12-11
+C150,CV Prima Sejahtera,Startup,Properti & Konstruksi,Surabaya,Lokal,Julia Safitri,085346671168,2024-03-15
+C151,PT Sukses Gemilang,Pemerintah,Properti & Konstruksi,Bandung,Multinasional,Dinda Rahmawati,085651863637,2022-07-10
+C152,PT Bakti Karya,Startup,Travel & Hospitality,Bandung,Nasional,Cahyo Hidayat,085370127706,2023-12-05
+C153,CV Prima Bersama,UMKM,Media & Kreatif,Malang,Lokal,Qonita Setiawan,085820643611,2022-07-11
+C154,PT Kreasi Inovasi,Startup,Manufaktur,Yogyakarta,Lokal,Erlangga Prasetya,085627136111,2023-12-05
+C155,PT Sukses Bersama,Startup,Energi & Pertambangan,Surabaya,Lokal,Eka Adriansyah,085209275326,2022-09-30
+C156,PT Makmur Bangsa,Startup,Logistik & Supply Chain,Surakarta,Nasional,Ulfa Ramadhani,082241389994,2023-12-21
+C157,PT Sentosa Kreatif,Corporate,Otomotif,Surakarta,Multinasional,Ivan Cahyono,081337918055,2022-04-22
+C158,CV Abadi Bangsa,BUMN,Asuransi,Jakarta,Nasional,Tasya Santoso,081291043006,2022-12-20
+C159,PT Mandiri Systems,UMKM,Asuransi,Jakarta,Lokal,Taufik Setiawan,083832856914,2023-07-23
+C160,PT Bina Teknologi,Startup,Asuransi,Surakarta,Lokal,Hasna Sulistyo,085321020275,2022-04-23
+C161,PT Esa Terapan,BUMN,Konsultan Manajemen,Surakarta,Nasional,Nadia Kurniawan,081505648149,2022-09-17
+C162,PT Bangkit Gemilang,Corporate,Keuangan & Perbankan,Yogyakarta,Nasional,Guntur Safitri,085313800030,2023-06-07
+C163,PT Sukses Sentosa,NGO,Media & Kreatif,Bekasi,Multinasional,Umar Wijaya,087854195180,2024-05-08
+C164,CV Digital Terapan,Corporate,Keuangan & Perbankan,Bekasi,Multinasional,Tasya Budiman,085818705349,2024-08-10
+C165,PT Bina Gemilang,Corporate,Agribisnis,Bogor,Nasional,Ahmad Gunawan,081238505064,2023-05-18
+C166,PT Kreasi Informatika,Pemerintah,Asuransi,Yogyakarta,Lokal,Fitri Nugroho,082286571918,2022-10-19
+C167,CV Gemilang Data,Corporate,Keuangan & Perbankan,Jakarta,Lokal,Devi Syahputra,085655743132,2023-06-19
+C168,PT Global Indonesia,Startup,Retail,Yogyakarta,Nasional,Tika Anggara,085711249035,2023-03-02
+C169,CV Techno Logistik,Startup,FMCG,Jakarta,Nasional,Budi Syahputra,081678831712,2023-06-17
+C170,PT Inovasi Teknologi,BUMN,Manufaktur,Surakarta,Nasional,Ika Cahyani,085319941013,2024-03-31
+C171,PT Prima Data,NGO,Properti & Konstruksi,Surakarta,Multinasional,Nanda Prasetya,081667066253,2022-04-14
+C172,CV Jaya Abadi,Corporate,Kesehatan & Farmasi,Surakarta,Lokal,Bunga Wardani,087701462638,2023-08-28
+C173,CV Solusi Sentosa,BUMN,FMCG,Yogyakarta,Nasional,Sinta Maulana,085864205930,2024-09-19
+C174,PT Mitra Terapan,Pemerintah,Otomotif,Jakarta,Nasional,Galih Wijaya,085334803965,2023-04-22
+C175,CV Nusa Sejahtera,Corporate,FMCG,Tangerang,Multinasional,Nanda Lestari,081678427010,2023-12-22
+C176,CV Digital Informatika,Corporate,Properti & Konstruksi,Tangerang,Multinasional,Mira Utami,081550029218,2022-09-25
+C177,PT Karya Pratama,UMKM,Energi & Pertambangan,Bandung,Nasional,Dwi Prasetya,081575289539,2022-10-07
+C178,CV Abadi Mandiri,UMKM,Telekomunikasi,Surakarta,Lokal,Lukman Anggraeni,085893917251,2024-03-12
+C179,CV Media Utama,Startup,E-commerce,Surabaya,Lokal,Ayu Kusuma,082231541006,2023-11-19
+C180,PT Cakra Solusi,BUMN,Agribisnis,Malang,Nasional,Gita Hartono,081593271040,2023-12-21
+C181,PT Inti Nusantara,Startup,Media & Kreatif,Malang,Lokal,Winda Puspitasari,087706296201,2022-07-10
+C182,PT Kreasi Kreatif,Corporate,Travel & Hospitality,Semarang,Lokal,Putri Hidayat,081269872050,2023-07-31
+C183,PT Techno Mandiri,BUMN,Agribisnis,Surakarta,Nasional,Kevin Cahyani,085717146774,2022-02-22
+C184,PT Abadi Solusi,Corporate,Energi & Pertambangan,Jakarta,Lokal,Olivia Permana,085202115869,2024-08-10
+C185,CV Mitra Karya,Corporate,Otomotif,Jakarta,Multinasional,Hanif Budiman,081360898992,2024-08-30
+C186,PT Makmur Solusi,NGO,Media & Kreatif,Depok,Multinasional,Dani Setiawan,085363294511,2022-09-16
+C187,PT Gemilang Konsultan,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Hana Gunawan,082129991191,2022-01-26
+C188,PT Media Bersama,Corporate,Energi & Pertambangan,Bandung,Nasional,Amelia Firmansyah,085296065307,2022-12-19
+C189,PT Sukses Digital,Startup,Telekomunikasi,Jakarta,Lokal,Irfan Budiman,085675469137,2022-07-21
+C190,CV Cakra Analitika,Corporate,Otomotif,Malang,Nasional,Taufik Handayani,083862890233,2022-11-22
+C191,PT Mitra Pratama,UMKM,Konsultan Manajemen,Jakarta,Nasional,Pandu Ramadhan,087797279855,2022-09-11
+C192,CV Inti Analitika,BUMN,E-commerce,Jakarta,Nasional,Kevin Safitri,081533334680,2024-03-02
+C193,PT Andalas Indonesia,UMKM,Teknologi Informasi,Jakarta,Lokal,Dian Cahyono,081657437489,2023-09-18
+C194,PT Global Digital,Corporate,FMCG,Yogyakarta,Lokal,Eka Suryadi,085754443283,2022-08-10
+C195,PT Gemilang Media,Startup,Kesehatan & Farmasi,Semarang,Lokal,Bunga Syahputra,087809935387,2023-08-29
+C196,PT Daya Mandiri,BUMN,Travel & Hospitality,Surakarta,Nasional,Indah Sulistyo,085782513534,2022-07-19
+C197,PT Graha Pratama,Startup,Telekomunikasi,Yogyakarta,Lokal,Lutfia Lestari,083816846022,2022-05-26
+C198,CV Graha Perkasa,Pemerintah,Retail,Surakarta,Multinasional,Ivan Suryadi,085325007432,2023-01-05
+C199,PT Bumi Inovasi,BUMN,E-commerce,Surakarta,Nasional,Amelia Prasetya,087760083505,2024-06-07
+C200,PT Sinergi Digital,UMKM,Manufaktur,Jakarta,Lokal,Galih Cahyono,083894210447,2023-10-02
+C201,PT Esa Utama,Corporate,Kesehatan & Farmasi,Jakarta,Nasional,Aditya Syahputra,081233230982,2023-01-21
+C202,PT Sukses Logistik,UMKM,Keuangan & Perbankan,Jakarta,Lokal,Prasetyo Wibowo,085310016761,2024-12-31
+C203,PT Inti Inovasi,UMKM,Pendidikan & EdTech,Semarang,Lokal,Hasna Hidayat,085384992618,2023-09-09
+C204,PT Mega Mandiri,Startup,Logistik & Supply Chain,Yogyakarta,Lokal,Wahyu Handayani,087842087375,2023-06-23
+C205,CV Inovasi Digital,UMKM,Logistik & Supply Chain,Surabaya,Lokal,Ilham Maulana,081314374470,2022-11-02
+C206,PT Nusa Bangsa,Startup,Telekomunikasi,Jakarta,Lokal,Galih Ardiansyah,081202255794,2024-05-22
+C207,PT Sukses Karya,Startup,Logistik & Supply Chain,Jakarta,Lokal,Lina Hartono,081562120216,2023-07-11
+C208,PT Andalas Terapan,Corporate,Retail,Surakarta,Multinasional,Erlangga Ningsih,081627716701,2024-01-05
+C209,PT Bakti Digital,UMKM,Otomotif,Semarang,Lokal,Dani Rahmawati,085637562890,2023-11-24
+C210,PT Bumi Informatika,BUMN,Agribisnis,Malang,Nasional,Ulfa Wijaya,085840838663,2022-06-03
+C211,PT Sejahtera Gemilang,BUMN,Retail,Surakarta,Nasional,Ulfa Kurniawan,087701660880,2024-10-17
+C212,PT Sentosa Bersama,Corporate,Pendidikan & EdTech,Bandung,Nasional,Dafa Anggara,085889975711,2022-04-22
+C213,CV Inovasi Utama,Corporate,Telekomunikasi,Yogyakarta,Multinasional,Guntur Putra,087726149331,2022-08-06
+C214,PT Kreasi Gemilang,BUMN,Pendidikan & EdTech,Semarang,Nasional,Citra Cahyani,081691779827,2022-08-09
+C215,PT Esa Analitika,Startup,Asuransi,Surabaya,Lokal,Galih Cahyono,085399586693,2022-12-22
+C216,PT Gemilang Utama,Pemerintah,Retail,Surabaya,Lokal,Galuh Fitriani,083858333945,2024-11-15
+C217,CV Nusa Informatika,Corporate,Properti & Konstruksi,Semarang,Nasional,Lutfia Prasetya,081508106200,2024-05-04
+C218,CV Jaya Cerdas,BUMN,Telekomunikasi,Semarang,Nasional,Aldi Handoko,082280571983,2022-10-27
+C219,PT Abadi Sejahtera,Corporate,Telekomunikasi,Semarang,Multinasional,Bunga Ningsih,085880043973,2024-02-21
+C220,PT Sinergi Cerdas,UMKM,Pendidikan & EdTech,Jakarta,Lokal,Farhan Maulana,081360648422,2023-01-18
+C221,PT Inti Digital,Startup,Kesehatan & Farmasi,Surakarta,Lokal,Laila Safitri,083851583281,2022-04-15
+C222,PT Bumi Perkasa,Corporate,Energi & Pertambangan,Surakarta,Multinasional,Vina Ramadhan,085739878015,2023-03-13
+C223,PT Bina Bersama,UMKM,Manufaktur,Bekasi,Lokal,Anisa Kurniawan,087848408588,2023-10-20
+C224,PT Bangkit Teknologi,Startup,Pendidikan & EdTech,Jakarta,Lokal,Surya Santoso,082236138612,2022-12-09
+C225,PT Sejahtera Logistik,Startup,E-commerce,Surakarta,Nasional,Qori Gunawan,087876650618,2022-05-25
+C226,PT Karya Cerdas,UMKM,Keuangan & Perbankan,Semarang,Lokal,Winda Setiawan,085776607283,2023-08-17
+C227,CV Gemilang Terapan,BUMN,Travel & Hospitality,Jakarta,Nasional,Ika Wulandari,085350882100,2022-10-23
+C228,CV Media Kreatif,Corporate,Otomotif,Surakarta,Multinasional,Hendra Utami,085390878141,2023-06-02
+C229,PT Global Kreatif,UMKM,Agribisnis,Bekasi,Lokal,Anggi Santoso,082257759492,2022-07-24
+C230,PT Sukses Terapan,Startup,Asuransi,Surakarta,Lokal,Galuh Ramadhan,082157775478,2024-06-12
+C231,PT Nusa Systems,UMKM,Konsultan Manajemen,Malang,Lokal,Dwi Santoso,081280996930,2023-06-24
+C232,PT Inti Konsultan,BUMN,Travel & Hospitality,Yogyakarta,Nasional,Amelia Dewi,081594278816,2022-11-01
+C233,PT Daya Digital,UMKM,Media & Kreatif,Semarang,Lokal,Farhan Wulandari,087750373145,2023-01-02
+C234,CV Cipta Media,Startup,FMCG,Jakarta,Lokal,Teguh Prabowo,081384498926,2022-04-06
+C235,PT Sukses Makmur,UMKM,E-commerce,Yogyakarta,Lokal,Wulan Hakim,087779082723,2024-11-23
+C236,PT Kreasi Indonesia,Startup,FMCG,Bandung,Lokal,Devi Suryadi,085617773926,2023-04-17
+C237,CV Bumi Indonesia,UMKM,Keuangan & Perbankan,Malang,Lokal,Krisna Syahputra,085290413797,2023-06-13
+C238,PT Bumi Sejahtera,BUMN,Kesehatan & Farmasi,Surabaya,Nasional,Kartika Wulandari,085357991366,2023-01-08
+C239,CV Global Digital,Startup,Otomotif,Semarang,Lokal,Hanif Puspitasari,085208811729,2022-07-17
+C240,PT Inovasi Bersama,NGO,Asuransi,Yogyakarta,Nasional,Olivia Hartono,081565991624,2022-03-30
+C241,PT Mandiri Global,BUMN,Asuransi,Jakarta,Nasional,Nanda Adriansyah,081380635651,2022-01-12
+C242,CV Perkasa Systems,Corporate,Konsultan Manajemen,Malang,Nasional,Salma Sari,087888725887,2023-07-19
+C243,PT Sentosa Makmur,Startup,Energi & Pertambangan,Semarang,Lokal,Faisal Fitriani,082113865890,2022-09-01
+C244,CV Abadi Systems,Startup,E-commerce,Surabaya,Nasional,Qori Dewi,085819066984,2022-06-30
+C245,PT Mitra Cerdas,BUMN,Agribisnis,Jakarta,Nasional,Maya Nugroho,081598839205,2023-02-18
+C246,CV Inovasi Solusi,Startup,Konsultan Manajemen,Surabaya,Nasional,Krisna Pratama,085611848955,2024-04-10
+C247,PT Digital Global,Pemerintah,Retail,Tangerang,Nasional,Bayu Maulana,081381845184,2023-06-19
+C248,PT Inti Logistik,Corporate,Energi & Pertambangan,Yogyakarta,Nasional,Nurul Febriani,081607141633,2024-07-28
+C249,PT Cakra Pratama,Corporate,Teknologi Informasi,Semarang,Multinasional,Arif Ningsih,085651827553,2023-08-12
+C250,PT Jaya Solusi,NGO,Pendidikan & EdTech,Yogyakarta,Lokal,Nisa Dewi,082239521117,2023-05-11
+C251,PT Inovasi Cerdas,BUMN,Keuangan & Perbankan,Surabaya,Nasional,Laila Safitri,081647284639,2024-01-31
+C252,CV Mitra Informatika,BUMN,Agribisnis,Bekasi,Nasional,Amelia Ningsih,081527187500,2022-03-08
+C253,CV Abadi Makmur,Startup,FMCG,Bandung,Nasional,Kirana Puspitasari,085852763655,2023-05-01
+C254,PT Jaya Gemilang,Startup,Kesehatan & Farmasi,Depok,Lokal,Devi Wijaya,083866322702,2022-07-24
+C255,PT Bangkit Indonesia,Pemerintah,Otomotif,Yogyakarta,Nasional,Qonita Wardani,081690612034,2024-09-23
+C256,PT Global Gemilang,UMKM,Konsultan Manajemen,Jakarta,Nasional,Bayu Kurniawan,085893998245,2023-12-06
+C257,PT Daya Inovasi,UMKM,Retail,Malang,Nasional,Erlangga Putra,085356996112,2024-08-07
+C258,PT Mandiri Logistik,Startup,Energi & Pertambangan,Jakarta,Nasional,Bunga Putra,082102341326,2024-12-02
+C259,PT Global Data,NGO,Agribisnis,Yogyakarta,Lokal,Galih Kusuma,085221643347,2024-03-24
+C260,CV Prima Informatika,BUMN,Teknologi Informasi,Surakarta,Nasional,Isna Hartono,087784872829,2024-01-01
+C261,PT Sejahtera Systems,UMKM,Asuransi,Yogyakarta,Lokal,Kirana Pangestu,082217456424,2023-09-27
+C262,PT Inovasi Informatika,BUMN,Kesehatan & Farmasi,Jakarta,Nasional,Aldi Firdaus,081574064930,2024-08-18
+C263,PT Sukses Kreatif,Corporate,Travel & Hospitality,Jakarta,Multinasional,Olivia Kusuma,081363894484,2024-03-09
+C264,PT Sinergi Bangsa,Startup,Kesehatan & Farmasi,Jakarta,Lokal,Lina Puspitasari,087735020802,2024-07-16
+C265,PT Mandiri Abadi,Startup,Retail,Semarang,Lokal,Nisa Suryadi,087847570512,2022-01-31
+C266,PT Jaya Cerdas,Corporate,Travel & Hospitality,Yogyakarta,Multinasional,Galuh Pratama,081336730371,2023-05-28
+C267,PT Sentosa Utama,Startup,Keuangan & Perbankan,Semarang,Lokal,Dinda Budiman,082250313650,2023-06-03
+C268,CV Jaya Makmur,Startup,Manufaktur,Surakarta,Nasional,Tasya Setiawan,082227195005,2022-11-14
+C269,CV Global Indonesia,Corporate,Properti & Konstruksi,Bogor,Nasional,Budi Fitriani,087852407784,2024-06-17
+C270,PT Bangkit Kreatif,Corporate,Travel & Hospitality,Jakarta,Lokal,Krisna Firmansyah,087744857086,2022-11-25
+C271,CV Solusi Global,BUMN,Manufaktur,Jakarta,Nasional,Maya Adriansyah,085378294565,2022-05-10
+C272,PT Global Informatika,UMKM,Keuangan & Perbankan,Surabaya,Lokal,Ivan Lestari,081309678994,2023-02-18
+C273,PT Sukses Sejahtera,UMKM,E-commerce,Surakarta,Lokal,Gilang Cahyani,081258650948,2024-10-03
+C274,PT Global Analitika,Startup,Energi & Pertambangan,Surakarta,Lokal,Riska Hidayat,081595761228,2023-01-02
+C275,PT Daya Utama,UMKM,Travel & Hospitality,Bogor,Nasional,Hesti Ramadhan,087865939836,2023-10-08
+C276,PT Inti Pratama,Pemerintah,Retail,Bekasi,Lokal,Winda Saputra,083824043350,2022-03-12
+C277,PT Daya Konsultan,Corporate,Kesehatan & Farmasi,Surakarta,Lokal,Lutfia Febriani,082234419693,2023-06-27
+C278,PT Bakti Terapan,Corporate,Agribisnis,Surabaya,Nasional,Citra Wulandari,081596105566,2022-07-15
+C279,PT Inovasi Systems,UMKM,Energi & Pertambangan,Surakarta,Nasional,Mega Fitriani,082220679981,2022-11-03
+C280,CV Perkasa Mandiri,BUMN,Kesehatan & Farmasi,Surakarta,Nasional,Sinta Sulistyo,081286416862,2022-06-19
+C281,CV Andalas Konsultan,Startup,Energi & Pertambangan,Bandung,Lokal,Rizky Nugraha,087859116655,2023-05-12
+C282,CV Bakti Pratama,Corporate,Teknologi Informasi,Semarang,Multinasional,Anggi Firmansyah,087703352110,2023-12-18
+C283,CV Indo Bangsa,BUMN,Telekomunikasi,Surakarta,Nasional,Fani Hartono,081253833884,2022-08-16
+C284,PT Andalas Global,UMKM,Kesehatan & Farmasi,Semarang,Lokal,Qori Putra,081243940701,2024-02-11
+C285,PT Jaya Media,BUMN,FMCG,Malang,Nasional,Isna Oktaviani,087836815798,2022-02-09
+C286,PT Nusa Kreatif,Corporate,Retail,Yogyakarta,Lokal,Vina Firdaus,087820555438,2024-12-20
+C287,PT Mitra Systems,Startup,Energi & Pertambangan,Malang,Lokal,Olivia Firmansyah,085862168936,2022-03-02
+C288,CV Indo Perkasa,Pemerintah,Properti & Konstruksi,Jakarta,Lokal,Erlangga Ramadhani,085782629251,2022-10-11
+C289,PT Mega Solusi,Startup,Kesehatan & Farmasi,Semarang,Lokal,Tika Mahendra,085642312209,2024-04-27
+C290,PT Jaya Global,Corporate,Manufaktur,Bandung,Multinasional,Fitri Fitriani,081572897526,2022-02-23
+C291,CV Sinergi Sejahtera,Startup,Teknologi Informasi,Tangerang,Lokal,Gibran Sari,081327975736,2023-04-01
+C292,PT Bakti Sentosa,UMKM,Travel & Hospitality,Yogyakarta,Lokal,Faisal Anggara,081603886086,2022-03-20
+C293,PT Mitra Kreatif,Startup,Energi & Pertambangan,Malang,Lokal,Kartika Prasetya,085790827718,2023-08-09
+C294,PT Nusa Cerdas,Corporate,Travel & Hospitality,Surakarta,Nasional,Tiara Handayani,082271452111,2023-01-02
+C295,PT Abadi Analitika,BUMN,Otomotif,Bandung,Nasional,Ratna Cahyono,081225922220,2022-11-24
+C296,PT Sentosa Mandiri,UMKM,Retail,Jakarta,Lokal,Rafi Ardiansyah,085707778097,2023-02-20
+C297,CV Kreasi Makmur,UMKM,Retail,Jakarta,Lokal,Anggi Cahyani,083830220502,2023-05-17
+C298,PT Mitra Nusantara,Corporate,Media & Kreatif,Surakarta,Multinasional,Riska Febriani,085801455616,2022-12-30
+C299,PT Prima Nusantara,UMKM,Konsultan Manajemen,Jakarta,Lokal,Galih Safitri,085681794695,2023-03-05
+C300,PT Esa Makmur,Pemerintah,FMCG,Tangerang,Nasional,Laila Utami,085234301071,2024-10-13
+C301,CV Cakra Perkasa,Startup,FMCG,Yogyakarta,Lokal,Aldi Handoko,085714488501,2022-01-24
+C302,PT Graha Sentosa,UMKM,Teknologi Informasi,Surabaya,Nasional,Devi Nugroho,085327278576,2024-09-08
+C303,PT Esa Mandiri,Corporate,Properti & Konstruksi,Yogyakarta,Multinasional,Eka Firmansyah,085705682996,2023-11-11
+C304,CV Mega Bangsa,BUMN,Telekomunikasi,Semarang,Nasional,Rizky Gunawan,081373574384,2023-10-07
+C305,CV Mega Pratama,BUMN,Pendidikan & EdTech,Tangerang,Nasional,Aditya Hartono,083823578452,2024-06-27
+C306,PT Esa Media,Pemerintah,Pendidikan & EdTech,Semarang,Nasional,Ahmad Budiman,081291570184,2024-12-05
+C307,PT Sentosa Systems,BUMN,Properti & Konstruksi,Jakarta,Nasional,Prita Prabowo,081571422410,2023-08-10
+C308,PT Daya Nusantara,Startup,FMCG,Yogyakarta,Nasional,Eka Budiman,085258702070,2023-05-17
+C309,PT Abadi Teknologi,Startup,Energi & Pertambangan,Surakarta,Nasional,Vina Lestari,085681792171,2023-12-30
+C310,PT Sentosa Media,UMKM,Retail,Yogyakarta,Lokal,Yuni Syahputra,082155770171,2022-10-22
+C311,PT Andalas Gemilang,BUMN,Telekomunikasi,Semarang,Nasional,Arif Handayani,081515814876,2022-09-18
+C312,PT Cakra Sejahtera,UMKM,Travel & Hospitality,Surakarta,Lokal,Bima Fitriani,085266958321,2023-11-29
+C313,PT Bangkit Nusantara,Corporate,Retail,Jakarta,Multinasional,Taufik Syahputra,081391965701,2024-06-30
+C314,CV Indo Gemilang,Corporate,Energi & Pertambangan,Bandung,Lokal,Sinta Ningsih,085765190986,2023-10-11
+C315,CV Mandiri Teknologi,Corporate,Travel & Hospitality,Depok,Multinasional,Erlangga Handoko,081603696566,2024-01-06
+C316,PT Perkasa Konsultan,Startup,Media & Kreatif,Yogyakarta,Nasional,Julia Handoko,081622010276,2024-01-08
+C317,CV Techno Indonesia,UMKM,Asuransi,Malang,Lokal,Gilang Maulana,087887653269,2024-05-21
+C318,PT Bangkit Bangsa,UMKM,Otomotif,Jakarta,Lokal,Cahyo Safitri,087751971284,2024-01-22
+C319,PT Esa Data,Corporate,E-commerce,Jakarta,Nasional,Anggi Wibowo,085880778795,2022-06-09
+C320,PT Media Terapan,Startup,Media & Kreatif,Surakarta,Lokal,Dewi Cahyani,087792904904,2023-09-15
+C321,PT Techno Indonesia,Corporate,Konsultan Manajemen,Jakarta,Lokal,Farhan Kurniawan,085229275243,2023-06-11
+C322,PT Nusa Terapan,Corporate,Keuangan & Perbankan,Jakarta,Multinasional,Candra Firdaus,081566372395,2022-10-25
+C323,PT Inti Cerdas,BUMN,Keuangan & Perbankan,Surakarta,Nasional,Tika Hartono,085683667428,2024-03-27
+C324,PT Inovasi Mandiri,NGO,Retail,Jakarta,Nasional,Galih Pangestu,085356945441,2024-12-21
+C325,CV Sinergi Informatika,Startup,Media & Kreatif,Jakarta,Lokal,Bayu Hidayat,083817534430,2022-05-20
+C326,PT Techno Teknologi,NGO,Pendidikan & EdTech,Bekasi,Nasional,Dafa Anggraeni,082169212447,2022-09-03
+C327,PT Sejahtera Abadi,UMKM,Properti & Konstruksi,Jakarta,Lokal,Zaki Cahyono,085804427173,2023-07-22
+C328,PT Gemilang Solusi,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Faisal Handayani,085710119470,2023-03-24
+C329,PT Indo Systems,UMKM,Keuangan & Perbankan,Bandung,Nasional,Januar Handayani,081577661830,2024-03-12
+C330,PT Andalas Nusantara,Corporate,FMCG,Jakarta,Multinasional,Yoga Pangestu,081651743280,2022-04-24
+C331,PT Sinergi Mandiri,UMKM,Logistik & Supply Chain,Bandung,Lokal,Irfan Nugroho,082209376184,2024-06-15
+C332,PT Makmur Digital,Startup,Keuangan & Perbankan,Jakarta,Lokal,Naufal Oktaviani,085387829310,2024-04-10
+C333,CV Bangkit Systems,Startup,Keuangan & Perbankan,Jakarta,Lokal,Surya Wibowo,085717929111,2022-01-30
+C334,PT Digital Data,BUMN,Asuransi,Jakarta,Nasional,Hana Ningsih,085282530925,2024-04-03
+C335,PT Mega Abadi,Startup,Asuransi,Surakarta,Lokal,Oki Nugroho,082119620710,2024-06-17
+C336,PT Nusa Data,UMKM,Telekomunikasi,Jakarta,Lokal,Naufal Firmansyah,085348763290,2024-09-01
+C337,PT Nusa Logistik,Corporate,E-commerce,Bandung,Nasional,Muhammad Kurniawan,083819588373,2022-01-10
+C338,PT Indo Media,BUMN,Agribisnis,Yogyakarta,Nasional,Dimas Oktaviani,085843645970,2022-11-24
+C339,PT Bangkit Informatika,Startup,Manufaktur,Semarang,Nasional,Farhan Ningsih,085831531363,2024-05-08
+C340,PT Indo Kreatif,NGO,Retail,Surakarta,Nasional,Surya Hakim,085735209042,2024-07-26
+C341,PT Bumi Cerdas,Startup,Telekomunikasi,Bandung,Lokal,Fajar Gunawan,081687397740,2022-12-15
+C342,PT Bina Sejahtera,Startup,Manufaktur,Malang,Lokal,Citra Nugroho,087780686717,2022-01-11
+C343,PT Bina Data,Corporate,Teknologi Informasi,Semarang,Lokal,Putri Oktaviani,081307427990,2024-01-05
+C344,PT Sejahtera Cerdas,Startup,Energi & Pertambangan,Surakarta,Lokal,Erlangga Cahyani,081365804649,2024-08-08
+C345,PT Kreasi Terapan,UMKM,Properti & Konstruksi,Semarang,Nasional,Zaki Ramadhan,087790552818,2022-04-16
+C346,CV Prima Utama,Startup,Logistik & Supply Chain,Bandung,Lokal,Umar Hakim,085786401557,2023-03-06
+C347,PT Daya Informatika,BUMN,Agribisnis,Semarang,Nasional,Fani Puspitasari,085813711624,2024-12-27
+C348,PT Global Solusi,Startup,Kesehatan & Farmasi,Yogyakarta,Lokal,Satria Gunawan,085382756704,2024-12-02
+C349,CV Karya Digital,BUMN,Manufaktur,Surabaya,Nasional,Bunga Febriani,085857988774,2024-11-30
+C350,PT Prima Bersama,BUMN,Media & Kreatif,Surabaya,Nasional,Yuni Handoko,081502547292,2023-04-10
+C351,PT Mandiri Solusi,Pemerintah,Kesehatan & Farmasi,Surakarta,Lokal,Faisal Kusuma,085823805525,2023-10-11
+C352,PT Bumi Konsultan,Startup,Teknologi Informasi,Jakarta,Lokal,Julia Pratama,085688547492,2024-07-27
+C353,PT Makmur Utama,UMKM,Agribisnis,Tangerang,Lokal,Arif Puspitasari,081637515093,2023-09-23
+C354,PT Esa Sejahtera,BUMN,Konsultan Manajemen,Surakarta,Nasional,Ika Rahmawati,081386375998,2022-06-21
+C355,CV Perkasa Pratama,Corporate,Teknologi Informasi,Jakarta,Multinasional,Naufal Wulandari,087767426629,2024-07-01
+C356,CV Sentosa Inovasi,Pemerintah,Otomotif,Bogor,Lokal,Ahmad Gunawan,085346287923,2024-02-09
+C357,PT Sentosa Inovasi,Corporate,Retail,Jakarta,Lokal,Hana Oktaviani,085346273014,2023-09-07
+C358,PT Karya Global,UMKM,Agribisnis,Yogyakarta,Lokal,Yoga Maulana,085690429025,2024-09-01
+C359,PT Prima Pratama,Startup,Konsultan Manajemen,Jakarta,Lokal,Satria Handoko,083818321928,2023-12-31
+C360,PT Global Konsultan,Corporate,Kesehatan & Farmasi,Surakarta,Nasional,Vina Putra,081332833898,2024-09-20
+C361,PT Mega Perkasa,Corporate,E-commerce,Surakarta,Multinasional,Wulan Budiman,085652798524,2022-02-05
+C362,PT Mega Sejahtera,Startup,Kesehatan & Farmasi,Semarang,Lokal,Dani Fitriani,081511076031,2022-09-24
+C363,PT Daya Makmur,Startup,Logistik & Supply Chain,Tangerang,Nasional,Rendy Kurniawan,085239325012,2022-01-22
+C364,PT Media Pratama,Startup,Otomotif,Surabaya,Lokal,Galih Febriani,081508334280,2024-10-31
+C365,PT Nusa Gemilang,UMKM,Logistik & Supply Chain,Surakarta,Nasional,Januar Dewi,087815171827,2024-05-18
+C366,PT Mandiri Konsultan,UMKM,E-commerce,Jakarta,Nasional,Ika Mahendra,082286463175,2024-07-24
+C367,CV Inovasi Media,Corporate,Logistik & Supply Chain,Jakarta,Nasional,Arif Syahputra,085691215353,2022-09-02
+C368,PT Gemilang Nusantara,Startup,Asuransi,Semarang,Nasional,Kirana Rahmawati,085267842711,2024-03-30
+C369,PT Bangkit Inovasi,Startup,Kesehatan & Farmasi,Surakarta,Lokal,Ika Saputra,082169524991,2022-05-20
+C370,PT Esa Cerdas,Corporate,Retail,Jakarta,Nasional,Devi Pangestu,083800616756,2023-06-20
+C371,PT Sejahtera Teknologi,Startup,Travel & Hospitality,Bandung,Lokal,Dian Ramadhani,085767197889,2022-12-03
+C372,PT Andalas Konsultan,BUMN,Otomotif,Surakarta,Nasional,Tiara Cahyono,085254500902,2023-06-24
+C373,PT Solusi Cerdas,BUMN,Properti & Konstruksi,Jakarta,Nasional,Wulan Gunawan,085803334911,2024-05-26
+C374,PT Mega Utama,Startup,Travel & Hospitality,Jakarta,Nasional,Rani Saputra,085679056965,2024-11-20
+C375,PT Global Terapan,Corporate,Pendidikan & EdTech,Jakarta,Nasional,Rafi Budiman,085863718344,2023-11-27
+C376,PT Global Makmur,Startup,E-commerce,Yogyakarta,Nasional,Anisa Santoso,085348468536,2023-03-06
+C377,PT Inti Global,Corporate,Travel & Hospitality,Surakarta,Multinasional,Nanda Firdaus,082274896908,2024-11-23
+C378,CV Sukses Gemilang,Startup,Kesehatan & Farmasi,Semarang,Lokal,Ulfa Santoso,085336442493,2024-06-10
+C379,PT Bina Nusantara,Startup,Teknologi Informasi,Jakarta,Lokal,Ratna Prasetya,087803242044,2024-08-08
+C380,PT Bangkit Terapan,Startup,E-commerce,Jakarta,Lokal,Hasna Rahmawati,081362319818,2024-04-13
+C381,PT Techno Sejahtera,Corporate,Properti & Konstruksi,Jakarta,Nasional,Nisa Firmansyah,081323476490,2023-04-29
+C382,PT Bakti Konsultan,Corporate,Manufaktur,Depok,Multinasional,Mira Ramadhan,081640900348,2024-01-14
+C383,PT Mega Konsultan,BUMN,Retail,Jakarta,Nasional,Tika Setiawan,081634327560,2024-03-15
+C384,PT Andalas Analitika,Corporate,Properti & Konstruksi,Semarang,Multinasional,Mega Santoso,085869857002,2022-11-25
+C385,PT Prima Digital,Corporate,Telekomunikasi,Jakarta,Multinasional,Krisna Handayani,081529657724,2022-11-20
+C386,CV Bakti Terapan,Startup,E-commerce,Jakarta,Nasional,Budi Wardani,085393173420,2023-04-05
+C387,PT Perkasa Global,Startup,E-commerce,Bekasi,Lokal,Tasya Anggara,081671333447,2022-01-29
+C388,PT Prima Perkasa,BUMN,Pendidikan & EdTech,Bogor,Nasional,Bayu Utami,087820443973,2023-08-03
+C389,PT Sejahtera Data,Startup,Kesehatan & Farmasi,Malang,Lokal,Bagus Cahyono,085669411800,2024-03-25
+C390,PT Bina Inovasi,NGO,Keuangan & Perbankan,Surakarta,Nasional,Amelia Rahmawati,085828092428,2024-02-20
+C391,PT Graha Bersama,Corporate,E-commerce,Jakarta,Lokal,Citra Ramadhani,087745644948,2022-08-28
+C392,PT Perkasa Bersama,Startup,Agribisnis,Semarang,Nasional,Joko Wibowo,082220742761,2022-04-19
+C393,PT Cipta Gemilang,Corporate,Travel & Hospitality,Yogyakarta,Multinasional,Wahyu Setiawan,082242284993,2022-10-31
+C394,PT Nusa Perkasa,NGO,Manufaktur,Semarang,Nasional,Satria Ningsih,085316591520,2023-11-05
+C395,PT Sejahtera Karya,UMKM,Agribisnis,Yogyakarta,Lokal,Citra Oktaviani,085275923045,2022-01-12
+C396,PT Abadi Data,Corporate,Media & Kreatif,Jakarta,Nasional,Kevin Cahyono,081564214764,2022-02-12
+C397,PT Sukses Informatika,Startup,Retail,Malang,Nasional,Devi Ramadhan,085226610857,2022-07-04
+C398,CV Indo Inovasi,Corporate,Otomotif,Surakarta,Lokal,Julia Ramadhani,085343864908,2024-09-05
+C399,PT Cipta Informatika,Startup,Asuransi,Jakarta,Nasional,Tiara Setiawan,081580172260,2023-12-29
+C400,PT Cakra Bersama,UMKM,Properti & Konstruksi,Bandung,Nasional,Isna Utami,082221941680,2023-06-27
+C401,PT Bumi Systems,Corporate,Energi & Pertambangan,Malang,Nasional,Anggi Puspitasari,085864122031,2024-09-23
+C402,CV Bina Perkasa,BUMN,Travel & Hospitality,Surakarta,Nasional,Julia Hartono,087801227770,2023-09-09
+C403,PT Bina Kreatif,Startup,Energi & Pertambangan,Surakarta,Nasional,Riska Febriani,085284076789,2024-05-01
+C404,PT Bangkit Sejahtera,UMKM,Otomotif,Surakarta,Lokal,Lutfia Hartono,081379576024,2023-07-03
+C405,CV Andalas Pratama,Corporate,Otomotif,Jakarta,Nasional,Farel Handoko,085666572934,2024-08-17
+C406,CV Sinergi Solusi,UMKM,Logistik & Supply Chain,Surabaya,Lokal,Putri Sari,083800545228,2024-10-08
+C407,PT Karya Utama,Corporate,Manufaktur,Surakarta,Multinasional,Anisa Hakim,081508428910,2023-06-13
+C408,PT Global Karya,Corporate,Otomotif,Surakarta,Multinasional,Dwi Handoko,085678712552,2024-01-11
+C409,PT Sinergi Gemilang,Pemerintah,Teknologi Informasi,Jakarta,Multinasional,Mega Putra,081345653286,2023-12-01
+C410,CV Prima Terapan,Corporate,Asuransi,Malang,Nasional,Faisal Firmansyah,081508115562,2024-01-11
+C411,PT Mitra Sentosa,UMKM,Kesehatan & Farmasi,Tangerang,Nasional,Lutfia Ningsih,085684550489,2024-05-08
+C412,CV Gemilang Systems,Startup,Travel & Hospitality,Bandung,Lokal,Lutfia Oktaviani,087834108562,2024-06-24
+C413,PT Mandiri Kreatif,Startup,Travel & Hospitality,Jakarta,Lokal,Farel Pangestu,085243468105,2022-02-17
+C414,PT Daya Pratama,Startup,Logistik & Supply Chain,Jakarta,Lokal,Putri Sulistyo,085298935449,2024-07-17
+C415,CV Abadi Informatika,UMKM,Logistik & Supply Chain,Jakarta,Nasional,Joko Handayani,087861106273,2024-07-19
+C416,PT Gemilang Makmur,Corporate,Energi & Pertambangan,Malang,Nasional,Nadia Gunawan,081622827728,2024-06-20
+C417,PT Mega Logistik,Startup,Agribisnis,Surakarta,Nasional,Hana Kurniawan,085894082154,2022-09-01
+C418,PT Solusi Terapan,Startup,Asuransi,Surakarta,Lokal,Lukman Sulistyo,087701851067,2023-08-04
+C419,PT Graha Terapan,Corporate,Kesehatan & Farmasi,Semarang,Nasional,Julia Wulandari,085819966365,2024-07-10
+C420,PT Cipta Media,BUMN,Konsultan Manajemen,Bandung,Nasional,Nanda Cahyani,081548181398,2022-12-06
+C421,PT Mitra Makmur,Corporate,Agribisnis,Yogyakarta,Multinasional,Budi Permana,081533971895,2024-12-25
+C422,PT Cipta Inovasi,BUMN,Teknologi Informasi,Jakarta,Nasional,Bella Adriansyah,085864111824,2023-01-05
+C423,CV Nusa Abadi,UMKM,Kesehatan & Farmasi,Jakarta,Lokal,Lestari Saputra,085604615265,2022-05-01
+C424,PT Abadi Karya,BUMN,Keuangan & Perbankan,Jakarta,Nasional,Mega Ardiansyah,083861405786,2023-04-30
+C425,PT Andalas Digital,Corporate,Manufaktur,Tangerang,Multinasional,Gibran Wardani,085324967183,2022-07-27
+C426,CV Sukses Konsultan,Pemerintah,Manufaktur,Yogyakarta,Nasional,Ahmad Anggara,081694200749,2024-07-14
+C427,PT Abadi Pratama,BUMN,Pendidikan & EdTech,Bandung,Nasional,Citra Putra,085689141612,2024-11-11
+C428,PT Jaya Bersama,Corporate,Otomotif,Bekasi,Multinasional,Salma Handayani,087743553795,2023-12-03
+C429,PT Bangkit Cerdas,Corporate,E-commerce,Surabaya,Lokal,Ika Kurniawan,085869562017,2022-03-05
+C430,PT Sinergi Data,BUMN,Telekomunikasi,Surabaya,Nasional,Ivan Ramadhan,081247930361,2023-03-29
+C431,CV Sinergi Media,UMKM,Media & Kreatif,Surakarta,Lokal,Sinta Dewi,083843089487,2022-09-18
+C432,PT Perkasa Systems,UMKM,Keuangan & Perbankan,Malang,Nasional,Rangga Adriansyah,087775803046,2023-07-16
+C433,PT Gemilang Kreatif,Startup,Teknologi Informasi,Bogor,Nasional,Muhammad Putra,085841107609,2022-06-02
+C434,PT Inti Sejahtera,Startup,Manufaktur,Bekasi,Lokal,Eka Nugraha,085297179110,2023-11-15
+C435,PT Abadi Utama,BUMN,E-commerce,Surabaya,Nasional,Dewi Budiman,085261108046,2022-05-07
+C436,PT Inovasi Gemilang,Corporate,Asuransi,Malang,Nasional,Nadya Suryadi,085231109193,2022-02-23
+C437,PT Mitra Indonesia,Startup,Asuransi,Yogyakarta,Lokal,Tiara Pangestu,081522749545,2024-01-03
+C438,CV Mitra Sejahtera,Corporate,Travel & Hospitality,Malang,Lokal,Rendy Santoso,085837795995,2023-02-15
+C439,PT Sentosa Perkasa,Startup,Logistik & Supply Chain,Yogyakarta,Lokal,Olivia Pratama,085333793375,2022-03-28
+C440,PT Kreasi Sentosa,Startup,Teknologi Informasi,Jakarta,Lokal,Satria Mahendra,082295003342,2022-08-24
+C441,CV Graha Bangsa,Corporate,Media & Kreatif,Surakarta,Multinasional,Budi Ningsih,082161534735,2023-06-21
+C442,PT Mega Indonesia,BUMN,Kesehatan & Farmasi,Surabaya,Nasional,Lina Ramadhan,085896309938,2023-01-28
+C443,PT Indo Utama,Startup,Konsultan Manajemen,Malang,Lokal,Dwi Setiawan,081579128685,2024-09-28
+C444,PT Esa Gemilang,Startup,FMCG,Yogyakarta,Nasional,Tiara Syahputra,085390333736,2024-08-28
+C445,CV Sentosa Perkasa,BUMN,Media & Kreatif,Bekasi,Nasional,Ratna Setiawan,082114785390,2024-02-06
+C446,PT Daya Global,Startup,Retail,Yogyakarta,Nasional,Zahra Saputra,082173415148,2023-10-12
+C447,PT Techno Terapan,Startup,Manufaktur,Surakarta,Lokal,Maya Ningsih,085844439284,2023-02-15
+C448,PT Gemilang Sentosa,BUMN,Teknologi Informasi,Yogyakarta,Nasional,Erlangga Syahputra,082233738987,2024-11-15
+C449,CV Perkasa Cerdas,NGO,Asuransi,Jakarta,Nasional,Indah Safitri,081624075536,2022-03-03
+C450,PT Prima Indonesia,Pemerintah,Properti & Konstruksi,Yogyakarta,Nasional,Nisa Syahputra,081386371597,2024-03-11
+C451,PT Techno Solusi,Startup,Travel & Hospitality,Surakarta,Lokal,Lukman Lestari,081364334817,2024-09-27
+C452,PT Bumi Utama,BUMN,Asuransi,Jakarta,Nasional,Luthfi Gunawan,087716323467,2022-08-15
+C453,CV Sentosa Makmur,Startup,Retail,Jakarta,Lokal,Bima Syahputra,085238597779,2024-07-01
+C454,PT Media Logistik,BUMN,Telekomunikasi,Jakarta,Nasional,Putri Utami,085267629160,2022-12-25
+C455,CV Bumi Abadi,BUMN,Travel & Hospitality,Jakarta,Nasional,Ivan Gunawan,081581511856,2022-05-17
+C456,CV Daya Teknologi,Corporate,E-commerce,Bandung,Nasional,Hesti Lestari,087800412577,2023-12-05
+C457,PT Karya Data,Corporate,Manufaktur,Semarang,Nasional,Kevin Saputra,085212418621,2023-07-26
+C458,PT Media Solusi,Startup,Keuangan & Perbankan,Malang,Nasional,Zaki Fitriani,085770900633,2022-04-08
+C459,PT Solusi Perkasa,Startup,Teknologi Informasi,Jakarta,Lokal,Aditya Rahmawati,082120681558,2023-03-28
+C460,CV Kreasi Konsultan,Corporate,Asuransi,Surakarta,Multinasional,Lestari Pratama,087850637314,2024-01-01
+C461,PT Sukses Teknologi,Startup,Pendidikan & EdTech,Jakarta,Lokal,Bagus Pangestu,081592419562,2024-10-20
+C462,PT Andalas Data,Startup,Retail,Jakarta,Lokal,Oscar Saputra,085214363910,2023-04-22
+C463,CV Sukses Inovasi,Startup,Kesehatan & Farmasi,Jakarta,Lokal,Riska Suryadi,082145086403,2023-05-03
+C464,PT Graha Sejahtera,Startup,Keuangan & Perbankan,Tangerang,Lokal,Prasetyo Cahyono,083852701713,2023-05-24
+C465,CV Techno Solusi,Corporate,Pendidikan & EdTech,Jakarta,Multinasional,Kartika Wulandari,082236293449,2024-08-14
+C466,PT Sinergi Abadi,BUMN,Agribisnis,Surakarta,Nasional,Zahra Putra,087776896270,2024-01-07
+C467,PT Perkasa Bangsa,Startup,Telekomunikasi,Bandung,Lokal,Intan Budiman,087746897152,2023-06-11
+C468,PT Sinergi Indonesia,NGO,Teknologi Informasi,Surakarta,Nasional,Amelia Gunawan,087856749160,2024-02-06
+C469,PT Abadi Makmur,Startup,Asuransi,Bekasi,Lokal,Dinda Fitriani,085806633705,2023-12-15
+C470,PT Indo Abadi,UMKM,Kesehatan & Farmasi,Jakarta,Lokal,Hendra Nugraha,081366918362,2022-11-27
+C471,PT Sentosa Analitika,Corporate,E-commerce,Surakarta,Nasional,Riska Sari,085664027011,2022-10-20
+C472,PT Esa Perkasa,UMKM,Asuransi,Surakarta,Lokal,Lestari Maulana,081379323023,2023-02-10
+C473,PT Cakra Gemilang,UMKM,Logistik & Supply Chain,Malang,Nasional,Hana Permana,081350937710,2022-06-25
+C474,PT Cipta Nusantara,Startup,Teknologi Informasi,Jakarta,Nasional,Salma Suryadi,085265555356,2024-09-22
+C475,PT Gemilang Analitika,BUMN,Kesehatan & Farmasi,Surakarta,Nasional,Lina Ardiansyah,081635797863,2022-09-09
+C476,PT Cipta Terapan,UMKM,Retail,Jakarta,Lokal,Kirana Rahmawati,081616493289,2023-12-15
+C477,PT Cipta Indonesia,Corporate,E-commerce,Jakarta,Nasional,Guntur Mahendra,081378333211,2024-08-14
+C478,PT Solusi Utama,NGO,Konsultan Manajemen,Jakarta,Lokal,Hafiz Ramadhani,083871539915,2024-09-02
+C479,PT Abadi Systems,UMKM,Travel & Hospitality,Depok,Lokal,Hana Handoko,081311593195,2023-04-03
+C480,CV Bakti Sentosa,Corporate,Teknologi Informasi,Jakarta,Lokal,Ulfa Nugraha,085828993160,2024-03-05
+C481,PT Sejahtera Utama,Startup,Telekomunikasi,Surabaya,Nasional,Julia Sulistyo,085309548149,2022-10-29
+C482,PT Indo Karya,UMKM,Manufaktur,Semarang,Lokal,Tika Rahmawati,081620865675,2024-09-25
+C483,PT Gemilang Data,Corporate,Telekomunikasi,Jakarta,Nasional,Irfan Prabowo,081590472927,2024-03-17
+C484,PT Mandiri Bersama,Startup,Pendidikan & EdTech,Surabaya,Lokal,Rangga Firmansyah,087862015720,2024-01-12
+C485,PT Perkasa Indonesia,UMKM,Energi & Pertambangan,Jakarta,Nasional,Lina Anggraeni,082161764750,2024-09-27
+C486,PT Mega Data,Startup,Otomotif,Jakarta,Nasional,Rendy Febriani,082167649215,2023-07-15
+C487,PT Nusa Sentosa,BUMN,Teknologi Informasi,Jakarta,Nasional,Eka Adriansyah,081698131292,2024-12-21
+C488,PT Makmur Terapan,Startup,Keuangan & Perbankan,Surakarta,Lokal,Hesti Ardiansyah,081211845826,2022-06-29
+C489,PT Bina Mandiri,Startup,Otomotif,Tangerang,Nasional,Lina Prabowo,083859883103,2022-10-14
+C490,PT Kreasi Makmur,Corporate,Kesehatan & Farmasi,Semarang,Nasional,Farah Putra,087871462831,2023-06-18
+C491,PT Sinergi Logistik,Corporate,Otomotif,Bandung,Lokal,Bella Anggraeni,082214181861,2024-06-07
+C492,PT Techno Pratama,NGO,Konsultan Manajemen,Surakarta,Nasional,Galih Cahyono,082261128497,2023-07-15
+C493,PT Esa Pratama,UMKM,Telekomunikasi,Yogyakarta,Lokal,Umar Ardiansyah,087825889679,2022-04-09
+C494,CV Inti Digital,UMKM,Kesehatan & Farmasi,Bandung,Nasional,Mira Nugraha,082296727578,2022-04-19
+C495,PT Digital Mandiri,UMKM,E-commerce,Bekasi,Nasional,Eka Wulandari,082212901487,2022-07-04
+C496,PT Perkasa Media,Corporate,Kesehatan & Farmasi,Yogyakarta,Multinasional,Arif Pratama,085230685389,2024-12-26
+C497,PT Digital Solusi,Startup,Kesehatan & Farmasi,Yogyakarta,Lokal,Zahra Putra,085815381447,2024-05-15
+C498,PT Inti Kreatif,Startup,Energi & Pertambangan,Jakarta,Lokal,Dewi Hakim,081297545105,2024-08-06
+C499,CV Gemilang Pratama,Startup,Asuransi,Yogyakarta,Lokal,Ivan Pratama,082143765456,2024-04-21
+C500,CV Jaya Nusantara,Pemerintah,Retail,Surakarta,Nasional,Wahyu Handayani,082213402665,2024-06-07
+C501,PT Bumi Media,Startup,Agribisnis,Bekasi,Lokal,Laila Wardani,087725686211,2022-09-01
+C502,CV Mitra Media,BUMN,Asuransi,Depok,Nasional,Kirana Handoko,085771639282,2022-01-17
+C503,CV Perkasa Kreatif,Corporate,Logistik & Supply Chain,Semarang,Lokal,Hendra Ramadhani,087804326093,2022-11-01
+C504,CV Digital Utama,Corporate,Keuangan & Perbankan,Yogyakarta,Nasional,Rani Hakim,085663502000,2023-07-06
+C505,PT Kreasi Mandiri,Corporate,Logistik & Supply Chain,Jakarta,Multinasional,Vina Budiman,081310825559,2024-10-03
+C506,PT Techno Bersama,Startup,Logistik & Supply Chain,Surakarta,Lokal,Bagus Mahendra,081318954738,2023-01-26
+C507,CV Cipta Indonesia,Startup,Travel & Hospitality,Semarang,Lokal,Fani Cahyani,085616176880,2023-12-13
+C508,CV Jaya Logistik,Pemerintah,Telekomunikasi,Surakarta,Nasional,Laila Ningsih,083881278686,2023-01-25
+C509,PT Jaya Kreatif,Startup,Media & Kreatif,Bandung,Lokal,Mega Handayani,085684434481,2024-11-16
+C510,CV Digital Teknologi,Corporate,Telekomunikasi,Surakarta,Multinasional,Rizky Wibowo,085333810595,2023-07-23
+C511,PT Techno Logistik,BUMN,Konsultan Manajemen,Semarang,Nasional,Ulfa Wibowo,085305342408,2024-04-16
+C512,PT Inti Bangsa,UMKM,Travel & Hospitality,Jakarta,Nasional,Oki Cahyani,081562736527,2023-07-05
+C513,PT Bangkit Solusi,Corporate,Media & Kreatif,Surakarta,Nasional,Taufik Putra,082169312163,2023-08-01
+C514,PT Prima Analitika,UMKM,Teknologi Informasi,Bandung,Lokal,Gibran Oktaviani,081223142900,2022-08-14
+C515,PT Graha Bangsa,UMKM,Pendidikan & EdTech,Surakarta,Lokal,Taufik Suryadi,087723084810,2024-06-28
+C516,PT Indo Digital,NGO,Teknologi Informasi,Jakarta,Nasional,Olivia Ningsih,087817213145,2023-12-25
+C517,PT Graha Nusantara,Corporate,E-commerce,Malang,Lokal,Winda Utami,085362494514,2024-12-22
+C518,PT Sukses Abadi,BUMN,E-commerce,Surabaya,Nasional,Umar Firmansyah,087877119642,2022-11-01
+C519,PT Bakti Indonesia,Startup,Energi & Pertambangan,Jakarta,Nasional,Indah Oktaviani,082266878878,2024-04-27
+C520,PT Digital Sentosa,Startup,Asuransi,Yogyakarta,Lokal,Pandu Ramadhan,081230587210,2023-03-26
+C521,PT Sukses Bangsa,BUMN,Kesehatan & Farmasi,Jakarta,Nasional,Putri Sari,081630212606,2022-10-23
+C522,PT Mitra Logistik,Startup,E-commerce,Yogyakarta,Lokal,Yoga Firmansyah,081331096227,2022-03-03
+C523,CV Esa Logistik,NGO,Agribisnis,Jakarta,Nasional,Hana Firmansyah,081209282066,2022-01-28
+C524,PT Inti Makmur,Corporate,Manufaktur,Jakarta,Multinasional,Indah Sulistyo,082269036289,2022-07-08
+C525,PT Sejahtera Inovasi,Startup,Energi & Pertambangan,Surabaya,Nasional,Rizky Hidayat,081315950342,2024-05-18
+C526,CV Inovasi Cerdas,NGO,Pendidikan & EdTech,Yogyakarta,Nasional,Rizky Setiawan,085290970051,2022-03-08
+C527,PT Inovasi Pratama,UMKM,Energi & Pertambangan,Yogyakarta,Nasional,Aldi Ningsih,081356818209,2023-12-30
+C528,PT Andalas Makmur,BUMN,Keuangan & Perbankan,Jakarta,Nasional,Fitri Cahyani,081333228898,2022-11-07
+C529,CV Graha Mandiri,Corporate,Asuransi,Surakarta,Nasional,Rafi Anggraeni,081329710248,2023-05-05
+C530,PT Sukses Pratama,Startup,Media & Kreatif,Semarang,Nasional,Farah Ramadhani,081397054669,2023-06-09
+C531,PT Bakti Pratama,Startup,Asuransi,Yogyakarta,Lokal,Aldi Wardani,081221462961,2022-04-27
+C532,PT Sejahtera Nusantara,Startup,Logistik & Supply Chain,Tangerang,Lokal,Arif Suryadi,081355973714,2024-06-06
+C533,PT Cipta Konsultan,Startup,Agribisnis,Surakarta,Lokal,Aditya Ramadhan,081567303064,2024-02-18
+C534,CV Karya Abadi,Corporate,Telekomunikasi,Malang,Nasional,Lestari Wibowo,081365423567,2023-03-15
+C535,PT Bumi Logistik,Corporate,Energi & Pertambangan,Surabaya,Multinasional,Dwi Rahmawati,085292550272,2023-02-11
+C536,PT Bakti Nusantara,BUMN,Asuransi,Jakarta,Nasional,Galuh Ramadhani,085379103368,2022-01-08
+C537,CV Abadi Kreatif,Startup,Pendidikan & EdTech,Depok,Lokal,Bella Budiman,085781776655,2024-01-29
+C538,PT Perkasa Informatika,Pemerintah,Properti & Konstruksi,Surakarta,Lokal,Lestari Wardani,085228664649,2024-05-27
+C539,PT Techno Systems,Startup,Asuransi,Surakarta,Lokal,Mega Febriani,081504633786,2022-07-24
+C540,PT Mega Pratama,Pemerintah,Retail,Jakarta,Multinasional,Yoga Dewi,083844446306,2024-03-21
+C541,PT Inovasi Digital,Startup,FMCG,Surabaya,Nasional,Nanda Prasetya,082286396096,2023-11-18
+C542,CV Abadi Analitika,Startup,Properti & Konstruksi,Yogyakarta,Lokal,Surya Safitri,081564825311,2022-09-16
+C543,PT Techno Makmur,Corporate,Kesehatan & Farmasi,Bogor,Nasional,Teguh Dewi,085738364041,2023-01-18
+C544,CV Solusi Systems,Pemerintah,Logistik & Supply Chain,Surakarta,Multinasional,Joko Handoko,085721175361,2022-09-09
+C545,PT Bangkit Systems,Startup,Asuransi,Jakarta,Nasional,Taufik Pratama,082199015579,2022-11-26
+C546,PT Inovasi Solusi,Corporate,Konsultan Manajemen,Tangerang,Multinasional,Krisna Maulana,081523513052,2022-03-02
+C547,CV Techno Analitika,UMKM,Kesehatan & Farmasi,Jakarta,Lokal,Intan Sulistyo,081576863423,2023-12-15
+C548,CV Bangkit Perkasa,BUMN,Asuransi,Bandung,Nasional,Anggi Hidayat,085266395517,2023-07-11
+C549,CV Cipta Informatika,Startup,Asuransi,Jakarta,Lokal,Amelia Saputra,081325625313,2024-12-22
+C550,PT Sukses Indonesia,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Gilang Safitri,081553816493,2023-11-05
+C551,PT Kreasi Nusantara,Corporate,E-commerce,Bandung,Nasional,Elsa Prabowo,082230770461,2024-06-10
+C552,PT Bakti Makmur,Corporate,Teknologi Informasi,Jakarta,Multinasional,Sari Ramadhani,081660880501,2022-01-10
+C553,PT Sentosa Abadi,Startup,FMCG,Jakarta,Nasional,Arif Budiman,085677159103,2024-10-08
+C554,PT Inovasi Indonesia,Startup,Properti & Konstruksi,Malang,Lokal,Fajar Lestari,085658004010,2023-04-09
+C555,PT Karya Abadi,Startup,Energi & Pertambangan,Jakarta,Lokal,Irfan Prabowo,081629671883,2024-08-01
+C556,PT Jaya Utama,UMKM,Agribisnis,Jakarta,Nasional,Ratna Wijaya,085331170303,2022-06-19
+C557,PT Abadi Kreatif,Corporate,Properti & Konstruksi,Jakarta,Nasional,Mira Anggara,085328123567,2023-10-04
+C558,PT Daya Kreatif,BUMN,Pendidikan & EdTech,Surakarta,Nasional,Rangga Budiman,081691271130,2024-05-16
+C559,PT Nusa Abadi,Startup,Otomotif,Yogyakarta,Lokal,Nisa Firmansyah,087886850745,2023-12-27
+C560,PT Perkasa Kreatif,Startup,Energi & Pertambangan,Surakarta,Nasional,Gita Ningsih,081231310094,2024-11-28
+C561,CV Karya Konsultan,Startup,Manufaktur,Malang,Lokal,Amelia Hidayat,082247323549,2024-04-08
+C562,PT Inovasi Nusantara,Startup,Agribisnis,Semarang,Lokal,Umar Ningsih,081322572076,2023-05-04
+C563,PT Solusi Abadi,BUMN,Media & Kreatif,Semarang,Nasional,Kirana Febriani,081273710094,2022-01-20
+C564,CV Esa Informatika,Startup,Kesehatan & Farmasi,Surabaya,Nasional,Riska Hakim,083847457054,2024-07-15
+C565,PT Indo Perkasa,BUMN,Kesehatan & Farmasi,Jakarta,Nasional,Nanda Sulistyo,085665313614,2022-03-05
+C566,PT Makmur Bersama,Corporate,Konsultan Manajemen,Tangerang,Multinasional,Tiara Gunawan,085743098591,2023-11-10
+C567,PT Sejahtera Makmur,Pemerintah,FMCG,Jakarta,Multinasional,Gilang Ningsih,082184982474,2024-10-18
+C568,PT Mandiri Digital,Corporate,Pendidikan & EdTech,Jakarta,Lokal,Dani Hakim,085300425488,2023-09-19
+C569,CV Perkasa Makmur,NGO,Telekomunikasi,Jakarta,Nasional,Aditya Ningsih,085366614494,2023-12-28
+C570,CV Perkasa Media,BUMN,Kesehatan & Farmasi,Semarang,Nasional,Indah Gunawan,083834414978,2023-02-13
+C571,CV Abadi Terapan,BUMN,Asuransi,Surakarta,Nasional,Lina Prabowo,083857567667,2024-12-14
+C572,PT Techno Cerdas,Startup,Telekomunikasi,Surabaya,Nasional,Dewi Ardiansyah,081662607870,2022-09-18
+C573,PT Mitra Abadi,BUMN,Logistik & Supply Chain,Jakarta,Nasional,Sinta Hartono,085650198038,2022-07-19
+C574,CV Bangkit Indonesia,Startup,Kesehatan & Farmasi,Jakarta,Lokal,Hendra Santoso,081229181331,2024-09-20
+C575,PT Solusi Karya,Corporate,Energi & Pertambangan,Surakarta,Multinasional,Lestari Wijaya,081684979162,2024-04-08
+C576,PT Nusa Indonesia,BUMN,Manufaktur,Surakarta,Nasional,Kirana Handoko,085719754661,2023-02-15
+C577,PT Cakra Karya,Corporate,Teknologi Informasi,Jakarta,Multinasional,Oki Budiman,081297052774,2024-03-08
+C578,PT Bumi Pratama,Corporate,Otomotif,Jakarta,Nasional,Lukman Oktaviani,082159572446,2024-11-16
+C579,PT Andalas Sentosa,Pemerintah,Media & Kreatif,Bandung,Multinasional,Indah Fitriani,085899599610,2024-12-12
+C580,PT Global Inovasi,NGO,Agribisnis,Jakarta,Lokal,Guntur Utami,085666109410,2023-04-30
+C581,PT Makmur Cerdas,Corporate,Teknologi Informasi,Tangerang,Multinasional,Indah Cahyani,085283347743,2024-07-09
+C582,CV Bumi Perkasa,BUMN,Pendidikan & EdTech,Surakarta,Nasional,Naufal Nugroho,081520569815,2022-02-19
+C583,CV Esa Inovasi,Startup,Pendidikan & EdTech,Bandung,Nasional,Aditya Santoso,087766191284,2024-01-01
+C584,PT Mega Inovasi,Startup,Travel & Hospitality,Jakarta,Nasional,Mira Hakim,081324189389,2023-05-30
+C585,PT Sentosa Global,Startup,Logistik & Supply Chain,Bandung,Lokal,Cahyo Suryadi,087843502385,2023-06-23
+C586,PT Cipta Pratama,Pemerintah,Asuransi,Bandung,Nasional,Indah Permana,085601078356,2022-06-15
+C587,PT Sentosa Terapan,BUMN,Manufaktur,Surakarta,Nasional,Ilham Lestari,083896087066,2022-04-24
+C588,CV Perkasa Logistik,Corporate,Kesehatan & Farmasi,Surakarta,Multinasional,Maya Suryadi,087803319036,2024-01-24
+C589,PT Bina Karya,Startup,Keuangan & Perbankan,Surakarta,Lokal,Winda Oktaviani,082242967111,2023-10-06
+C590,PT Digital Gemilang,UMKM,FMCG,Surabaya,Lokal,Ulfa Fitriani,083881056974,2024-12-14
+C591,PT Indo Teknologi,Pemerintah,Retail,Bandung,Nasional,Ivan Nugroho,085749641049,2022-08-22
+C592,PT Abadi Gemilang,Startup,Pendidikan & EdTech,Jakarta,Lokal,Hafiz Budiman,081285095493,2024-12-26
+C593,PT Graha Analitika,BUMN,Asuransi,Malang,Nasional,Maulana Cahyono,085648769984,2022-04-27
+C594,CV Abadi Gemilang,UMKM,Manufaktur,Surakarta,Nasional,Ilham Pangestu,085759609454,2022-06-25
+C595,PT Solusi Gemilang,Startup,Keuangan & Perbankan,Depok,Lokal,Oki Setiawan,085798517244,2024-04-16
+C596,CV Nusa Indonesia,BUMN,Keuangan & Perbankan,Jakarta,Nasional,Rangga Maulana,081679508304,2022-03-20
+C597,PT Solusi Media,BUMN,FMCG,Yogyakarta,Nasional,Wahyu Hidayat,081387181335,2022-04-02
+C598,PT Karya Systems,Corporate,Telekomunikasi,Surakarta,Multinasional,Bunga Oktaviani,085874902504,2024-01-08
+C599,CV Solusi Nusantara,UMKM,Properti & Konstruksi,Yogyakarta,Lokal,Nisa Cahyono,081690261139,2024-11-06
+C600,PT Cakra Konsultan,UMKM,Otomotif,Surabaya,Lokal,Ulfa Permana,082294353537,2024-12-10
+C601,CV Makmur Analitika,Pemerintah,Asuransi,Jakarta,Nasional,Yoga Oktaviani,087793763928,2024-11-01
+C602,CV Cakra Media,Corporate,Kesehatan & Farmasi,Bandung,Nasional,Bayu Gunawan,083829732702,2022-08-30
+C603,PT Cakra Abadi,UMKM,Agribisnis,Semarang,Lokal,Aldi Putra,081328866526,2024-06-02
+C604,PT Bina Logistik,Startup,Properti & Konstruksi,Malang,Lokal,Eka Sulistyo,085876764722,2022-08-09
+C605,PT Daya Data,Startup,Teknologi Informasi,Bandung,Nasional,Fani Utami,083894134750,2024-02-16
+C606,PT Esa Bersama,Corporate,Otomotif,Surabaya,Nasional,Joko Nugroho,081636849951,2023-10-15
+C607,PT Makmur Sejahtera,BUMN,Telekomunikasi,Bekasi,Nasional,Oscar Rahmawati,085721388209,2023-06-16
+C608,PT Solusi Pratama,Startup,Asuransi,Semarang,Nasional,Bagus Handayani,081617674124,2023-08-28
+C609,PT Graha Abadi,Corporate,Otomotif,Semarang,Multinasional,Dani Hidayat,085685380032,2023-10-07
+C610,PT Abadi Bangsa,NGO,Pendidikan & EdTech,Jakarta,Lokal,Sari Ramadhani,082218306178,2023-01-19
+C611,PT Kreasi Logistik,Startup,Asuransi,Semarang,Lokal,Kirana Adriansyah,085324347769,2023-04-26
+C612,PT Andalas Mandiri,Startup,Logistik & Supply Chain,Depok,Lokal,Fani Prabowo,082261275156,2023-08-12
+C613,CV Andalas Karya,BUMN,Agribisnis,Bandung,Nasional,Satria Permana,083836085456,2023-04-26
+C614,PT Makmur Perkasa,Corporate,Keuangan & Perbankan,Jakarta,Nasional,Fani Gunawan,082292831995,2022-04-04
+C615,CV Solusi Analitika,Startup,Energi & Pertambangan,Surakarta,Lokal,Teguh Wibowo,083835832863,2023-12-24
+C616,PT Cakra Kreatif,Corporate,Manufaktur,Bekasi,Multinasional,Januar Syahputra,081570244033,2022-02-11
+C617,PT Prima Karya,UMKM,Konsultan Manajemen,Malang,Nasional,Farhan Pangestu,085221963945,2022-02-11
+C618,PT Sinergi Nusantara,Startup,Agribisnis,Jakarta,Lokal,Kirana Handoko,085688360765,2024-04-12
+C619,PT Global Systems,Startup,Kesehatan & Farmasi,Surabaya,Lokal,Naufal Firdaus,085231269789,2022-07-15
+C620,CV Mitra Cerdas,Corporate,Asuransi,Jakarta,Multinasional,Umar Fitriani,085296043878,2022-11-05
+C621,PT Bakti Systems,Startup,Retail,Semarang,Lokal,Lina Santoso,087820281237,2022-08-04
+C622,PT Cipta Bersama,Corporate,Media & Kreatif,Bandung,Lokal,Ayu Handoko,081364485959,2024-05-06
+C623,CV Indo Mandiri,Corporate,Pendidikan & EdTech,Surabaya,Nasional,Intan Sari,085822870562,2023-05-30
+C624,CV Andalas Data,Pemerintah,Teknologi Informasi,Jakarta,Lokal,Vina Hidayat,081297921583,2022-07-12
+C625,PT Inovasi Kreatif,Startup,Asuransi,Bandung,Nasional,Eka Febriani,082113424912,2023-06-06
+C626,PT Jaya Terapan,UMKM,Agribisnis,Jakarta,Lokal,Aditya Puspitasari,082122705102,2023-03-20
+C627,PT Bakti Mandiri,Corporate,Logistik & Supply Chain,Jakarta,Multinasional,Wulan Budiman,081685819324,2024-02-29
+C628,CV Perkasa Konsultan,Corporate,Konsultan Manajemen,Semarang,Nasional,Budi Ramadhan,081675639836,2023-12-15
+C629,PT Esa Kreatif,Startup,Telekomunikasi,Jakarta,Lokal,Prasetyo Permana,081247604409,2023-06-04
+C630,PT Global Teknologi,Corporate,Kesehatan & Farmasi,Semarang,Multinasional,Bayu Kurniawan,081270518439,2022-09-27
+C631,PT Graha Karya,UMKM,Properti & Konstruksi,Malang,Nasional,Hafiz Syahputra,087801382412,2024-11-23
+C632,PT Cipta Abadi,UMKM,Otomotif,Jakarta,Lokal,Rani Wardani,085815791971,2022-01-07
+C633,PT Nusa Utama,Corporate,Teknologi Informasi,Semarang,Lokal,Fitri Wulandari,082243240642,2024-02-07
+C634,PT Prima Makmur,Startup,Manufaktur,Surabaya,Lokal,Qonita Fitriani,087741759558,2022-12-29
+C635,PT Bumi Teknologi,NGO,Energi & Pertambangan,Surakarta,Nasional,Farah Ningsih,081543588418,2024-06-07
+C636,CV Inti Kreatif,Corporate,Keuangan & Perbankan,Tangerang,Nasional,Gilang Febriani,085859690515,2024-08-31
+C637,PT Graha Utama,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Gibran Saputra,087797996673,2024-08-14
+C638,PT Sentosa Teknologi,Pemerintah,Manufaktur,Semarang,Multinasional,Bayu Prasetya,081549690282,2024-11-04
+C639,PT Indo Terapan,Startup,Energi & Pertambangan,Surakarta,Lokal,Taufik Budiman,081323361328,2023-02-15
+C640,PT Gemilang Logistik,Startup,Agribisnis,Bandung,Lokal,Zaki Ramadhani,085826546968,2023-05-13
+C641,PT Solusi Sejahtera,BUMN,Media & Kreatif,Semarang,Nasional,Vina Maulana,081609961327,2024-01-26
+C642,CV Cipta Kreatif,Startup,E-commerce,Jakarta,Lokal,Satria Budiman,087870462268,2024-05-21
+C643,PT Media Analitika,Startup,Energi & Pertambangan,Surabaya,Nasional,Ika Anggara,081276604641,2022-09-21
+C644,PT Makmur Informatika,Corporate,Agribisnis,Semarang,Multinasional,Dani Pangestu,081561205943,2022-08-17
+C645,PT Sejahtera Perkasa,Startup,Telekomunikasi,Surakarta,Lokal,Dewi Anggraeni,085354654084,2024-07-31
+C646,CV Mandiri Pratama,Corporate,Retail,Jakarta,Nasional,Luthfi Sulistyo,087832181227,2024-01-02
+C647,PT Jaya Pratama,Pemerintah,Manufaktur,Tangerang,Multinasional,Citra Santoso,085850291681,2024-12-08
+C648,PT Mega Terapan,Startup,Konsultan Manajemen,Bogor,Lokal,Yoga Safitri,087736424809,2023-05-15
+C649,PT Nusa Media,Startup,Teknologi Informasi,Jakarta,Nasional,Rani Anggara,085251330531,2022-09-23
+C650,PT Mandiri Analitika,UMKM,Retail,Bandung,Lokal,Kirana Wardani,081255557277,2023-11-05
+C651,CV Bumi Media,Corporate,Energi & Pertambangan,Surakarta,Multinasional,Fitri Sari,085685445770,2024-09-23
+C652,CV Bumi Global,Corporate,Asuransi,Jakarta,Nasional,Putri Cahyono,083826911633,2023-08-05
+C653,CV Gemilang Konsultan,Corporate,Pendidikan & EdTech,Jakarta,Nasional,Hafiz Ningsih,085358886367,2024-01-14
+C654,PT Mandiri Karya,NGO,Media & Kreatif,Tangerang,Lokal,Luthfi Suryadi,081572169666,2023-08-14
+C655,CV Prima Global,UMKM,E-commerce,Bandung,Lokal,Anggi Wijaya,082197150968,2022-02-16
+C656,CV Sejahtera Pratama,UMKM,Manufaktur,Surakarta,Lokal,Indah Handoko,081303977397,2023-02-14
+C657,CV Nusa Gemilang,Corporate,Logistik & Supply Chain,Surabaya,Multinasional,Gilang Wulandari,081300687616,2022-11-23
+C658,PT Mitra Mandiri,BUMN,Keuangan & Perbankan,Jakarta,Nasional,Dian Kurniawan,081324912565,2024-11-13
+C659,CV Bina Terapan,Corporate,Konsultan Manajemen,Surakarta,Lokal,Gibran Kusuma,085847574949,2024-10-03
+C660,CV Sukses Makmur,Corporate,Telekomunikasi,Jakarta,Nasional,Mira Mahendra,085342229464,2023-09-17
+C661,CV Solusi Bangsa,Startup,Telekomunikasi,Surakarta,Nasional,Kirana Puspitasari,082152985856,2024-11-07
+C662,PT Bumi Bangsa,Corporate,Media & Kreatif,Yogyakarta,Multinasional,Olivia Budiman,082232491357,2022-05-13
+C663,PT Inovasi Karya,UMKM,Otomotif,Malang,Lokal,Arif Cahyani,081358148881,2024-01-15
+C664,CV Bina Abadi,BUMN,Media & Kreatif,Semarang,Nasional,Aldi Handayani,087720948413,2023-05-17
+C665,CV Bina Makmur,UMKM,Agribisnis,Yogyakarta,Lokal,Muhammad Hartono,081371731893,2023-10-16
+C666,PT Inovasi Makmur,Corporate,Logistik & Supply Chain,Semarang,Nasional,Qori Ardiansyah,087894725878,2024-07-23
+C667,PT Bina Utama,Startup,Travel & Hospitality,Yogyakarta,Lokal,Ivan Pratama,085887722164,2022-08-17
+C668,PT Digital Kreatif,Startup,Telekomunikasi,Jakarta,Lokal,Nanda Ningsih,082152362292,2023-09-07
+C669,PT Esa Inovasi,UMKM,Asuransi,Surabaya,Nasional,Yuni Firmansyah,085755574696,2024-08-24
+C670,PT Mitra Perkasa,Corporate,Kesehatan & Farmasi,Depok,Lokal,Hafiz Handayani,085745056658,2023-02-19
+C671,PT Sinergi Terapan,Startup,Otomotif,Jakarta,Lokal,Umar Wulandari,087797067349,2023-05-13
+C672,PT Makmur Mandiri,Startup,Kesehatan & Farmasi,Malang,Nasional,Oki Budiman,085238173598,2022-11-07
+C673,PT Esa Karya,Startup,Teknologi Informasi,Surakarta,Lokal,Nurul Nugraha,087732573755,2023-10-05
+C674,CV Inti Abadi,UMKM,Teknologi Informasi,Surakarta,Lokal,Devi Firdaus,081508085096,2024-05-25
+C675,PT Daya Bangsa,BUMN,Travel & Hospitality,Yogyakarta,Nasional,Farhan Santoso,085218182819,2023-11-15
+C676,CV Graha Data,Startup,Properti & Konstruksi,Yogyakarta,Lokal,Arif Safitri,085709600356,2024-06-04
+C677,CV Inti Bangsa,Startup,Properti & Konstruksi,Yogyakarta,Lokal,Nurul Handayani,081692323421,2023-02-15
+C678,CV Media Data,Startup,Properti & Konstruksi,Tangerang,Lokal,Kartika Prasetya,085733502716,2023-02-18
+C679,CV Abadi Teknologi,Corporate,Energi & Pertambangan,Surakarta,Nasional,Lukman Maulana,085281231795,2022-09-13
+C680,CV Techno Terapan,Corporate,Agribisnis,Jakarta,Multinasional,Ahmad Cahyono,081566155416,2024-07-24
+C681,PT Digital Logistik,Startup,Energi & Pertambangan,Malang,Nasional,Joko Wijaya,082190282270,2023-10-25
+C682,CV Nusa Pratama,BUMN,Logistik & Supply Chain,Surabaya,Nasional,Nisa Budiman,087854950050,2022-03-03
+C683,PT Cipta Analitika,BUMN,Asuransi,Surakarta,Nasional,Kevin Hidayat,081253161177,2024-02-12
+C684,PT Makmur Indonesia,BUMN,Teknologi Informasi,Jakarta,Nasional,Indah Prabowo,085385917793,2024-08-19
+C685,CV Indo Sejahtera,UMKM,Logistik & Supply Chain,Semarang,Lokal,Qori Utami,085645798894,2023-05-27
+C686,CV Bakti Perkasa,Corporate,Kesehatan & Farmasi,Bandung,Lokal,Rendy Lestari,082102032650,2024-02-28
+C687,PT Andalas Inovasi,BUMN,Pendidikan & EdTech,Bandung,Nasional,Nisa Anggara,085248714855,2024-04-10
+C688,CV Inti Utama,BUMN,Agribisnis,Surabaya,Nasional,Hafiz Suryadi,081584156082,2024-07-23
+C689,PT Prima Bangsa,Startup,Retail,Jakarta,Lokal,Arif Maulana,082223035892,2022-06-19
+C690,PT Esa Informatika,Startup,Travel & Hospitality,Jakarta,Lokal,Galih Ningsih,082193289634,2024-02-06
+C691,PT Gemilang Mandiri,Corporate,Otomotif,Depok,Nasional,Ayu Santoso,085784399106,2022-10-06
+C692,CV Bina Sentosa,BUMN,Asuransi,Jakarta,Nasional,Candra Hakim,081334261923,2023-02-01
+C693,PT Sentosa Karya,Startup,Retail,Surakarta,Lokal,Citra Cahyono,081641769274,2023-12-01
+C694,CV Esa Nusantara,Startup,FMCG,Jakarta,Lokal,Bunga Wibowo,085314448564,2024-10-09
+C695,PT Techno Digital,Startup,Agribisnis,Jakarta,Nasional,Ilham Handayani,087789969860,2023-06-29
+C696,PT Global Nusantara,Pemerintah,Manufaktur,Jakarta,Nasional,Mira Sulistyo,081257798066,2024-05-13
+C697,PT Global Mandiri,NGO,Teknologi Informasi,Semarang,Multinasional,Elsa Ningsih,085853470574,2023-06-04
+C698,CV Bangkit Bangsa,Startup,FMCG,Bandung,Lokal,Galuh Budiman,081316597263,2023-04-12
+C699,PT Bangkit Pratama,Startup,Retail,Malang,Lokal,Bella Kurniawan,082294884882,2022-12-12
+C700,PT Karya Kreatif,Startup,Energi & Pertambangan,Malang,Nasional,Amelia Ramadhani,087814991537,2024-12-27
+C701,PT Bina Konsultan,Startup,Konsultan Manajemen,Surakarta,Lokal,Faisal Oktaviani,081532043097,2023-05-18
+C702,PT Sinergi Perkasa,Startup,Otomotif,Bandung,Lokal,Mira Ramadhan,081546553585,2024-03-03
+C703,PT Prima Utama,BUMN,Manufaktur,Surabaya,Nasional,Rendy Maulana,085678519358,2022-09-21
+C704,CV Sejahtera Abadi,Corporate,Keuangan & Perbankan,Yogyakarta,Nasional,Budi Wardani,087780572151,2022-05-13
+C705,PT Inti Bersama,UMKM,Agribisnis,Jakarta,Lokal,Nisa Rahmawati,087748453986,2022-10-01
+C706,CV Bakti Bangsa,Startup,Keuangan & Perbankan,Semarang,Lokal,Krisna Gunawan,085623392207,2022-05-26
+C707,PT Graha Data,Startup,Energi & Pertambangan,Bandung,Lokal,Zahra Fitriani,087725214526,2024-03-04
+C708,PT Bangkit Data,Startup,Energi & Pertambangan,Jakarta,Lokal,Salma Hidayat,083840908051,2023-11-27
+C709,CV Inovasi Informatika,Startup,Properti & Konstruksi,Jakarta,Nasional,Muhammad Cahyani,085272835129,2022-05-23
+C710,PT Nusa Informatika,Startup,Retail,Surakarta,Lokal,Gita Hakim,085329821739,2023-10-01
+C711,CV Graha Gemilang,NGO,Travel & Hospitality,Surabaya,Nasional,Vino Wijaya,085823736050,2022-08-27
+C712,PT Global Bangsa,Corporate,Properti & Konstruksi,Tangerang,Nasional,Salma Pangestu,085334527346,2024-12-04
+C713,PT Perkasa Sentosa,Startup,Teknologi Informasi,Yogyakarta,Nasional,Laila Nugraha,085708031499,2024-03-07
+C714,PT Sinergi Pratama,Pemerintah,Keuangan & Perbankan,Surabaya,Nasional,Januar Ramadhan,085303172351,2024-06-07
+C715,CV Bangkit Kreatif,Corporate,Teknologi Informasi,Surakarta,Multinasional,Ayu Wijaya,085352635602,2022-08-27
+C716,CV Bina Global,UMKM,Asuransi,Semarang,Lokal,Farel Oktaviani,085646066643,2023-09-27
+C717,PT Gemilang Teknologi,UMKM,Retail,Surakarta,Lokal,Hendra Putra,081571285246,2022-05-25
+C718,PT Mandiri Bangsa,Corporate,Logistik & Supply Chain,Semarang,Multinasional,Maulana Firdaus,082228077113,2023-02-18
+C719,PT Karya Sejahtera,Corporate,FMCG,Jakarta,Multinasional,Ilham Sari,085650902542,2022-03-26
+C720,PT Sejahtera Kreatif,NGO,Keuangan & Perbankan,Jakarta,Lokal,Oscar Utami,085335707139,2023-08-21
+C721,CV Indo Konsultan,Pemerintah,Keuangan & Perbankan,Surakarta,Lokal,Rafi Wulandari,082155021306,2024-11-26
+C722,PT Mitra Karya,Corporate,Logistik & Supply Chain,Malang,Lokal,Teguh Hartono,085264967379,2022-06-01
+C723,PT Media Systems,Corporate,Kesehatan & Farmasi,Yogyakarta,Lokal,Zaki Kusuma,082150642076,2023-08-11
+C724,PT Sejahtera Analitika,Corporate,Energi & Pertambangan,Yogyakarta,Multinasional,Dwi Adriansyah,082233393957,2024-03-27
+C725,CV Andalas Nusantara,Corporate,Retail,Jakarta,Nasional,Muhammad Sari,085882686270,2024-04-24
+C726,CV Jaya Analitika,UMKM,Kesehatan & Farmasi,Bandung,Lokal,Ulfa Anggara,082227599801,2022-11-05
+C727,PT Mitra Utama,BUMN,Properti & Konstruksi,Bekasi,Nasional,Farhan Firmansyah,082241595977,2024-01-01
+C728,PT Nusa Mandiri,Startup,Travel & Hospitality,Surakarta,Lokal,Hana Pangestu,085262887431,2022-12-01
+C729,CV Makmur Nusantara,UMKM,Kesehatan & Farmasi,Malang,Nasional,Oki Fitriani,081657992707,2022-12-16
+C730,PT Karya Solusi,Startup,Telekomunikasi,Semarang,Lokal,Surya Prabowo,085715970996,2022-08-16
+C731,CV Sukses Bangsa,Startup,Otomotif,Jakarta,Lokal,Nurul Putra,081234476504,2024-09-29
+C732,PT Techno Utama,Corporate,Kesehatan & Farmasi,Malang,Lokal,Zahra Lestari,087766046558,2022-02-09
+C733,PT Cakra Logistik,Startup,FMCG,Semarang,Nasional,Fitri Mahendra,085315810213,2023-07-31
+C734,PT Nusa Pratama,Startup,Manufaktur,Surabaya,Lokal,Farhan Suryadi,081691297519,2022-01-20
+C735,CV Sinergi Analitika,NGO,Media & Kreatif,Surakarta,Multinasional,Anisa Ningsih,082230165837,2022-01-08
+C736,CV Bangkit Global,UMKM,Agribisnis,Jakarta,Lokal,Lestari Maulana,081212342893,2022-05-06
+C737,CV Bakti Cerdas,Pemerintah,Media & Kreatif,Jakarta,Multinasional,Mega Cahyani,085736453804,2023-08-31
+C738,PT Karya Inovasi,Startup,Keuangan & Perbankan,Bandung,Lokal,Ayu Sulistyo,085315959194,2022-06-13
+C739,PT Bangkit Utama,Corporate,Pendidikan & EdTech,Jakarta,Multinasional,Intan Anggara,085867772266,2023-12-24
+C740,PT Perkasa Terapan,BUMN,Media & Kreatif,Surakarta,Nasional,Galih Saputra,087872453076,2023-01-12
+C741,CV Sentosa Karya,Pemerintah,Travel & Hospitality,Jakarta,Lokal,Dian Putra,087705115794,2024-10-19
+C742,CV Bina Informatika,NGO,Pendidikan & EdTech,Jakarta,Lokal,Vino Cahyani,085796919284,2023-09-23
+C743,PT Karya Digital,Corporate,Asuransi,Jakarta,Nasional,Anisa Permana,083859532593,2023-10-03
+C744,CV Bangkit Makmur,Corporate,Teknologi Informasi,Jakarta,Nasional,Fitri Adriansyah,087779417634,2022-10-31
+C745,CV Jaya Utama,Corporate,Properti & Konstruksi,Bandung,Multinasional,Satria Wulandari,081238843660,2023-01-21
+C746,CV Mandiri Digital,Startup,Asuransi,Surakarta,Lokal,Ratna Putra,085275147439,2024-07-03
+C747,PT Mega Teknologi,BUMN,Travel & Hospitality,Yogyakarta,Nasional,Galuh Wulandari,087880656259,2022-10-18
+C748,PT Mandiri Utama,Corporate,Keuangan & Perbankan,Malang,Multinasional,Eka Santoso,082121823155,2022-09-28
+C749,PT Techno Perkasa,Startup,E-commerce,Yogyakarta,Nasional,Maulana Setiawan,081637214330,2024-03-21
+C750,CV Andalas Teknologi,Startup,Manufaktur,Bekasi,Lokal,Ulfa Cahyono,081560847068,2022-10-09
+C751,PT Cipta Kreatif,Corporate,Pendidikan & EdTech,Jakarta,Nasional,Mega Putra,087832809448,2022-06-15
+C752,PT Daya Sentosa,Startup,Pendidikan & EdTech,Semarang,Lokal,Amelia Kurniawan,085347079863,2023-11-01
+C753,CV Mega Teknologi,Corporate,Logistik & Supply Chain,Semarang,Lokal,Farel Febriani,081645703943,2023-09-04
+C754,CV Graha Kreatif,Corporate,Energi & Pertambangan,Semarang,Nasional,Kirana Wardani,085243191009,2022-12-05
+C755,PT Inovasi Abadi,NGO,Telekomunikasi,Jakarta,Nasional,Dimas Ramadhan,082236514604,2022-11-23
+C756,CV Inti Gemilang,NGO,Pendidikan & EdTech,Surakarta,Nasional,Lestari Pratama,081313798440,2022-03-04
+C757,PT Abadi Digital,Startup,Asuransi,Surabaya,Lokal,Ilham Permana,085647340433,2022-04-01
+C758,PT Mandiri Pratama,Startup,FMCG,Yogyakarta,Lokal,Nadia Wardani,083825562965,2024-02-04
+C759,PT Techno Global,Startup,Kesehatan & Farmasi,Jakarta,Nasional,Farel Nugroho,085882958292,2024-07-12
+C760,PT Mega Informatika,Corporate,Otomotif,Surakarta,Multinasional,Rangga Handayani,081557155868,2022-12-04
+C761,PT Digital Makmur,Corporate,Asuransi,Semarang,Lokal,Candra Fitriani,081530817214,2024-07-18
+C762,CV Gemilang Mandiri,BUMN,Travel & Hospitality,Bandung,Nasional,Budi Saputra,085713211471,2023-01-27
+C763,PT Media Sentosa,Startup,Telekomunikasi,Jakarta,Nasional,Dinda Puspitasari,085207075504,2024-05-27
+C764,PT Abadi Cerdas,Corporate,Logistik & Supply Chain,Jakarta,Multinasional,Zaki Nugroho,087717481131,2024-10-01
+C765,PT Bina Global,Pemerintah,Keuangan & Perbankan,Jakarta,Nasional,Rafi Gunawan,081302908718,2024-07-13
+C766,PT Abadi Terapan,NGO,Keuangan & Perbankan,Jakarta,Lokal,Lestari Mahendra,085720495612,2024-11-24
+C767,PT Sinergi Inovasi,Corporate,Teknologi Informasi,Jakarta,Nasional,Citra Budiman,082135973711,2022-12-28
+C768,CV Prima Indonesia,UMKM,Teknologi Informasi,Jakarta,Nasional,Dinda Pangestu,081367046861,2022-02-12
+C769,PT Techno Abadi,BUMN,FMCG,Yogyakarta,Nasional,Farel Ramadhani,081302192378,2024-11-04
+C770,PT Nusa Makmur,Corporate,Travel & Hospitality,Surakarta,Multinasional,Farhan Fitriani,087805080184,2023-09-08
+C771,PT Esa Digital,Startup,Kesehatan & Farmasi,Jakarta,Nasional,Hafiz Hartono,087773126881,2023-03-14
+C772,CV Prima Bangsa,Corporate,E-commerce,Yogyakarta,Lokal,Surya Ardiansyah,087853460605,2022-12-04
+C773,PT Solusi Kreatif,UMKM,FMCG,Jakarta,Lokal,Hanif Puspitasari,081586239847,2023-04-06
+C774,CV Cipta Pratama,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Galuh Pangestu,085254787698,2023-12-01
+C775,PT Prima Inovasi,Startup,Agribisnis,Depok,Lokal,Rani Handoko,085283553935,2023-05-31
+C776,PT Sinergi Karya,Startup,Asuransi,Jakarta,Lokal,Maya Ningsih,085358853798,2022-10-13
+C777,CV Mega Analitika,UMKM,Telekomunikasi,Bandung,Nasional,Yuni Wijaya,087874978524,2023-01-10
+C778,PT Gemilang Digital,Startup,Konsultan Manajemen,Tangerang,Nasional,Maya Permana,081267917665,2024-11-12
+C779,PT Prima Solusi,Startup,Keuangan & Perbankan,Surakarta,Lokal,Rendy Hidayat,085663090015,2023-07-04
+C780,CV Jaya Konsultan,Corporate,Manufaktur,Surakarta,Nasional,Aditya Cahyono,082289021994,2023-03-27
+C781,PT Mega Nusantara,Startup,Asuransi,Jakarta,Lokal,Rizky Hidayat,081234699673,2022-12-22
+C782,CV Global Bangsa,Startup,Retail,Jakarta,Lokal,Bella Pangestu,081543768550,2024-02-27
+C783,PT Makmur Global,Startup,Kesehatan & Farmasi,Semarang,Lokal,Rendy Syahputra,082235564343,2024-02-13
+C784,PT Bina Systems,UMKM,Retail,Semarang,Nasional,Bella Firdaus,087876164534,2024-01-07
+C785,CV Bumi Sejahtera,BUMN,Otomotif,Bandung,Nasional,Zaki Ramadhan,081231219804,2023-02-05
+C786,PT Indo Mandiri,Startup,Asuransi,Jakarta,Lokal,Tika Putra,083813190924,2023-04-15
+C787,PT Andalas Perkasa,BUMN,Manufaktur,Surakarta,Nasional,Eka Nugraha,081342817852,2023-02-05
+C788,CV Jaya Informatika,BUMN,Otomotif,Yogyakarta,Nasional,Indah Putra,081272239594,2022-04-27
+C789,CV Mega Logistik,Startup,Keuangan & Perbankan,Surakarta,Lokal,Nadya Firdaus,085368868785,2023-08-12
+C790,CV Daya Bangsa,Corporate,Keuangan & Perbankan,Jakarta,Nasional,Prasetyo Gunawan,087864505730,2023-09-04
+C791,CV Makmur Bangsa,Corporate,Kesehatan & Farmasi,Bandung,Multinasional,Budi Dewi,087747677537,2023-05-16
+C792,CV Cakra Teknologi,Startup,Kesehatan & Farmasi,Malang,Lokal,Dewi Hakim,087766194588,2023-08-29
+C793,PT Cipta Bangsa,BUMN,E-commerce,Jakarta,Nasional,Mega Putra,081212840083,2023-02-01
+C794,PT Sejahtera Pratama,UMKM,Telekomunikasi,Jakarta,Lokal,Salma Firdaus,087880898126,2022-09-10
+C795,PT Makmur Analitika,UMKM,Konsultan Manajemen,Surakarta,Lokal,Rafi Cahyono,085763004023,2023-02-07
+C796,PT Graha Global,UMKM,FMCG,Malang,Lokal,Dinda Rahmawati,085882984933,2023-06-13
+C797,PT Perkasa Inovasi,Startup,Otomotif,Jakarta,Lokal,Oki Budiman,081541283337,2024-04-08
+C798,CV Global Logistik,Corporate,FMCG,Jakarta,Multinasional,Fitri Wijaya,082197150666,2023-11-10
+C799,CV Cakra Inovasi,Pemerintah,Properti & Konstruksi,Bekasi,Lokal,Lutfia Firdaus,087893663439,2023-04-28
+C800,CV Graha Solusi,Corporate,Energi & Pertambangan,Malang,Multinasional,Joko Pangestu,087871200720,2022-06-18
+C801,CV Mandiri Karya,Corporate,FMCG,Bandung,Multinasional,Vina Hidayat,081291090326,2022-12-05
+C802,PT Global Abadi,Corporate,Otomotif,Surakarta,Lokal,Kartika Oktaviani,081581793406,2024-08-04
+C803,PT Cakra Terapan,NGO,Telekomunikasi,Bandung,Lokal,Bagus Firmansyah,081210912172,2024-08-02
+C804,CV Karya Mandiri,UMKM,Properti & Konstruksi,Bandung,Lokal,Hana Oktaviani,085389437052,2024-06-10
+C805,PT Mitra Teknologi,BUMN,Konsultan Manajemen,Jakarta,Nasional,Hasna Syahputra,081557256592,2024-10-16
+C806,PT Techno Inovasi,BUMN,Properti & Konstruksi,Surakarta,Nasional,Januar Anggraeni,087743260055,2022-10-15
+C807,PT Sukses Utama,Startup,Agribisnis,Surabaya,Lokal,Joko Suryadi,085384868999,2023-02-18
+C808,PT Sejahtera Bersama,UMKM,Manufaktur,Tangerang,Lokal,Qonita Budiman,085303946408,2023-04-02
+C809,CV Cipta Sejahtera,Pemerintah,Retail,Jakarta,Lokal,Aditya Permana,083886084907,2022-04-08
+C810,PT Kreasi Konsultan,UMKM,Telekomunikasi,Surabaya,Lokal,Lestari Pangestu,085330615370,2024-03-07
+C811,PT Inti Perkasa,Startup,Asuransi,Jakarta,Lokal,Prita Fitriani,083811210314,2023-08-15
+C812,CV Mega Cerdas,Corporate,Logistik & Supply Chain,Yogyakarta,Nasional,Hanif Rahmawati,085241515263,2024-11-12
+C813,PT Techno Data,Startup,Properti & Konstruksi,Surakarta,Lokal,Hanif Ardiansyah,085350566186,2024-12-31
+C814,CV Bumi Kreatif,UMKM,Agribisnis,Surabaya,Lokal,Candra Rahmawati,081578765530,2022-05-18
+C815,PT Makmur Kreatif,Startup,FMCG,Surakarta,Lokal,Bunga Sulistyo,081605712198,2024-02-02
+C816,PT Mega Makmur,Startup,Agribisnis,Yogyakarta,Nasional,Rendy Cahyani,085834864010,2022-09-03
+C817,PT Prima Logistik,Startup,Energi & Pertambangan,Bogor,Nasional,Eka Firdaus,085746004521,2022-06-02
+C818,CV Esa Global,Corporate,Logistik & Supply Chain,Jakarta,Multinasional,Ulfa Kurniawan,082193913044,2023-06-26
+C819,PT Global Bersama,Corporate,Keuangan & Perbankan,Jakarta,Lokal,Riska Wibowo,082111901707,2023-11-14
+C820,PT Inti Solusi,Corporate,Travel & Hospitality,Malang,Multinasional,Lukman Oktaviani,085210732283,2023-11-16
+C821,PT Inovasi Media,Corporate,Konsultan Manajemen,Bandung,Multinasional,Dimas Prasetya,082296384526,2024-10-05
+C822,PT Cakra Makmur,Startup,Manufaktur,Bandung,Lokal,Farah Anggraeni,087701693429,2024-05-10
+C823,CV Mega Media,Startup,Keuangan & Perbankan,Jakarta,Lokal,Indah Sari,085719031061,2022-05-28
+C824,CV Indo Analitika,UMKM,Logistik & Supply Chain,Malang,Nasional,Fani Rahmawati,082223653377,2024-02-15
+C825,PT Perkasa Teknologi,Startup,Asuransi,Yogyakarta,Lokal,Nisa Gunawan,081342442607,2024-07-28
+C826,PT Karya Makmur,Corporate,Telekomunikasi,Bandung,Nasional,Zahra Permana,082173720376,2023-07-19
+C827,CV Daya Systems,NGO,Logistik & Supply Chain,Jakarta,Nasional,Rizky Rahmawati,083846019134,2023-06-06
+C828,PT Bina Cerdas,Pemerintah,Travel & Hospitality,Malang,Nasional,Surya Firdaus,083802058695,2024-12-21
+C829,PT Andalas Kreatif,Startup,Telekomunikasi,Semarang,Nasional,Hasna Anggraeni,085295167933,2023-02-13
+C830,CV Graha Inovasi,Startup,Travel & Hospitality,Surakarta,Lokal,Isna Nugroho,082276811872,2023-04-19
+C831,CV Kreasi Kreatif,Corporate,Keuangan & Perbankan,Jakarta,Nasional,Nurul Sari,081353911498,2023-07-29
+C832,CV Cipta Inovasi,UMKM,Travel & Hospitality,Surakarta,Lokal,Elsa Sari,081565118939,2022-01-14
+C833,PT Inovasi Perkasa,UMKM,FMCG,Semarang,Lokal,Surya Safitri,081243223023,2022-02-25
+C834,CV Sinergi Indonesia,Startup,Keuangan & Perbankan,Bandung,Lokal,Dwi Wulandari,082254621276,2022-03-06
+C835,CV Cakra Nusantara,Corporate,Media & Kreatif,Jakarta,Nasional,Lutfia Mahendra,082198937629,2024-12-23
+C836,PT Kreasi Analitika,BUMN,Teknologi Informasi,Surakarta,Nasional,Tasya Pangestu,087719120381,2023-08-29
+C837,PT Prima Teknologi,Corporate,Travel & Hospitality,Malang,Lokal,Pandu Pangestu,083815881445,2022-04-14
+C838,CV Cipta Perkasa,Corporate,Pendidikan & EdTech,Surakarta,Nasional,Rafi Mahendra,081368157245,2022-07-03
+C839,PT Solusi Data,Startup,E-commerce,Surakarta,Lokal,Dewi Cahyani,085690255618,2024-06-18
+C840,CV Techno Konsultan,BUMN,Travel & Hospitality,Yogyakarta,Nasional,Joko Utami,081648905670,2024-10-02
+C841,PT Perkasa Gemilang,Startup,Keuangan & Perbankan,Surakarta,Lokal,Dinda Suryadi,081358482669,2024-02-13
+C842,PT Bina Perkasa,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Yoga Budiman,081629608070,2024-01-27
+C843,PT Kreasi Sejahtera,Corporate,Travel & Hospitality,Yogyakarta,Multinasional,Irfan Santoso,081240164818,2022-02-04
+C844,PT Bangkit Bersama,NGO,Otomotif,Surakarta,Nasional,Arif Permana,082221269428,2023-01-20
+C845,PT Bumi Digital,Startup,Asuransi,Semarang,Nasional,Taufik Nugraha,085717064625,2023-03-15
+C846,CV Solusi Media,Startup,Energi & Pertambangan,Jakarta,Lokal,Ilham Dewi,085615388824,2023-08-19
+C847,PT Prima Gemilang,UMKM,Keuangan & Perbankan,Semarang,Nasional,Putri Sari,082235384951,2022-04-28
+C848,PT Digital Terapan,Startup,Logistik & Supply Chain,Surakarta,Lokal,Nadia Kurniawan,083809339137,2024-07-20
+C849,CV Prima Sentosa,UMKM,Manufaktur,Surakarta,Lokal,Gibran Puspitasari,081587561786,2022-06-07
+C850,CV Solusi Terapan,Startup,Logistik & Supply Chain,Jakarta,Lokal,Pandu Fitriani,087857744916,2024-12-08
+C851,PT Media Indonesia,BUMN,E-commerce,Jakarta,Nasional,Erlangga Adriansyah,085394184336,2022-05-26
+C852,PT Andalas Utama,BUMN,Kesehatan & Farmasi,Semarang,Nasional,Kevin Wulandari,082139982137,2024-04-14
+C853,PT Cipta Logistik,UMKM,Telekomunikasi,Surakarta,Lokal,Ilham Suryadi,082276660811,2024-01-22
+C854,CV Sukses Sentosa,Corporate,E-commerce,Surabaya,Nasional,Umar Sulistyo,082212345506,2024-07-22
+C855,PT Perkasa Cerdas,Corporate,Kesehatan & Farmasi,Bandung,Multinasional,Hendra Wijaya,085780873543,2023-08-18
+C856,PT Esa Indonesia,Corporate,Pendidikan & EdTech,Jakarta,Multinasional,Galih Rahmawati,085870908599,2022-09-12
+C857,PT Mandiri Makmur,Startup,Teknologi Informasi,Semarang,Nasional,Salma Anggraeni,085699699648,2022-12-06
+C858,PT Mandiri Indonesia,Corporate,FMCG,Bandung,Nasional,Sinta Hidayat,085708499323,2022-10-28
+C859,PT Nusa Karya,BUMN,Manufaktur,Jakarta,Nasional,Amelia Safitri,083806908726,2022-10-17
+C860,PT Solusi Systems,Corporate,Pendidikan & EdTech,Jakarta,Nasional,Umar Rahmawati,085395382804,2024-11-30
+C861,PT Media Perkasa,BUMN,Logistik & Supply Chain,Bogor,Nasional,Bella Wardani,081526958264,2024-06-08
+C862,PT Kreasi Digital,Corporate,Asuransi,Surakarta,Multinasional,Sinta Suryadi,081514346823,2023-01-25
+C863,PT Sentosa Bangsa,Corporate,Keuangan & Perbankan,Malang,Lokal,Ahmad Rahmawati,081686966101,2023-04-04
+C864,CV Graha Karya,Pemerintah,Teknologi Informasi,Surakarta,Lokal,Rafi Oktaviani,085714915076,2024-12-16
+C865,CV Esa Kreatif,BUMN,Retail,Bandung,Nasional,Dwi Ramadhan,082244077794,2022-10-22
+C866,PT Cakra Media,Startup,Kesehatan & Farmasi,Jakarta,Lokal,Zahra Wibowo,082199140688,2024-10-04
+C867,CV Sinergi Gemilang,Startup,Kesehatan & Farmasi,Bekasi,Lokal,Amelia Hidayat,087781703211,2023-02-19
+C868,PT Bangkit Konsultan,Corporate,FMCG,Jakarta,Multinasional,Guntur Rahmawati,083844490295,2024-07-05
+C869,PT Indo Bangsa,Corporate,Otomotif,Surakarta,Nasional,Pandu Mahendra,082241678127,2023-08-07
+C870,PT Daya Solusi,NGO,E-commerce,Surakarta,Lokal,Nurul Febriani,083821348629,2022-07-08
+C871,PT Bakti Perkasa,Startup,Manufaktur,Bandung,Lokal,Amelia Ningsih,081377067368,2024-10-06
+C872,CV Inovasi Pratama,UMKM,Energi & Pertambangan,Yogyakarta,Lokal,Surya Hakim,085821650587,2023-01-05
+C873,PT Inti Sentosa,Corporate,E-commerce,Yogyakarta,Lokal,Sinta Syahputra,087790898436,2022-10-12
+C874,PT Mandiri Terapan,Corporate,Teknologi Informasi,Bekasi,Multinasional,Devi Nugroho,085238694842,2022-03-19
+C875,PT Makmur Systems,Corporate,Retail,Depok,Lokal,Wahyu Utami,082286767382,2024-06-22
+C876,PT Makmur Abadi,Corporate,E-commerce,Depok,Multinasional,Anggi Pangestu,087768299687,2024-08-02
+C877,PT Bakti Media,Corporate,Energi & Pertambangan,Bandung,Nasional,Aldi Permana,081256695790,2024-01-26
+C878,CV Prima Media,Corporate,Konsultan Manajemen,Surabaya,Lokal,Vino Syahputra,082141528572,2023-02-03
+C879,CV Graha Informatika,UMKM,FMCG,Surakarta,Lokal,Maulana Handayani,087855078468,2024-10-30
+C880,PT Solusi Global,Startup,Agribisnis,Surabaya,Nasional,Muhammad Budiman,085391891179,2023-04-05
+C881,CV Esa Karya,UMKM,Manufaktur,Jakarta,Nasional,Tika Setiawan,085847155313,2023-03-07
+C882,CV Sukses Global,BUMN,Asuransi,Yogyakarta,Nasional,Pandu Prasetya,087750094214,2024-12-10
+C883,PT Esa Nusantara,UMKM,Otomotif,Yogyakarta,Lokal,Rizky Ramadhan,082138885622,2024-09-05
+C884,PT Daya Perkasa,BUMN,Retail,Yogyakarta,Nasional,Isna Putra,082175854859,2023-07-27
+C885,PT Prima Mandiri,Pemerintah,Logistik & Supply Chain,Depok,Multinasional,Bella Ramadhani,081600024539,2024-05-26
+C886,CV Karya Sejahtera,Startup,Logistik & Supply Chain,Surabaya,Lokal,Ahmad Prabowo,085870836821,2022-05-22
+C887,PT Esa Global,Corporate,Agribisnis,Surakarta,Nasional,Fani Cahyani,081574620258,2023-03-31
+C888,CV Sukses Mandiri,Startup,E-commerce,Yogyakarta,Lokal,Farhan Ramadhani,082212392049,2022-12-21
+C889,PT Techno Informatika,Startup,Konsultan Manajemen,Yogyakarta,Nasional,Luthfi Putra,081576817225,2023-12-08
+C890,PT Sukses Konsultan,UMKM,Agribisnis,Surakarta,Lokal,Rafi Setiawan,083876831608,2023-10-29
+C891,CV Indo Makmur,Pemerintah,Pendidikan & EdTech,Semarang,Multinasional,Devi Prabowo,085391438823,2022-07-26
+C892,CV Bakti Systems,Corporate,Manufaktur,Surabaya,Nasional,Rani Gunawan,081377732643,2023-10-18
+C893,PT Bangkit Global,UMKM,Logistik & Supply Chain,Surakarta,Nasional,Nanda Utami,087712053978,2022-01-06
+C894,PT Mega Kreatif,Corporate,Properti & Konstruksi,Surakarta,Multinasional,Irfan Firmansyah,081212560832,2024-11-28
+C895,CV Sukses Media,Corporate,Media & Kreatif,Jakarta,Multinasional,Budi Permana,085736199517,2022-03-24
+C896,PT Media Karya,BUMN,Pendidikan & EdTech,Malang,Nasional,Ilham Firmansyah,085392950143,2022-07-11
+C897,PT Sinergi Teknologi,UMKM,Pendidikan & EdTech,Tangerang,Nasional,Rangga Febriani,087719126022,2022-06-19
+C898,PT Kreasi Solusi,Startup,Retail,Jakarta,Lokal,Hendra Anggraeni,081511166122,2022-10-13
+C899,PT Mega Global,UMKM,Retail,Surakarta,Nasional,Rafi Sulistyo,085630493665,2023-05-25
+C900,CV Sejahtera Systems,BUMN,Telekomunikasi,Surabaya,Nasional,Gibran Handoko,082111408682,2022-08-01
+C901,PT Mandiri Sentosa,Startup,Pendidikan & EdTech,Semarang,Nasional,Aditya Sulistyo,085603995297,2024-02-19
+C902,PT Global Sejahtera,Pemerintah,Logistik & Supply Chain,Surakarta,Lokal,Prita Ramadhan,087842304120,2024-01-06
+C903,CV Bangkit Abadi,Startup,Keuangan & Perbankan,Jakarta,Lokal,Dian Febriani,081263224815,2022-06-24
+C904,CV Inovasi Sejahtera,UMKM,Telekomunikasi,Surakarta,Lokal,Laila Safitri,081575649157,2024-01-14
+C905,PT Digital Nusantara,Corporate,Konsultan Manajemen,Semarang,Multinasional,Nadya Nugroho,083808157129,2022-11-28
+C906,PT Global Utama,UMKM,Retail,Surakarta,Nasional,Pandu Wibowo,087735104584,2024-07-16
+C907,PT Nusa Nusantara,UMKM,Teknologi Informasi,Surakarta,Nasional,Fani Prasetya,085669470318,2024-12-24
+C908,PT Graha Kreatif,Pemerintah,Pendidikan & EdTech,Bandung,Lokal,Galuh Prasetya,087862159183,2024-06-19
+C909,CV Andalas Digital,Startup,Konsultan Manajemen,Jakarta,Nasional,Gibran Santoso,081510797714,2023-11-08
+C910,PT Karya Logistik,Corporate,Konsultan Manajemen,Bandung,Multinasional,Anisa Utami,081249980949,2022-05-15
+C911,CV Karya Kreatif,Corporate,Retail,Semarang,Nasional,Bayu Cahyono,081323740779,2023-08-23
+C912,CV Kreasi Analitika,UMKM,Otomotif,Bandung,Lokal,Eka Handayani,081642620370,2024-07-02
+C913,PT Bumi Nusantara,Startup,Keuangan & Perbankan,Surabaya,Lokal,Gita Pangestu,081513599898,2022-02-26
+C914,CV Mega Data,Pemerintah,Teknologi Informasi,Semarang,Nasional,Bima Santoso,083864482217,2023-08-17
+C915,CV Makmur Informatika,Corporate,Teknologi Informasi,Yogyakarta,Multinasional,Prita Nugroho,087875712369,2022-02-22
+C916,PT Indo Gemilang,UMKM,Energi & Pertambangan,Bandung,Lokal,Rizky Nugroho,085253141961,2024-09-04
+C917,PT Bina Solusi,Corporate,Travel & Hospitality,Yogyakarta,Multinasional,Gita Nugraha,087796240964,2024-02-12
+C918,PT Abadi Sentosa,Corporate,Konsultan Manajemen,Bekasi,Lokal,Julia Santoso,087702851622,2024-11-13
+C919,PT Digital Abadi,Corporate,Travel & Hospitality,Semarang,Multinasional,Indah Kusuma,087872879916,2022-03-26
+C920,PT Bina Pratama,UMKM,Media & Kreatif,Bogor,Lokal,Oscar Sari,087760523045,2024-04-14
+C921,PT Graha Cerdas,BUMN,Teknologi Informasi,Tangerang,Nasional,Salma Budiman,087724191650,2024-01-08
+C922,CV Mandiri Abadi,Startup,Asuransi,Jakarta,Nasional,Aldi Kusuma,085289808806,2022-05-14
+C923,PT Indo Nusantara,Startup,Retail,Jakarta,Lokal,Anggi Utami,087864869893,2023-04-09
+C924,PT Inti Utama,BUMN,Keuangan & Perbankan,Surakarta,Nasional,Dimas Ningsih,081575360511,2022-10-04
+C925,PT Digital Karya,Corporate,Travel & Hospitality,Surabaya,Multinasional,Bayu Handayani,085321894559,2023-10-06
+C926,PT Abadi Inovasi,Startup,Teknologi Informasi,Bandung,Lokal,Taufik Adriansyah,085242046648,2023-09-09
+C927,PT Bakti Sejahtera,Startup,Otomotif,Surabaya,Lokal,Qonita Syahputra,087822654016,2023-05-12
+C928,PT Media Sejahtera,NGO,Teknologi Informasi,Semarang,Nasional,Hendra Utami,082142767746,2022-11-25
+C929,CV Bakti Global,Startup,Teknologi Informasi,Surakarta,Lokal,Hesti Maulana,081648860080,2022-07-09
+C930,PT Gemilang Inovasi,UMKM,Travel & Hospitality,Surakarta,Lokal,Fani Pratama,081547264261,2022-12-21
+C931,CV Mega Solusi,Startup,Otomotif,Jakarta,Lokal,Olivia Prasetya,085896807852,2024-09-07
+C932,PT Inti Informatika,Startup,Kesehatan & Farmasi,Surakarta,Lokal,Lutfia Kusuma,085840064454,2024-10-28
+C933,CV Sinergi Bangsa,BUMN,Logistik & Supply Chain,Surakarta,Nasional,Bagus Mahendra,085789791776,2023-02-01
+C934,CV Bina Media,Startup,Media & Kreatif,Yogyakarta,Nasional,Guntur Hartono,085808019630,2022-12-14
+C935,PT Graha Logistik,UMKM,Keuangan & Perbankan,Jakarta,Lokal,Nadia Pangestu,083824935340,2023-04-16
+C936,PT Mandiri Informatika,NGO,Asuransi,Jakarta,Lokal,Hasna Ramadhan,085746083851,2023-06-05
+C937,PT Sejahtera Informatika,Corporate,Konsultan Manajemen,Malang,Multinasional,Farel Ardiansyah,085690457927,2024-05-21
+C938,PT Jaya Karya,Corporate,Kesehatan & Farmasi,Jakarta,Multinasional,Mira Kusuma,082142383972,2022-07-03
+C939,PT Bumi Bersama,Corporate,Media & Kreatif,Yogyakarta,Lokal,Joko Kurniawan,081210232001,2023-03-11
+C940,PT Abadi Nusantara,Startup,Teknologi Informasi,Yogyakarta,Lokal,Hana Pratama,083814356140,2024-09-11
+C941,CV Mandiri Utama,UMKM,E-commerce,Bandung,Lokal,Bunga Ardiansyah,081582354695,2024-09-15
+C942,PT Cipta Digital,Startup,Teknologi Informasi,Yogyakarta,Lokal,Yoga Permana,085896715006,2023-01-09
+C943,PT Makmur Konsultan,Startup,Energi & Pertambangan,Bandung,Lokal,Citra Adriansyah,085205836683,2023-07-05
+C944,PT Indo Sentosa,Corporate,Energi & Pertambangan,Surakarta,Nasional,Luthfi Prasetya,083888917879,2024-12-17
+C945,PT Perkasa Solusi,Corporate,E-commerce,Yogyakarta,Lokal,Budi Setiawan,082165789826,2023-04-30
+C946,PT Sentosa Data,Corporate,Teknologi Informasi,Semarang,Nasional,Rendy Anggara,085858517774,2022-10-13
+C947,PT Abadi Global,Startup,E-commerce,Surakarta,Lokal,Fitri Anggraeni,085696264222,2022-10-24
+C948,PT Karya Gemilang,Startup,Konsultan Manajemen,Semarang,Lokal,Ika Handoko,085870568209,2022-08-04
+C949,PT Bangkit Karya,Startup,Teknologi Informasi,Bekasi,Nasional,Bunga Permana,081272324728,2023-03-26
+C950,CV Bakti Bersama,UMKM,Konsultan Manajemen,Surakarta,Lokal,Mira Mahendra,082212616850,2022-11-26
+C951,PT Karya Teknologi,BUMN,Travel & Hospitality,Bandung,Nasional,Hendra Safitri,085809271152,2022-05-01
+C952,PT Techno Analitika,BUMN,FMCG,Jakarta,Nasional,Bima Safitri,082130071695,2024-06-21
+C953,PT Bakti Logistik,Startup,Kesehatan & Farmasi,Surabaya,Nasional,Wulan Ramadhani,085244716198,2023-03-13
+C954,CV Andalas Kreatif,BUMN,Travel & Hospitality,Surakarta,Nasional,Qori Suryadi,081225896321,2022-05-25
+C955,CV Cakra Informatika,Startup,Konsultan Manajemen,Depok,Nasional,Oki Wardani,082244883842,2024-07-06
+C956,PT Gemilang Indonesia,Corporate,Properti & Konstruksi,Jakarta,Nasional,Arif Ramadhan,087795515623,2023-07-21
+C957,CV Global Data,Pemerintah,Retail,Surabaya,Multinasional,Joko Suryadi,081547602206,2022-07-14
+C958,PT Jaya Logistik,NGO,Media & Kreatif,Bogor,Multinasional,Faisal Prabowo,081595002601,2022-10-04
+C959,CV Nusa Bersama,Startup,Konsultan Manajemen,Jakarta,Lokal,Faisal Handoko,081271732798,2023-11-27
+C960,PT Sukses Systems,Startup,Manufaktur,Bandung,Lokal,Arif Handoko,085393403910,2022-04-09
+C961,PT Graha Indonesia,Startup,Energi & Pertambangan,Surakarta,Nasional,Arif Safitri,087880186774,2022-01-27
+C962,CV Kreasi Media,Startup,Telekomunikasi,Jakarta,Lokal,Budi Pratama,087877625503,2024-02-07
+C963,CV Media Karya,Startup,Agribisnis,Jakarta,Nasional,Lestari Handoko,081378429029,2022-09-24
+C964,CV Sentosa Utama,BUMN,E-commerce,Surakarta,Nasional,Teguh Gunawan,081605308868,2022-03-07
+C965,PT Bina Digital,Startup,Logistik & Supply Chain,Surakarta,Lokal,Satria Ningsih,085875988759,2022-10-06
+C966,PT Perkasa Mandiri,Startup,Keuangan & Perbankan,Jakarta,Lokal,Aditya Pratama,085627558214,2024-05-08
+C967,CV Global Systems,BUMN,Media & Kreatif,Surakarta,Nasional,Krisna Safitri,087705916118,2024-12-10
+C968,PT Andalas Solusi,UMKM,Logistik & Supply Chain,Jakarta,Lokal,Hanif Pangestu,081593186928,2023-11-27
+C969,PT Andalas Bersama,Startup,Otomotif,Jakarta,Lokal,Hafiz Hidayat,083822720028,2023-09-29
+C970,CV Mandiri Konsultan,Startup,Manufaktur,Surakarta,Lokal,Fitri Permana,085774328116,2022-05-02
+C971,CV Mitra Abadi,NGO,Kesehatan & Farmasi,Jakarta,Lokal,Wulan Ramadhani,085613530281,2024-06-17
+C972,CV Prima Cerdas,Startup,Teknologi Informasi,Bandung,Lokal,Ika Ningsih,085617469029,2022-07-03
+C973,PT Jaya Data,UMKM,Energi & Pertambangan,Surakarta,Lokal,Laila Pratama,083805685667,2022-08-31
+C974,PT Indo Data,Corporate,Energi & Pertambangan,Jakarta,Multinasional,Tika Oktaviani,081276634933,2023-08-11
+C975,CV Abadi Indonesia,Corporate,Logistik & Supply Chain,Surakarta,Lokal,Candra Sulistyo,085885421880,2024-04-21
+C976,PT Cakra Indonesia,UMKM,Telekomunikasi,Tangerang,Lokal,Olivia Lestari,083853247250,2024-02-18
+C977,PT Bangkit Sentosa,Startup,Konsultan Manajemen,Jakarta,Nasional,Vina Anggara,087894535365,2023-07-05
+C978,PT Andalas Bangsa,Startup,Energi & Pertambangan,Bekasi,Nasional,Nisa Permana,082112545080,2022-05-11
+C979,PT Sentosa Informatika,Startup,Properti & Konstruksi,Surakarta,Lokal,Sinta Cahyono,087847213074,2023-10-24
+C980,CV Bina Pratama,UMKM,Logistik & Supply Chain,Jakarta,Nasional,Farah Pangestu,085233261454,2022-04-18
+C981,CV Mitra Gemilang,Corporate,Manufaktur,Bandung,Lokal,Luthfi Oktaviani,085317852211,2022-02-07
+C982,PT Makmur Data,NGO,Travel & Hospitality,Jakarta,Lokal,Riska Utami,087887447017,2024-01-13
+C983,CV Bumi Bangsa,UMKM,Teknologi Informasi,Semarang,Nasional,Guntur Mahendra,087772966563,2022-10-30
+C984,CV Sejahtera Digital,Startup,Keuangan & Perbankan,Bandung,Nasional,Prita Santoso,081255800027,2022-11-09
+C985,CV Prima Data,Startup,Properti & Konstruksi,Yogyakarta,Lokal,Dani Saputra,085243913681,2023-02-04
+C986,CV Mega Kreatif,Corporate,FMCG,Jakarta,Multinasional,Dwi Saputra,085229735259,2024-03-11
+C987,PT Nusa Digital,Startup,Agribisnis,Semarang,Lokal,Olivia Ramadhani,082266185076,2023-03-31
+C988,CV Abadi Global,Corporate,Logistik & Supply Chain,Semarang,Multinasional,Citra Hidayat,081271261583,2023-02-14
+C989,PT Bangkit Media,BUMN,Asuransi,Tangerang,Nasional,Tasya Syahputra,087735742233,2023-06-21
+C990,CV Indo Solusi,NGO,Otomotif,Surakarta,Lokal,Julia Hakim,083892225606,2023-08-22
+C991,PT Bangkit Abadi,Startup,Manufaktur,Surakarta,Lokal,Tasya Kurniawan,085385201362,2023-04-15
+C992,PT Mitra Informatika,BUMN,Energi & Pertambangan,Jakarta,Nasional,Zahra Santoso,085847055491,2024-08-27
+C993,CV Karya Pratama,Startup,Konsultan Manajemen,Surakarta,Nasional,Rani Saputra,085219693957,2023-11-07
+C994,CV Mitra Inovasi,BUMN,Kesehatan & Farmasi,Surakarta,Nasional,Kartika Rahmawati,081219712124,2022-12-12
+C995,PT Sinergi Makmur,Startup,Asuransi,Tangerang,Lokal,Amelia Nugroho,085287312677,2024-08-05
+C996,PT Abadi Media,UMKM,Retail,Bekasi,Lokal,Farah Pangestu,087853394319,2024-12-22
+C997,CV Mega Indonesia,Startup,Logistik & Supply Chain,Bandung,Lokal,Devi Cahyono,085749747000,2023-12-16
+C998,CV Cakra Konsultan,Corporate,Telekomunikasi,Jakarta,Nasional,Sinta Mahendra,085274163656,2024-04-01
+C999,PT Digital Inovasi,Startup,Energi & Pertambangan,Depok,Lokal,Fitri Kurniawan,085395296353,2024-08-09
+C1000,PT Media Nusantara,Startup,Media & Kreatif,Yogyakarta,Lokal,Putri Setiawan,081659489895,2024-05-23
+C1001,PT Karya Terapan,BUMN,Logistik & Supply Chain,Jakarta,Nasional,Candra Handayani,081644974394,2023-05-16
+C1002,PT Bumi Indonesia,Startup,Properti & Konstruksi,Yogyakarta,Nasional,Gita Wijaya,082110972021,2023-03-24
+C1003,PT Media Kreatif,Startup,Asuransi,Jakarta,Lokal,Pandu Pratama,081244964612,2022-09-15
+C1004,PT Graha Systems,UMKM,Agribisnis,Depok,Nasional,Eka Kusuma,085658434566,2022-06-11
+C1005,CV Techno Data,Startup,Travel & Hospitality,Yogyakarta,Lokal,Muhammad Gunawan,082120334742,2023-08-31
+C1006,CV Makmur Logistik,Corporate,Otomotif,Semarang,Nasional,Maulana Oktaviani,085829469021,2022-02-27
+C1007,CV Sukses Teknologi,Startup,Travel & Hospitality,Bandung,Nasional,Faisal Ardiansyah,085823328293,2023-11-24
+C1008,CV Graha Sentosa,Corporate,Logistik & Supply Chain,Jakarta,Lokal,Qori Gunawan,087771167507,2023-03-26
+C1009,PT Indo Cerdas,Corporate,FMCG,Semarang,Multinasional,Rizky Oktaviani,085830123984,2022-04-27
+C1010,PT Kreasi Abadi,UMKM,Kesehatan & Farmasi,Surakarta,Nasional,Fajar Anggara,085622240507,2022-05-20
+C1011,PT Inti Media,BUMN,Retail,Semarang,Nasional,Farah Cahyani,085675461992,2022-07-28
+C1012,CV Bina Inovasi,Startup,Pendidikan & EdTech,Yogyakarta,Lokal,Galih Ramadhani,081310187803,2022-06-06
+C1013,PT Sejahtera Bangsa,Startup,Agribisnis,Jakarta,Lokal,Gita Febriani,085294529517,2022-11-06
+C1014,PT Nusa Solusi,Startup,Agribisnis,Bekasi,Lokal,Maulana Anggara,082120542216,2023-05-27
+C1015,CV Abadi Media,Startup,Konsultan Manajemen,Bandung,Lokal,Farhan Sulistyo,081283344470,2023-01-29
+C1016,PT Daya Karya,Corporate,Otomotif,Bandung,Lokal,Aditya Putra,081259685195,2024-08-09
+C1017,CV Makmur Inovasi,Startup,Media & Kreatif,Jakarta,Lokal,Farel Anggraeni,085656342777,2023-03-05
+C1018,PT Bumi Solusi,NGO,Kesehatan & Farmasi,Surakarta,Lokal,Prita Setiawan,082192059229,2024-03-28
+C1019,PT Indo Makmur,Startup,Energi & Pertambangan,Jakarta,Lokal,Bima Puspitasari,085642066154,2024-04-16
+C1020,PT Digital Systems,Corporate,Keuangan & Perbankan,Surakarta,Multinasional,Eka Oktaviani,081322121548,2023-04-05
+C1021,PT Sentosa Cerdas,Startup,Teknologi Informasi,Surakarta,Nasional,Putri Prabowo,083856646419,2024-06-24
+C1022,PT Prima Kreatif,Startup,Media & Kreatif,Surakarta,Nasional,Eka Lestari,082104104294,2022-10-24
+C1023,PT Jaya Makmur,UMKM,Logistik & Supply Chain,Bandung,Lokal,Dimas Dewi,087866020005,2022-08-16
+C1024,CV Bumi Konsultan,Startup,Travel & Hospitality,Jakarta,Lokal,Dinda Nugroho,085824383805,2022-01-08
+C1025,PT Bumi Karya,Corporate,Asuransi,Bekasi,Lokal,Ika Sari,082276185186,2023-02-28
+C1026,CV Gemilang Nusantara,Startup,Travel & Hospitality,Jakarta,Lokal,Muhammad Firmansyah,085382339218,2022-01-02
+C1027,PT Digital Pratama,BUMN,Retail,Semarang,Nasional,Ulfa Handayani,081506776106,2022-05-10
+C1028,PT Media Makmur,Corporate,Travel & Hospitality,Bandung,Lokal,Farhan Ningsih,081226656862,2024-10-15
+C1029,PT Cakra Perkasa,Corporate,Telekomunikasi,Surakarta,Nasional,Maulana Pratama,083897474859,2024-09-19
+C1030,PT Karya Informatika,Startup,Otomotif,Surabaya,Nasional,Galuh Anggara,083853698816,2023-05-12
+C1031,PT Mitra Digital,BUMN,Media & Kreatif,Jakarta,Nasional,Nadya Hidayat,081530889830,2023-06-02
+C1032,PT Andalas Abadi,BUMN,Logistik & Supply Chain,Yogyakarta,Nasional,Ahmad Firmansyah,087750003056,2024-05-01
+C1033,CV Solusi Pratama,Corporate,Logistik & Supply Chain,Yogyakarta,Lokal,Dian Mahendra,085208701872,2024-06-16
+C1034,CV Jaya Mandiri,Startup,Konsultan Manajemen,Surakarta,Lokal,Rani Rahmawati,085868652406,2024-03-16
+C1035,CV Prima Nusantara,Startup,FMCG,Bandung,Nasional,Dian Nugraha,082122190533,2022-10-08
+C1036,CV Bakti Digital,Corporate,E-commerce,Depok,Multinasional,Galih Putra,085690036221,2023-12-14
+C1037,CV Sejahtera Inovasi,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Mira Ningsih,085885229425,2023-12-11
+C1038,CV Bakti Nusantara,Corporate,Otomotif,Jakarta,Multinasional,Eka Wibowo,085808054914,2022-06-22
+C1039,PT Sejahtera Mandiri,Startup,Manufaktur,Semarang,Lokal,Taufik Mahendra,081684171594,2024-01-01
+C1040,PT Kreasi Teknologi,Startup,Agribisnis,Yogyakarta,Lokal,Bayu Setiawan,081613389260,2022-09-13
+C1041,CV Mega Gemilang,UMKM,Asuransi,Jakarta,Lokal,Hanif Maulana,081218915673,2023-11-02
+C1042,PT Jaya Bangsa,Corporate,E-commerce,Semarang,Nasional,Tiara Santoso,085733629994,2022-11-29
+C1043,PT Perkasa Abadi,Pemerintah,Properti & Konstruksi,Surakarta,Nasional,Hendra Wibowo,083898573908,2022-03-01
+C1044,PT Techno Konsultan,Corporate,Otomotif,Jakarta,Multinasional,Rani Sulistyo,083884997957,2023-08-27
+C1045,CV Sukses Karya,UMKM,Agribisnis,Jakarta,Lokal,Krisna Sulistyo,081390221797,2023-12-15
+C1046,PT Karya Indonesia,Startup,Travel & Hospitality,Surakarta,Lokal,Gilang Pratama,085898445143,2024-07-14
+C1047,CV Esa Sentosa,Pemerintah,Logistik & Supply Chain,Surakarta,Nasional,Krisna Maulana,085868119397,2022-03-02
+C1048,PT Indo Konsultan,BUMN,Asuransi,Bandung,Nasional,Fitri Cahyani,081658807053,2023-03-29
+C1049,CV Gemilang Digital,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Dafa Pangestu,082197425513,2022-01-22
+C1050,PT Bakti Teknologi,BUMN,Telekomunikasi,Jakarta,Nasional,Arif Santoso,085887366271,2024-08-02
+C1051,CV Media Informatika,UMKM,Energi & Pertambangan,Yogyakarta,Lokal,Surya Suryadi,083856154731,2022-05-04
+C1052,PT Bina Makmur,Corporate,Media & Kreatif,Jakarta,Lokal,Putri Syahputra,085390283772,2024-02-17
+C1053,PT Solusi Bangsa,Startup,Asuransi,Bogor,Lokal,Vino Wijaya,085728164416,2024-04-19
+C1054,CV Graha Konsultan,BUMN,Telekomunikasi,Jakarta,Nasional,Yoga Kurniawan,081238802730,2023-06-28
+C1055,PT Indo Inovasi,Corporate,Asuransi,Surakarta,Multinasional,Ika Permana,087718939530,2023-06-24
+C1056,PT Cakra Inovasi,Corporate,Teknologi Informasi,Yogyakarta,Multinasional,Salma Permana,081655135872,2023-07-24
+C1057,PT Mega Gemilang,Startup,Pendidikan & EdTech,Surakarta,Lokal,Gibran Cahyono,081640343988,2022-09-03
+C1058,CV Andalas Gemilang,UMKM,FMCG,Depok,Lokal,Sari Ardiansyah,087770413090,2023-03-16
+C1059,CV Daya Karya,UMKM,Asuransi,Depok,Lokal,Wahyu Kusuma,081520412319,2024-03-21
+C1060,PT Media Gemilang,Corporate,Teknologi Informasi,Jakarta,Multinasional,Bagus Fitriani,087794193245,2022-02-10
+C1061,CV Karya Teknologi,UMKM,Telekomunikasi,Surakarta,Lokal,Gibran Permana,083870987264,2022-10-23
+C1062,PT Indo Solusi,Startup,Konsultan Manajemen,Surabaya,Lokal,Bayu Hidayat,081389003468,2023-03-15
+C1063,PT Global Logistik,Corporate,Keuangan & Perbankan,Yogyakarta,Multinasional,Lina Oktaviani,082102009536,2024-03-28
+C1064,PT Solusi Digital,Startup,Agribisnis,Bandung,Lokal,Irfan Suryadi,081590073971,2024-10-10
+C1065,CV Cipta Systems,Corporate,Media & Kreatif,Surakarta,Multinasional,Farhan Maulana,087716722104,2024-02-19
+C1066,PT Andalas Karya,Startup,Konsultan Manajemen,Jakarta,Lokal,Sari Ramadhani,082152160252,2023-04-07
+C1067,PT Kreasi Media,Startup,FMCG,Jakarta,Lokal,Fitri Oktaviani,087794802455,2024-08-21
+C1068,CV Sejahtera Sentosa,Pemerintah,Teknologi Informasi,Yogyakarta,Lokal,Bella Maulana,085637819190,2024-07-23
+C1069,CV Bakti Sejahtera,Startup,Konsultan Manajemen,Yogyakarta,Lokal,Hendra Dewi,085286546220,2024-10-29
+C1070,CV Bangkit Media,NGO,Kesehatan & Farmasi,Malang,Nasional,Farel Sari,081530000886,2023-11-05
+C1071,CV Mandiri Analitika,UMKM,Energi & Pertambangan,Yogyakarta,Lokal,Hendra Kusuma,081360091692,2022-01-07
+C1072,PT Cipta Sentosa,Startup,Properti & Konstruksi,Jakarta,Lokal,Kirana Kusuma,087830009984,2022-06-18
+C1073,CV Makmur Data,NGO,Otomotif,Malang,Nasional,Vina Maulana,082194203401,2024-01-27
+C1074,CV Jaya Perkasa,Corporate,Retail,Jakarta,Nasional,Tiara Handayani,085766720108,2023-05-28
+C1075,CV Jaya Bersama,UMKM,Teknologi Informasi,Surabaya,Lokal,Irfan Oktaviani,082287940262,2022-07-07
+C1076,PT Bakti Bersama,Startup,Manufaktur,Surabaya,Lokal,Kartika Dewi,085870041291,2024-04-22
+C1077,PT Prima Konsultan,UMKM,Logistik & Supply Chain,Yogyakarta,Lokal,Rendy Cahyani,085859046100,2022-05-23
+C1078,PT Nusa Sejahtera,Startup,Asuransi,Jakarta,Lokal,Gilang Setiawan,081212329615,2023-05-12
+C1079,PT Bangkit Analitika,UMKM,Pendidikan & EdTech,Depok,Lokal,Wahyu Wardani,087817682251,2023-06-16
+C1080,CV Sejahtera Media,Pemerintah,Energi & Pertambangan,Yogyakarta,Lokal,Mira Cahyono,085862241976,2024-03-13
+C1081,PT Mandiri Inovasi,Corporate,E-commerce,Bandung,Nasional,Cahyo Gunawan,081384897422,2024-01-11
+C1082,PT Abadi Konsultan,Startup,Logistik & Supply Chain,Surakarta,Nasional,Kartika Hakim,085792064411,2023-06-02
+C1083,CV Graha Media,Corporate,Telekomunikasi,Yogyakarta,Multinasional,Tiara Gunawan,083806640511,2022-05-13
+C1084,CV Jaya Data,BUMN,Media & Kreatif,Jakarta,Nasional,Bagus Syahputra,081249860372,2022-03-02
+C1085,CV Mitra Logistik,Startup,Retail,Yogyakarta,Lokal,Aditya Permana,081203471317,2022-06-14
+C1086,PT Cakra Teknologi,BUMN,Logistik & Supply Chain,Malang,Nasional,Gibran Hakim,085390841947,2024-03-05
+C1087,PT Esa Solusi,UMKM,Teknologi Informasi,Yogyakarta,Nasional,Hanif Ramadhani,081579037161,2024-12-06
+C1088,PT Solusi Konsultan,UMKM,Logistik & Supply Chain,Surabaya,Lokal,Rangga Anggraeni,081596477183,2022-09-23
+C1089,CV Cipta Gemilang,BUMN,Travel & Hospitality,Malang,Nasional,Aditya Handoko,083808557800,2022-01-15
+C1090,CV Inti Media,BUMN,Pendidikan & EdTech,Surabaya,Nasional,Farel Syahputra,082121690696,2022-10-04
+C1091,PT Solusi Sentosa,BUMN,FMCG,Surakarta,Nasional,Nanda Ramadhan,085621501642,2022-08-31
+C1092,CV Mandiri Bangsa,Startup,Logistik & Supply Chain,Bandung,Lokal,Prita Handoko,083813004169,2022-10-08
+C1093,PT Abadi Logistik,Startup,Manufaktur,Jakarta,Lokal,Taufik Wardani,081310501476,2023-11-07
+C1094,CV Graha Utama,UMKM,Logistik & Supply Chain,Surakarta,Lokal,Vina Hidayat,082139597815,2024-07-08
+C1095,PT Inti Indonesia,Corporate,Keuangan & Perbankan,Semarang,Nasional,Bella Firmansyah,085746546772,2023-04-11
+C1096,PT Media Data,Corporate,Teknologi Informasi,Yogyakarta,Multinasional,Hana Ramadhan,087847837031,2024-10-21
+C1097,CV Esa Digital,UMKM,Retail,Jakarta,Nasional,Mira Anggara,085326029254,2024-10-27
+C1098,PT Esa Sentosa,Pemerintah,Retail,Surakarta,Nasional,Faisal Gunawan,087842076327,2023-09-07
+C1099,CV Gemilang Inovasi,Corporate,Kesehatan & Farmasi,Jakarta,Multinasional,Nadia Maulana,081679060488,2024-12-19
+C1100,PT Bina Abadi,Startup,Teknologi Informasi,Semarang,Lokal,Maya Safitri,087815976405,2022-10-24
+C1101,PT Bangkit Logistik,Startup,Konsultan Manajemen,Surakarta,Lokal,Candra Adriansyah,085722736273,2022-02-26
+C1102,CV Nusa Systems,Startup,Logistik & Supply Chain,Surakarta,Nasional,Dian Anggraeni,081371620429,2024-01-30
+C1103,PT Digital Teknologi,Corporate,Logistik & Supply Chain,Surabaya,Lokal,Budi Utami,085669801426,2023-01-02
+C1104,PT Sinergi Kreatif,Startup,Retail,Surakarta,Lokal,Dafa Kurniawan,081672947638,2024-02-11
+C1105,PT Inti Teknologi,Startup,FMCG,Bandung,Lokal,Aldi Anggraeni,082293272728,2023-10-28
+C1106,PT Mega Karya,Corporate,FMCG,Bandung,Multinasional,Irfan Prasetya,085667652728,2024-05-29
+C1107,PT Sukses Cerdas,Corporate,Teknologi Informasi,Surakarta,Nasional,Prasetyo Nugroho,082121543904,2022-07-31
+C1108,CV Kreasi Solusi,Startup,Media & Kreatif,Jakarta,Lokal,Wulan Wibowo,081393545036,2024-02-06
+C1109,CV Sinergi Cerdas,UMKM,Pendidikan & EdTech,Malang,Lokal,Oki Prasetya,082108059831,2024-03-18
+C1110,PT Mitra Gemilang,BUMN,Energi & Pertambangan,Jakarta,Nasional,Hendra Firmansyah,082276317749,2022-10-02
+C1111,PT Inovasi Sentosa,Startup,Konsultan Manajemen,Bandung,Nasional,Oki Ramadhani,082167131753,2023-12-02
+C1112,PT Indo Logistik,Startup,Asuransi,Surakarta,Lokal,Ahmad Safitri,085228452403,2023-04-14
+C1113,PT Media Digital,Startup,Konsultan Manajemen,Jakarta,Lokal,Taufik Wijaya,085308779724,2022-07-25
+C1114,CV Inti Systems,BUMN,Properti & Konstruksi,Semarang,Nasional,Farhan Pratama,085787706769,2022-08-13
+C1115,CV Kreasi Bersama,Startup,Media & Kreatif,Bandung,Lokal,Gita Hakim,081690257846,2024-05-30
+C1116,PT Perkasa Logistik,BUMN,Kesehatan & Farmasi,Jakarta,Nasional,Farhan Maulana,085767292543,2022-12-19
+C1117,CV Media Digital,UMKM,Travel & Hospitality,Surakarta,Lokal,Gibran Budiman,087728639420,2024-04-10
+C1118,PT Nusa Global,Startup,Teknologi Informasi,Bandung,Lokal,Candra Fitriani,087702660450,2024-03-18
+C1119,CV Nusa Data,Corporate,Telekomunikasi,Bandung,Multinasional,Dimas Sulistyo,081519335389,2023-04-20
+C1120,CV Prima Solusi,Startup,Retail,Surakarta,Lokal,Hesti Pratama,085606082770,2023-04-01
+C1121,PT Gemilang Abadi,Corporate,Asuransi,Surabaya,Multinasional,Arif Handoko,082285009537,2024-06-11
+C1122,CV Sinergi Abadi,Corporate,Retail,Surabaya,Multinasional,Erlangga Lestari,081561094416,2022-08-16
+C1123,PT Mandiri Nusantara,NGO,Pendidikan & EdTech,Yogyakarta,Nasional,Kirana Gunawan,081506349429,2024-03-06
+C1124,PT Sinergi Solusi,Startup,Media & Kreatif,Surakarta,Lokal,Rani Nugraha,085717234565,2024-06-30
+C1125,PT Inti Gemilang,Corporate,Teknologi Informasi,Surakarta,Nasional,Zaki Ardiansyah,082168904723,2024-01-28
+C1126,PT Perkasa Analitika,UMKM,E-commerce,Bandung,Lokal,Olivia Maulana,081655742164,2022-01-07
+C1127,PT Cipta Teknologi,Startup,Agribisnis,Tangerang,Lokal,Vina Nugroho,085678604356,2022-01-23
+C1128,PT Cipta Utama,BUMN,Manufaktur,Semarang,Nasional,Dian Febriani,083833067730,2024-06-28
+C1129,PT Andalas Logistik,BUMN,Logistik & Supply Chain,Yogyakarta,Nasional,Farhan Utami,087867941908,2022-10-05
+C1130,PT Perkasa Utama,Startup,Properti & Konstruksi,Semarang,Lokal,Kirana Ardiansyah,082296342898,2022-04-06
+C1131,CV Prima Karya,Startup,Retail,Surakarta,Lokal,Luthfi Syahputra,085370663201,2024-05-15
+C1132,PT Bumi Makmur,NGO,Teknologi Informasi,Yogyakarta,Multinasional,Rangga Safitri,081682718265,2022-12-30
+C1133,CV Digital Gemilang,Startup,Teknologi Informasi,Yogyakarta,Lokal,Kartika Syahputra,085242039831,2023-09-23
+C1134,CV Bakti Mandiri,UMKM,Teknologi Informasi,Surakarta,Nasional,Zaki Anggraeni,082119587305,2024-07-09
+C1135,CV Karya Gemilang,UMKM,Logistik & Supply Chain,Jakarta,Lokal,Farah Permana,085331589016,2024-03-02
+C1136,PT Indo Bersama,BUMN,Otomotif,Surakarta,Nasional,Faisal Nugraha,081217092640,2022-01-04
+C1137,PT Sejahtera Solusi,Corporate,Otomotif,Surakarta,Nasional,Galuh Adriansyah,085800728895,2023-08-30
+C1138,PT Perkasa Makmur,UMKM,Energi & Pertambangan,Malang,Nasional,Indah Pratama,083808203917,2024-04-11
+C1139,CV Sentosa Solusi,UMKM,FMCG,Jakarta,Lokal,Gilang Ramadhan,082202849760,2022-11-16
+C1140,PT Bina Sentosa,Startup,Telekomunikasi,Surakarta,Nasional,Aldi Pangestu,081675403648,2023-06-08
+C1141,PT Makmur Inovasi,Startup,FMCG,Jakarta,Lokal,Muhammad Ramadhani,082260667998,2024-04-21
+C1142,CV Media Sentosa,UMKM,Kesehatan & Farmasi,Bandung,Lokal,Umar Ardiansyah,083876887779,2023-05-23
+C1143,CV Sukses Cerdas,Corporate,Telekomunikasi,Surakarta,Multinasional,Krisna Kusuma,085231539839,2022-12-20
+C1144,PT Indo Indonesia,Corporate,Teknologi Informasi,Surakarta,Multinasional,Teguh Rahmawati,085676291430,2023-09-02
+C1145,PT Mega Digital,Startup,Agribisnis,Jakarta,Lokal,Cahyo Febriani,085286564224,2024-08-20
+C1146,CV Solusi Makmur,NGO,Asuransi,Jakarta,Multinasional,Ratna Puspitasari,087829805682,2022-07-29
+C1147,PT Cakra Nusantara,NGO,Asuransi,Bandung,Multinasional,Hesti Pratama,085734741253,2022-11-10
+C1148,PT Sinergi Systems,Startup,Agribisnis,Bogor,Lokal,Gibran Safitri,081520259991,2024-05-08
+C1149,PT Sinergi Informatika,Corporate,Pendidikan & EdTech,Yogyakarta,Multinasional,Hesti Budiman,085774890476,2023-01-12
+C1150,PT Cakra Bangsa,Startup,Manufaktur,Jakarta,Lokal,Ulfa Santoso,081591708517,2024-08-21
+C1151,CV Inti Teknologi,UMKM,E-commerce,Yogyakarta,Lokal,Prita Sulistyo,081315744965,2023-12-07
+C1152,CV Mega Sentosa,Startup,Agribisnis,Surabaya,Nasional,Guntur Pratama,085645418403,2022-01-24
+C1153,CV Abadi Sentosa,UMKM,Keuangan & Perbankan,Jakarta,Nasional,Hafiz Mahendra,083880265295,2023-07-25
+C1154,PT Abadi Mandiri,UMKM,Pendidikan & EdTech,Malang,Lokal,Indah Lestari,081239744088,2023-12-03
+C1155,PT Sinergi Media,BUMN,Kesehatan & Farmasi,Surabaya,Nasional,Galih Suryadi,083848580526,2024-02-15
+C1156,CV Nusa Media,Startup,Energi & Pertambangan,Surakarta,Lokal,Budi Prabowo,082297077454,2022-11-22
+C1157,CV Techno Gemilang,UMKM,Telekomunikasi,Jakarta,Nasional,Bunga Firdaus,081566262359,2023-05-15
+C1158,CV Inovasi Indonesia,UMKM,E-commerce,Semarang,Lokal,Elsa Wardani,087703686050,2024-02-05
+C1159,CV Cipta Makmur,Startup,Media & Kreatif,Surakarta,Lokal,Yoga Ramadhani,081294523759,2022-03-01
+C1160,PT Mitra Global,UMKM,Asuransi,Surakarta,Lokal,Elsa Firdaus,085754492054,2024-08-07
+C1161,PT Techno Nusantara,Corporate,Travel & Hospitality,Surakarta,Nasional,Satria Handoko,081556622952,2023-12-19
+C1162,CV Sinergi Pratama,BUMN,E-commerce,Jakarta,Nasional,Eka Ramadhan,082201731671,2024-01-18
+C1163,PT Esa Systems,Corporate,Energi & Pertambangan,Jakarta,Nasional,Dani Suryadi,087818335974,2024-04-08
+C1164,PT Sejahtera Sentosa,Corporate,Teknologi Informasi,Jakarta,Nasional,Hesti Hartono,081518430192,2023-05-13
+C1165,CV Bumi Karya,Corporate,Retail,Jakarta,Nasional,Faisal Hartono,082292385202,2023-06-13
+C1166,CV Nusa Digital,Corporate,Konsultan Manajemen,Semarang,Multinasional,Oscar Ardiansyah,081528442347,2024-05-16
+C1167,PT Inovasi Terapan,UMKM,Properti & Konstruksi,Surabaya,Lokal,Lina Suryadi,082160756999,2023-11-04
+C1168,PT Sinergi Konsultan,Pemerintah,Logistik & Supply Chain,Surakarta,Nasional,Putri Sari,085322622777,2024-03-16
+C1169,PT Bumi Global,Corporate,Telekomunikasi,Surakarta,Multinasional,Anisa Handayani,085702740675,2022-03-18
+C1170,PT Inovasi Bangsa,Startup,Pendidikan & EdTech,Surakarta,Nasional,Irfan Ramadhani,085639461212,2023-08-31
+C1171,CV Prima Kreatif,BUMN,Otomotif,Semarang,Nasional,Tika Utami,081625678718,2023-09-15
+C1172,CV Kreasi Gemilang,Corporate,Travel & Hospitality,Bandung,Multinasional,Zaki Adriansyah,081261349564,2023-08-18
+C1173,PT Jaya Sentosa,Startup,Properti & Konstruksi,Yogyakarta,Lokal,Maya Ningsih,083830972361,2023-07-06
+C1174,CV Cakra Data,Corporate,Kesehatan & Farmasi,Surakarta,Nasional,Ika Maulana,087845786555,2023-10-15
+C1175,CV Inti Inovasi,Corporate,Teknologi Informasi,Surakarta,Multinasional,Nadya Gunawan,081582405166,2024-07-03
+C1176,CV Cipta Bersama,UMKM,Konsultan Manajemen,Surakarta,Nasional,Cahyo Fitriani,085808983094,2022-05-05
+C1177,PT Jaya Nusantara,Startup,Energi & Pertambangan,Bandung,Nasional,Gilang Sari,085867480957,2023-10-13
+C1178,PT Graha Makmur,BUMN,Travel & Hospitality,Surakarta,Nasional,Kevin Handayani,085244203158,2024-06-04
+C1179,CV Global Makmur,UMKM,Retail,Yogyakarta,Nasional,Hana Rahmawati,085718648230,2024-01-13
+C1180,CV Digital Solusi,Pemerintah,Asuransi,Surakarta,Nasional,Kartika Anggara,087874831730,2024-02-11
+C1181,PT Daya Indonesia,Startup,Kesehatan & Farmasi,Malang,Lokal,Bunga Puspitasari,083890623272,2023-11-28
+C1182,CV Digital Inovasi,UMKM,Keuangan & Perbankan,Surakarta,Lokal,Elsa Permana,081687084779,2024-05-27
+C1183,PT Inti Data,UMKM,Retail,Jakarta,Lokal,Bima Pangestu,083890737815,2024-12-10
+C1184,PT Prima Sejahtera,Corporate,Kesehatan & Farmasi,Bandung,Multinasional,Rizky Handayani,083864970350,2023-04-19
+C1185,CV Sinergi Utama,Corporate,Retail,Surakarta,Lokal,Candra Rahmawati,082215550570,2022-07-27
+C1186,PT Jaya Abadi,Startup,FMCG,Bogor,Lokal,Eka Budiman,087701235036,2022-06-06
+C1187,PT Makmur Nusantara,Startup,Energi & Pertambangan,Surabaya,Lokal,Oki Cahyani,087779780234,2022-06-02
+C1188,CV Perkasa Analitika,BUMN,Telekomunikasi,Surabaya,Nasional,Nisa Ramadhani,085257378315,2022-05-16
+C1189,CV Makmur Sejahtera,Startup,Energi & Pertambangan,Depok,Lokal,Irfan Safitri,081615854233,2023-03-03
+C1190,CV Sentosa Data,Corporate,FMCG,Surakarta,Multinasional,Oki Prasetya,081560734467,2023-06-05
+C1191,PT Media Konsultan,Startup,E-commerce,Tangerang,Lokal,Faisal Pratama,085802218169,2024-05-19
+C1192,PT Inti Karya,Corporate,Agribisnis,Surabaya,Multinasional,Luthfi Syahputra,085733026509,2022-09-21
+C1193,CV Mega Konsultan,BUMN,Asuransi,Jakarta,Nasional,Prasetyo Sulistyo,087866610256,2024-07-30
+C1194,CV Jaya Solusi,BUMN,Keuangan & Perbankan,Surakarta,Nasional,Rangga Fitriani,082249980137,2022-09-20
+C1195,PT Digital Bersama,Corporate,FMCG,Bandung,Multinasional,Anggi Santoso,085824461440,2024-08-29
+C1196,PT Bumi Kreatif,Startup,FMCG,Surakarta,Nasional,Lutfia Budiman,082160186372,2024-01-09
+C1197,PT Kreasi Data,Corporate,FMCG,Semarang,Multinasional,Tiara Ardiansyah,082127764149,2023-11-17
+C1198,PT Mandiri Media,Startup,Travel & Hospitality,Jakarta,Lokal,Kirana Ardiansyah,082231454615,2022-01-02
+C1199,CV Indo Pratama,Startup,Konsultan Manajemen,Semarang,Nasional,Eka Ramadhani,081604095437,2023-10-11
+C1200,PT Perkasa Nusantara,Corporate,Keuangan & Perbankan,Semarang,Nasional,Dwi Fitriani,083873143915,2022-05-03
+C1201,CV Perkasa Inovasi,Corporate,Media & Kreatif,Bandung,Lokal,Gita Nugroho,085268564257,2022-06-08
+C1202,PT Cakra Systems,Corporate,Teknologi Informasi,Surakarta,Nasional,Aditya Wulandari,081354230600,2023-02-10
+C1203,CV Sinergi Teknologi,Startup,Otomotif,Jakarta,Nasional,Galuh Ramadhani,082141142066,2022-02-08
+C1204,PT Gemilang Perkasa,BUMN,Pendidikan & EdTech,Surabaya,Nasional,Irfan Ramadhani,081624005392,2024-11-29
+C1205,CV Nusa Teknologi,Corporate,Kesehatan & Farmasi,Bandung,Multinasional,Hendra Ardiansyah,082248433913,2022-04-05
+C1206,CV Kreasi Mandiri,Startup,Energi & Pertambangan,Jakarta,Lokal,Anisa Pratama,082149866342,2024-06-25
+C1207,PT Sukses Solusi,UMKM,Manufaktur,Jakarta,Lokal,Lina Utami,087865591476,2022-07-08
+C1208,CV Sukses Terapan,Startup,Otomotif,Surakarta,Lokal,Gita Permana,087753369524,2024-05-02
+C1209,CV Cakra Indonesia,UMKM,Travel & Hospitality,Malang,Lokal,Maya Handayani,081567924157,2022-11-12
+C1210,PT Bina Media,Corporate,Asuransi,Surabaya,Multinasional,Sinta Hartono,085239981615,2022-10-29
+C1211,CV Daya Data,Startup,Otomotif,Bandung,Lokal,Pandu Saputra,087737260720,2022-07-01
+C1212,CV Mega Mandiri,Corporate,Pendidikan & EdTech,Bandung,Multinasional,Lestari Prabowo,085342926456,2024-06-24
+C1213,CV Sinergi Global,Startup,Kesehatan & Farmasi,Semarang,Nasional,Arif Safitri,085781126649,2022-01-24
+C1214,PT Makmur Media,Startup,Travel & Hospitality,Jakarta,Lokal,Zaki Hidayat,082159016399,2022-03-09
+C1215,PT Sinergi Sejahtera,Startup,Konsultan Manajemen,Jakarta,Lokal,Hasna Sari,085348140984,2024-05-08
+C1216,CV Cipta Data,Pemerintah,Travel & Hospitality,Surakarta,Nasional,Ilham Saputra,081242028866,2023-08-03
+C1217,PT Karya Bersama,UMKM,Keuangan & Perbankan,Jakarta,Lokal,Tika Wardani,085720353160,2023-06-13
+C1218,PT Sinergi Global,Startup,Travel & Hospitality,Surabaya,Nasional,Hafiz Cahyono,081394232154,2023-09-10
+C1219,CV Techno Utama,Startup,Keuangan & Perbankan,Jakarta,Lokal,Eka Gunawan,083845525274,2023-01-15
+C1220,PT Jaya Informatika,Corporate,FMCG,Jakarta,Nasional,Budi Ramadhan,081395675635,2023-03-29
+C1221,CV Inovasi Karya,Corporate,Asuransi,Malang,Multinasional,Tasya Hidayat,081206689041,2024-11-14
+C1222,CV Inovasi Perkasa,Startup,Otomotif,Semarang,Lokal,Joko Wardani,082122824084,2022-10-14
+C1223,CV Esa Makmur,Startup,Teknologi Informasi,Surabaya,Lokal,Ratna Nugroho,085278302801,2024-01-07
+C1224,PT Sentosa Nusantara,UMKM,Properti & Konstruksi,Jakarta,Nasional,Teguh Kusuma,085778674280,2022-09-16
+C1225,CV Techno Systems,Corporate,Travel & Hospitality,Tangerang,Multinasional,Gibran Hakim,087780378912,2024-02-29
+C1226,CV Gemilang Global,Corporate,Properti & Konstruksi,Surabaya,Multinasional,Tiara Safitri,085708429069,2024-10-06
+C1227,PT Karya Analitika,Startup,Properti & Konstruksi,Jakarta,Nasional,Fani Nugroho,081365276136,2023-07-14
+C1228,PT Daya Abadi,Startup,Energi & Pertambangan,Bandung,Nasional,Tika Anggara,081572508423,2023-08-29
+C1229,CV Inti Solusi,Startup,Otomotif,Surakarta,Lokal,Taufik Kurniawan,085655369158,2024-07-19
+C1230,PT Bakti Gemilang,Startup,Teknologi Informasi,Jakarta,Lokal,Kevin Permana,082157033329,2024-02-15
+C1231,CV Digital Bangsa,Startup,Travel & Hospitality,Tangerang,Nasional,Rizky Saputra,081629662991,2023-04-09
+C1232,CV Solusi Mandiri,Startup,Retail,Yogyakarta,Lokal,Ika Wijaya,085226693706,2022-09-02
+C1233,CV Indo Teknologi,Corporate,Keuangan & Perbankan,Surakarta,Multinasional,Yoga Puspitasari,082279719000,2023-05-14
+C1234,PT Graha Perkasa,Startup,Kesehatan & Farmasi,Surakarta,Nasional,Januar Sulistyo,085859407992,2024-10-05
+C1235,CV Inovasi Mandiri,BUMN,FMCG,Semarang,Nasional,Farhan Dewi,081367781456,2023-03-21
+C1236,PT Bangkit Perkasa,Pemerintah,Asuransi,Jakarta,Nasional,Eka Ramadhani,081292815780,2024-08-22
+C1237,CV Bina Data,UMKM,Energi & Pertambangan,Yogyakarta,Nasional,Dinda Hartono,085363532237,2022-02-19
+C1238,CV Karya Bangsa,Startup,Otomotif,Semarang,Lokal,Olivia Firdaus,081314294300,2024-01-23
+C1239,CV Inti Perkasa,Startup,Otomotif,Malang,Lokal,Salma Pangestu,085641783765,2022-09-17
+C1240,CV Cipta Nusantara,Startup,Konsultan Manajemen,Bandung,Nasional,Aldi Prasetya,087842673512,2023-12-25
+C1241,CV Bangkit Karya,Corporate,Energi & Pertambangan,Jakarta,Nasional,Nadya Mahendra,083849622494,2024-04-21
+C1242,PT Cakra Cerdas,Startup,Retail,Malang,Lokal,Farhan Prabowo,085609793442,2023-01-03
+C1243,CV Sinergi Mandiri,BUMN,Retail,Yogyakarta,Nasional,Wulan Firdaus,085697251840,2022-01-13
+C1244,CV Esa Indonesia,Startup,Retail,Yogyakarta,Lokal,Muhammad Mahendra,085320945167,2022-10-22
+C1245,CV Indo Digital,BUMN,Keuangan & Perbankan,Malang,Nasional,Mega Permana,082164833367,2024-11-26
+C1246,CV Indo Abadi,UMKM,E-commerce,Tangerang,Lokal,Bima Oktaviani,081601154617,2024-02-06
+C1247,PT Esa Logistik,UMKM,Keuangan & Perbankan,Yogyakarta,Lokal,Dinda Santoso,081240431566,2023-08-09
+C1248,PT Daya Teknologi,Startup,Teknologi Informasi,Surakarta,Nasional,Fani Kurniawan,087778401902,2024-02-21
+C1249,PT Global Sentosa,BUMN,Otomotif,Semarang,Nasional,Lina Hidayat,087811586686,2023-02-23
+C1250,CV Sukses Kreatif,Startup,Travel & Hospitality,Surakarta,Nasional,Luthfi Ramadhan,082253399824,2024-06-19
+C1251,CV Global Gemilang,NGO,Agribisnis,Jakarta,Lokal,Dian Prasetya,083879303028,2023-11-08
+C1252,PT Nusa Inovasi,UMKM,Asuransi,Bandung,Lokal,Ulfa Santoso,085350252854,2023-03-31
+C1253,CV Inovasi Konsultan,NGO,Agribisnis,Surakarta,Nasional,Salma Dewi,083827777118,2022-01-17
+C1254,CV Andalas Systems,Corporate,Energi & Pertambangan,Surakarta,Lokal,Joko Santoso,081224234473,2024-06-25
+C1255,PT Abadi Informatika,BUMN,Pendidikan & EdTech,Jakarta,Nasional,Budi Puspitasari,085652242653,2023-06-29
+C1256,PT Sejahtera Digital,Corporate,Telekomunikasi,Yogyakarta,Multinasional,Vino Firdaus,081591150101,2022-04-13
+C1257,PT Solusi Informatika,Startup,Energi & Pertambangan,Jakarta,Lokal,Vina Anggraeni,087783354883,2023-06-20
+C1258,CV Techno Inovasi,UMKM,Asuransi,Jakarta,Lokal,Prita Suryadi,085792724000,2023-09-28
+C1259,CV Solusi Konsultan,Corporate,Keuangan & Perbankan,Surakarta,Nasional,Fitri Febriani,081285432716,2022-02-05
+C1260,CV Mitra Bersama,UMKM,Pendidikan & EdTech,Bogor,Nasional,Winda Handayani,081530100090,2023-03-21
+C1261,CV Inovasi Bangsa,UMKM,Agribisnis,Tangerang,Lokal,Indah Hidayat,083891426937,2024-10-28
+C1262,PT Gemilang Bangsa,BUMN,Otomotif,Yogyakarta,Nasional,Putri Prasetya,083885016276,2023-03-20
+C1263,CV Bumi Solusi,Corporate,Asuransi,Jakarta,Nasional,Farah Syahputra,081365228989,2023-02-03
+C1264,PT Bina Terapan,Startup,Travel & Hospitality,Surakarta,Nasional,Julia Prasetya,085897640838,2024-09-10
+C1265,PT Mega Cerdas,Corporate,Energi & Pertambangan,Jakarta,Lokal,Oki Hakim,081665188711,2022-05-24
+C1266,PT Mitra Bangsa,UMKM,Keuangan & Perbankan,Surakarta,Lokal,Winda Handayani,085328787570,2023-06-21
+C1267,CV Solusi Cerdas,Startup,Pendidikan & EdTech,Surakarta,Lokal,Eka Oktaviani,083860742906,2023-11-28
+C1268,CV Cakra Global,Startup,Logistik & Supply Chain,Bandung,Lokal,Rendy Firdaus,085330242662,2022-03-27
+C1269,CV Andalas Terapan,UMKM,Telekomunikasi,Bogor,Lokal,Lutfia Fitriani,081344695674,2023-10-31
+C1270,PT Kreasi Pratama,UMKM,Konsultan Manajemen,Bekasi,Nasional,Zahra Oktaviani,087888658348,2022-05-15
+C1271,CV Media Systems,Corporate,Asuransi,Bandung,Multinasional,Amelia Budiman,083853207758,2023-03-19
+C1272,CV Cakra Cerdas,BUMN,Travel & Hospitality,Jakarta,Nasional,Putri Wulandari,087895805045,2023-05-31
+C1273,PT Sukses Analitika,Startup,Media & Kreatif,Yogyakarta,Lokal,Gilang Lestari,085729390773,2022-01-17
+C1274,PT Bakti Abadi,UMKM,FMCG,Bandung,Lokal,Maulana Saputra,081362585150,2022-01-10
+C1275,CV Global Mandiri,Startup,Manufaktur,Malang,Nasional,Bima Dewi,081579531112,2023-06-27
+C1276,CV Media Makmur,Startup,Media & Kreatif,Jakarta,Nasional,Maulana Prasetya,081662510857,2023-06-26
+C1277,PT Bakti Cerdas,UMKM,Retail,Semarang,Lokal,Hanif Utami,083816733746,2024-05-05
+C1278,CV Perkasa Abadi,BUMN,Media & Kreatif,Semarang,Nasional,Nadya Kurniawan,083876209906,2022-02-28
+C1279,PT Perkasa Sejahtera,Startup,Manufaktur,Tangerang,Lokal,Dewi Budiman,085805998226,2024-06-11
+C1280,PT Digital Media,BUMN,Media & Kreatif,Bekasi,Nasional,Anisa Dewi,081688804851,2023-03-17
+C1281,CV Global Sejahtera,Startup,Agribisnis,Jakarta,Nasional,Prasetyo Puspitasari,081315490443,2024-08-13
+C1282,PT Esa Bangsa,UMKM,Telekomunikasi,Jakarta,Lokal,Rendy Setiawan,081229771150,2024-02-02
+C1283,PT Mega Media,NGO,Kesehatan & Farmasi,Jakarta,Nasional,Faisal Sari,081628162910,2023-11-27
+C1284,PT Daya Media,Corporate,Teknologi Informasi,Jakarta,Multinasional,Isna Lestari,081244500202,2022-06-15
+C1285,CV Sentosa Systems,Startup,Keuangan & Perbankan,Surakarta,Nasional,Dewi Wijaya,085304093467,2024-07-15
+C1286,CV Prima Gemilang,Startup,Keuangan & Perbankan,Malang,Lokal,Zahra Wibowo,081384220138,2023-05-16
+C1287,PT Inovasi Sejahtera,Corporate,E-commerce,Bandung,Multinasional,Gilang Sulistyo,083894767200,2024-02-19
+C1288,PT Mitra Inovasi,NGO,Retail,Surakarta,Lokal,Rendy Oktaviani,085389512370,2024-01-18
+C1289,CV Makmur Gemilang,UMKM,Logistik & Supply Chain,Semarang,Lokal,Salma Firmansyah,081663956126,2024-10-21
+C1290,PT Kreasi Bersama,NGO,Konsultan Manajemen,Yogyakarta,Multinasional,Zahra Pangestu,085269870368,2024-03-06
+C1291,CV Techno Cerdas,Startup,Media & Kreatif,Semarang,Lokal,Dewi Cahyono,085893410406,2022-12-10
+C1292,CV Daya Solusi,Startup,Logistik & Supply Chain,Yogyakarta,Lokal,Farah Wibowo,081675789849,2024-07-03
+C1293,PT Perkasa Data,Corporate,Properti & Konstruksi,Jakarta,Multinasional,Candra Hidayat,082197557261,2024-04-15
+C1294,CV Inovasi Data,Corporate,Agribisnis,Jakarta,Nasional,Olivia Fitriani,082261317985,2022-08-24
+C1295,PT Mitra Sejahtera,Corporate,Media & Kreatif,Bandung,Nasional,Vino Fitriani,087839981274,2023-11-13
+C1296,CV Indo Indonesia,NGO,Properti & Konstruksi,Surakarta,Multinasional,Umar Wardani,081347621236,2022-05-23
+C1297,CV Global Utama,Corporate,Keuangan & Perbankan,Bandung,Multinasional,Nadya Rahmawati,085659096459,2024-08-21
+C1298,CV Graha Systems,NGO,E-commerce,Jakarta,Nasional,Naufal Puspitasari,087736707217,2022-05-17
+C1299,CV Sentosa Indonesia,UMKM,Media & Kreatif,Semarang,Lokal,Aditya Wibowo,087832365401,2022-07-12
+C1300,CV Mandiri Cerdas,Pemerintah,Konsultan Manajemen,Surakarta,Multinasional,Aldi Permana,082250947651,2022-03-05
+C1301,PT Inovasi Global,BUMN,Telekomunikasi,Surakarta,Nasional,Maya Puspitasari,083891370542,2024-10-10
+C1302,PT Bakti Data,UMKM,Keuangan & Perbankan,Yogyakarta,Lokal,Hafiz Nugraha,081303565942,2024-02-29
+C1303,PT Nusa Teknologi,UMKM,Media & Kreatif,Jakarta,Nasional,Winda Utami,081529533861,2024-06-05
+C1304,PT Prima Abadi,UMKM,Kesehatan & Farmasi,Jakarta,Lokal,Rizky Gunawan,082234889334,2024-11-15
+C1305,PT Bina Analitika,Corporate,Energi & Pertambangan,Bekasi,Nasional,Faisal Permana,082250952889,2023-12-05
+C1306,CV Daya Gemilang,Startup,Konsultan Manajemen,Bogor,Lokal,Nadya Prasetya,087879899470,2024-04-03
+C1307,CV Esa Abadi,BUMN,Retail,Surakarta,Nasional,Galuh Hakim,087865051886,2024-03-14
+C1308,CV Inti Bersama,Startup,Travel & Hospitality,Jakarta,Lokal,Hana Budiman,081225038576,2023-11-10
+C1309,PT Daya Terapan,Startup,Asuransi,Semarang,Nasional,Isna Wardani,081606358530,2023-05-16
+C1310,CV Abadi Utama,Corporate,Keuangan & Perbankan,Bekasi,Lokal,Nisa Cahyani,085246896331,2023-09-15
+C1311,CV Mega Bersama,Corporate,Konsultan Manajemen,Malang,Multinasional,Lutfia Ramadhani,087836785089,2022-12-21
+C1312,PT Kreasi Systems,UMKM,Keuangan & Perbankan,Bandung,Lokal,Riska Nugroho,081565658234,2022-04-06
+C1313,PT Gemilang Karya,Startup,E-commerce,Surakarta,Nasional,Farhan Mahendra,081546614477,2024-10-25
+C1314,CV Digital Logistik,Startup,Media & Kreatif,Bandung,Nasional,Umar Permana,081673986221,2023-08-09
+C1315,CV Inovasi Kreatif,Startup,Konsultan Manajemen,Jakarta,Lokal,Farah Dewi,081651866477,2023-04-08
+C1316,CV Mega Inovasi,Corporate,Properti & Konstruksi,Jakarta,Nasional,Mira Ningsih,081512865581,2024-12-06
+C1317,CV Nusa Mandiri,NGO,Logistik & Supply Chain,Semarang,Multinasional,Gibran Wibowo,081691218527,2024-08-06
+C1318,CV Mandiri Data,Pemerintah,Telekomunikasi,Semarang,Lokal,Vino Oktaviani,085853015303,2023-05-26
+C1319,CV Mitra Perkasa,Startup,E-commerce,Bekasi,Lokal,Bayu Hidayat,085666910082,2022-07-30
+C1320,CV Inti Indonesia,BUMN,Logistik & Supply Chain,Jakarta,Nasional,Elsa Maulana,082121756269,2022-10-17
+C1321,PT Bangkit Makmur,BUMN,E-commerce,Semarang,Nasional,Sinta Dewi,082157228703,2022-01-23
+C1322,CV Sejahtera Nusantara,Startup,FMCG,Surakarta,Lokal,Bagus Firmansyah,085386060480,2023-11-10
+C1323,PT Graha Teknologi,UMKM,Teknologi Informasi,Jakarta,Nasional,Lina Kusuma,082201655623,2024-06-11
+C1324,PT Solusi Bersama,Startup,Logistik & Supply Chain,Surabaya,Lokal,Rizky Hartono,081694719903,2024-02-22
+C1325,CV Sentosa Gemilang,Startup,Manufaktur,Bandung,Lokal,Nisa Cahyani,081295326708,2024-04-17
+C1326,PT Daya Cerdas,Corporate,Otomotif,Semarang,Nasional,Oki Putra,085882282801,2024-02-18
+C1327,CV Techno Sejahtera,Corporate,Pendidikan & EdTech,Surakarta,Multinasional,Januar Fitriani,085274874114,2023-11-07
+C1328,CV Perkasa Gemilang,Startup,Logistik & Supply Chain,Surabaya,Lokal,Qonita Suryadi,082249655156,2024-10-06
+C1329,CV Media Analitika,Corporate,Media & Kreatif,Surakarta,Multinasional,Fajar Ardiansyah,085659722422,2023-01-28
+C1330,PT Inovasi Data,BUMN,Properti & Konstruksi,Malang,Nasional,Yoga Adriansyah,087867155446,2024-06-17
+C1331,PT Gemilang Systems,UMKM,Agribisnis,Surakarta,Lokal,Lina Budiman,085291192856,2023-02-27
+C1332,CV Bina Bangsa,Startup,Agribisnis,Yogyakarta,Lokal,Kevin Cahyono,082164395678,2022-10-12
+C1333,CV Esa Cerdas,UMKM,Agribisnis,Jakarta,Nasional,Tiara Nugroho,087705549434,2024-02-16
+C1334,PT Digital Cerdas,Startup,Konsultan Manajemen,Jakarta,Nasional,Lukman Hakim,085878564135,2024-09-17
+C1335,CV Bakti Indonesia,Startup,Kesehatan & Farmasi,Yogyakarta,Lokal,Candra Nugraha,085395794758,2023-12-17
+C1336,PT Inti Systems,UMKM,Pendidikan & EdTech,Jakarta,Nasional,Taufik Saputra,087714697147,2024-06-28
+C1337,CV Mandiri Nusantara,Corporate,Properti & Konstruksi,Bandung,Nasional,Sari Ramadhan,085660170396,2023-03-20
+C1338,PT Media Global,UMKM,Keuangan & Perbankan,Semarang,Lokal,Sinta Oktaviani,085790786928,2024-02-24
+C1339,CV Sukses Bersama,UMKM,FMCG,Semarang,Lokal,Gilang Ramadhani,082188341335,2024-09-28
+C1340,CV Mitra Global,Corporate,Telekomunikasi,Surakarta,Multinasional,Amelia Ningsih,082257967148,2023-04-10
+C1341,CV Abadi Karya,Startup,Media & Kreatif,Depok,Nasional,Devi Febriani,085712886691,2023-05-01
+C1342,PT Prima Media,Startup,Pendidikan & EdTech,Surabaya,Nasional,Isna Putra,081561197892,2022-12-07
+C1343,CV Daya Digital,UMKM,Kesehatan & Farmasi,Surakarta,Lokal,Galuh Wulandari,087884184714,2023-03-20
+C1344,CV Bakti Abadi,Pemerintah,Logistik & Supply Chain,Surakarta,Nasional,Ayu Lestari,081287647709,2023-03-01
+C1345,CV Bumi Sentosa,BUMN,Properti & Konstruksi,Surabaya,Nasional,Intan Budiman,081399160539,2023-06-10
+C1346,PT Prima Cerdas,BUMN,Media & Kreatif,Jakarta,Nasional,Lukman Kurniawan,087890887548,2022-01-08
+C1347,CV Techno Mandiri,Startup,E-commerce,Surakarta,Lokal,Yuni Maulana,085397990359,2022-06-27
+C1348,PT Makmur Teknologi,BUMN,Telekomunikasi,Surakarta,Nasional,Ayu Suryadi,081364838953,2023-06-04
+C1349,CV Makmur Sentosa,Corporate,Logistik & Supply Chain,Semarang,Multinasional,Isna Rahmawati,087800643459,2024-07-25
+C1350,PT Andalas Cerdas,Startup,Manufaktur,Jakarta,Nasional,Salma Firdaus,085751048480,2024-07-13
+C1351,PT Cakra Utama,Corporate,Otomotif,Yogyakarta,Lokal,Mega Suryadi,085703909846,2023-03-07
+C1352,CV Media Nusantara,Startup,Asuransi,Surakarta,Lokal,Prita Oktaviani,082143233302,2022-03-08
+C1353,CV Digital Abadi,Startup,Teknologi Informasi,Surabaya,Lokal,Sinta Kusuma,085630695235,2022-02-26
+C1354,CV Daya Utama,Startup,Keuangan & Perbankan,Surakarta,Nasional,Sari Pangestu,087753119804,2023-06-04
+C1355,CV Sukses Pratama,Pemerintah,Kesehatan & Farmasi,Yogyakarta,Lokal,Bunga Ardiansyah,085725507868,2023-05-23
+C1356,CV Bumi Analitika,UMKM,Teknologi Informasi,Surakarta,Lokal,Yuni Permana,081364879210,2024-01-10
+C1357,CV Sejahtera Utama,UMKM,Teknologi Informasi,Surabaya,Nasional,Rani Putra,081603607854,2024-07-05
+C1358,CV Kreasi Sentosa,Corporate,Teknologi Informasi,Jakarta,Multinasional,Winda Firmansyah,082226714858,2023-11-19
+C1359,PT Graha Informatika,Startup,Logistik & Supply Chain,Jakarta,Lokal,Devi Kurniawan,081363971492,2024-02-01
+C1360,CV Cakra Solusi,Corporate,FMCG,Bandung,Nasional,Taufik Oktaviani,085277367724,2022-05-24
+C1361,CV Abadi Pratama,Corporate,Properti & Konstruksi,Tangerang,Multinasional,Candra Putra,085290348042,2023-04-02
+C1362,CV Digital Kreatif,Pemerintah,Otomotif,Bogor,Lokal,Kevin Safitri,083835966771,2023-09-20
+C1363,CV Gemilang Utama,Startup,Pendidikan & EdTech,Surakarta,Lokal,Tika Anggara,087814427873,2022-04-24
+C1364,CV Mitra Analitika,Corporate,FMCG,Surabaya,Multinasional,Taufik Dewi,085396904539,2023-04-06
+C1365,CV Media Solusi,Corporate,Travel & Hospitality,Semarang,Multinasional,Bima Maulana,081333073453,2023-02-10
+C1366,CV Mitra Solusi,Pemerintah,Asuransi,Jakarta,Multinasional,Salma Hartono,085709853720,2022-11-09
+C1367,CV Digital Pratama,Startup,E-commerce,Jakarta,Lokal,Bima Saputra,087715558709,2023-10-31
+C1368,CV Indo Bersama,UMKM,Telekomunikasi,Bekasi,Lokal,Yoga Ramadhan,081612538078,2022-06-11
+C1369,CV Media Bersama,Startup,Manufaktur,Semarang,Nasional,Hana Suryadi,085675571663,2022-05-21
+C1370,CV Solusi Karya,BUMN,Logistik & Supply Chain,Semarang,Nasional,Hafiz Rahmawati,081685635200,2022-10-02
+C1371,CV Mitra Utama,UMKM,Energi & Pertambangan,Yogyakarta,Nasional,Lutfia Santoso,085733608090,2024-07-01
+C1372,PT Cipta Data,NGO,Asuransi,Semarang,Multinasional,Ivan Maulana,083888189304,2023-03-20
+C1373,PT Mega Sentosa,NGO,Travel & Hospitality,Yogyakarta,Nasional,Mira Pangestu,085651856905,2024-11-06
+C1374,CV Sejahtera Kreatif,Corporate,Telekomunikasi,Surakarta,Nasional,Dimas Nugraha,087897899951,2022-02-28
+C1375,PT Media Mandiri,UMKM,Pendidikan & EdTech,Jakarta,Lokal,Kirana Kusuma,085206688675,2023-06-17
+C1376,CV Global Sentosa,Corporate,Travel & Hospitality,Yogyakarta,Lokal,Yoga Handoko,083872012402,2024-05-01
+C1377,PT Graha Mandiri,Corporate,Keuangan & Perbankan,Yogyakarta,Lokal,Amelia Cahyani,087738872461,2023-03-04
+C1378,CV Mandiri Sejahtera,Corporate,Keuangan & Perbankan,Surakarta,Lokal,Rafi Budiman,085230741799,2023-10-03
+C1379,CV Graha Indonesia,Corporate,Properti & Konstruksi,Bandung,Multinasional,Pandu Nugroho,082134056771,2022-12-06
+C1380,CV Sukses Data,UMKM,Otomotif,Yogyakarta,Nasional,Ilham Maulana,081251666081,2022-07-29
+C1381,CV Bangkit Informatika,Corporate,Konsultan Manajemen,Yogyakarta,Nasional,Bayu Setiawan,085827695844,2024-02-21
+C1382,PT Cakra Digital,Corporate,Teknologi Informasi,Jakarta,Nasional,Candra Hidayat,081699256924,2024-10-23
+C1383,CV Bumi Utama,UMKM,Retail,Malang,Lokal,Fani Nugroho,083856094067,2023-09-27
+C1384,CV Global Abadi,BUMN,FMCG,Semarang,Nasional,Ulfa Hartono,082127579407,2024-03-09
+C1385,PT Digital Sejahtera,UMKM,Manufaktur,Jakarta,Lokal,Lukman Cahyani,087841060326,2023-08-15
+C1386,PT Mandiri Perkasa,BUMN,Media & Kreatif,Jakarta,Nasional,Zaki Handoko,081204748679,2024-03-22
+C1387,PT Mega Bersama,Startup,Logistik & Supply Chain,Bandung,Lokal,Rizky Puspitasari,081221444155,2022-04-17
+C1388,CV Esa Mandiri,UMKM,Asuransi,Bogor,Lokal,Oscar Safitri,081370335300,2024-02-06
+C1389,PT Mega Analitika,UMKM,Retail,Jakarta,Lokal,Salma Prasetya,085624872385,2023-03-20
+C1390,CV Bakti Gemilang,UMKM,Logistik & Supply Chain,Malang,Lokal,Arif Fitriani,081598935464,2023-11-26
+C1391,CV Andalas Logistik,BUMN,Logistik & Supply Chain,Semarang,Nasional,Riska Febriani,082155290509,2024-03-20
+C1392,PT Karya Bangsa,Corporate,Pendidikan & EdTech,Yogyakarta,Multinasional,Irfan Setiawan,081630088238,2024-11-19
+C1393,CV Solusi Perkasa,Startup,E-commerce,Yogyakarta,Lokal,Hanif Cahyono,081330236416,2023-08-12
+C1394,PT Sinergi Utama,NGO,E-commerce,Jakarta,Nasional,Candra Wijaya,082139193252,2023-07-15
+C1395,CV Abadi Bersama,UMKM,Retail,Bandung,Lokal,Lukman Prabowo,082196444843,2023-10-20
+C1396,PT Mitra Solusi,NGO,Logistik & Supply Chain,Semarang,Lokal,Putri Anggara,082116266032,2023-06-30
+C1397,CV Bakti Informatika,Startup,Travel & Hospitality,Surabaya,Nasional,Intan Nugraha,082279395795,2023-12-07
+C1398,PT Inovasi Konsultan,Startup,Energi & Pertambangan,Bekasi,Lokal,Dinda Wardani,082187321078,2022-12-07
+C1399,CV Prima Perkasa,BUMN,Pendidikan & EdTech,Semarang,Nasional,Bayu Pratama,087722350283,2022-01-27
+C1400,PT Mega Bangsa,Corporate,Energi & Pertambangan,Jakarta,Multinasional,Galuh Wardani,087740330454,2024-05-23
+C1401,PT Global Perkasa,Corporate,Retail,Surakarta,Lokal,Galih Suryadi,085617642962,2023-11-10
+C1402,PT Cakra Global,Corporate,Asuransi,Surakarta,Lokal,Bagus Suryadi,085823228058,2023-11-07
+C1403,PT Sentosa Sejahtera,Startup,Konsultan Manajemen,Semarang,Lokal,Amelia Utami,085839501115,2023-09-19
+C1404,CV Bakti Utama,Corporate,Asuransi,Surabaya,Nasional,Citra Dewi,081374890304,2022-12-29
+C1405,CV Makmur Terapan,Corporate,Teknologi Informasi,Semarang,Nasional,Isna Kusuma,085811608958,2022-10-20
+C1406,CV Sinergi Sentosa,UMKM,Energi & Pertambangan,Surakarta,Lokal,Intan Prasetya,085312898993,2023-02-05
+C1407,CV Kreasi Informatika,UMKM,Travel & Hospitality,Malang,Lokal,Nadia Oktaviani,083898681843,2022-10-26
+C1408,PT Bumi Analitika,Corporate,Energi & Pertambangan,Bandung,Lokal,Tasya Mahendra,081659160435,2023-04-21
+C1409,PT Karya Sentosa,Corporate,Telekomunikasi,Bogor,Multinasional,Ivan Fitriani,082207177613,2023-09-20
+C1410,CV Sinergi Logistik,UMKM,Properti & Konstruksi,Jakarta,Lokal,Indah Wardani,085802312653,2024-04-17
+C1411,CV Cipta Teknologi,Corporate,Agribisnis,Jakarta,Multinasional,Anisa Ramadhan,085247612189,2023-09-26
+C1412,CV Andalas Media,UMKM,Teknologi Informasi,Surabaya,Nasional,Guntur Firmansyah,082128305644,2024-04-09
+C1413,CV Cakra Kreatif,UMKM,Asuransi,Surakarta,Nasional,Teguh Ramadhani,087763990460,2023-03-20
+C1414,CV Gemilang Makmur,Corporate,Kesehatan & Farmasi,Bekasi,Multinasional,Rangga Utami,082109755061,2022-02-05
+C1415,PT Cipta Perkasa,UMKM,Retail,Surakarta,Lokal,Lukman Nugroho,081239344907,2023-11-29
+C1416,CV Bina Cerdas,UMKM,Manufaktur,Bandung,Lokal,Nanda Cahyono,081592105307,2022-05-29
+C1417,CV Daya Sejahtera,UMKM,Retail,Semarang,Lokal,Anggi Wardani,085878872820,2023-10-09
+C1418,PT Sentosa Indonesia,Corporate,Keuangan & Perbankan,Surabaya,Multinasional,Ika Wulandari,081364170053,2022-10-28
+C1419,CV Karya Logistik,BUMN,Energi & Pertambangan,Jakarta,Nasional,Dinda Santoso,082179831242,2024-08-24
+C1420,CV Digital Perkasa,Pemerintah,FMCG,Semarang,Nasional,Teguh Handoko,087810511090,2024-07-16
+C1421,PT Indo Pratama,UMKM,Agribisnis,Surakarta,Lokal,Cahyo Setiawan,081229759974,2023-04-16
+C1422,CV Perkasa Utama,Corporate,Retail,Semarang,Multinasional,Julia Cahyono,085394204164,2022-12-09
+C1423,CV Makmur Mandiri,Startup,FMCG,Surakarta,Lokal,Gilang Nugraha,085237669976,2023-01-20
+C1424,PT Bakti Utama,Corporate,E-commerce,Surabaya,Nasional,Nadya Budiman,085268814499,2022-04-06
+C1425,PT Bumi Mandiri,UMKM,FMCG,Jakarta,Lokal,Lukman Kusuma,085835279111,2024-06-13
+C1426,CV Bumi Data,Startup,Asuransi,Surakarta,Lokal,Nadia Fitriani,082248002264,2022-04-18
+C1427,CV Media Global,Pemerintah,Agribisnis,Bandung,Lokal,Sari Pangestu,081629878192,2023-11-17
+C1428,CV Nusa Perkasa,Corporate,Asuransi,Bandung,Nasional,Kirana Suryadi,085745847413,2024-07-20
+C1429,PT Bina Informatika,UMKM,Logistik & Supply Chain,Surakarta,Nasional,Winda Wijaya,087856115686,2023-08-27
+C1430,CV Prima Logistik,NGO,Keuangan & Perbankan,Depok,Multinasional,Vina Puspitasari,085780531602,2022-02-27
+C1431,CV Makmur Systems,NGO,Manufaktur,Jakarta,Lokal,Aditya Oktaviani,085671862447,2024-06-20
+C1432,CV Bangkit Konsultan,UMKM,Keuangan & Perbankan,Tangerang,Nasional,Anggi Maulana,085886635654,2023-09-04
+C1433,CV Esa Solusi,Startup,E-commerce,Bekasi,Lokal,Dian Febriani,081259469984,2024-12-07
+C1434,CV Daya Bersama,Startup,Travel & Hospitality,Bogor,Lokal,Cahyo Wijaya,081332988712,2023-11-04
+C1435,CV Bumi Digital,Startup,Asuransi,Bekasi,Nasional,Isna Sulistyo,087786268527,2022-09-17
+C1436,CV Esa Gemilang,UMKM,Teknologi Informasi,Semarang,Nasional,Candra Permana,087710628334,2024-07-08
+C1437,CV Graha Bersama,Corporate,Pendidikan & EdTech,Bekasi,Multinasional,Farah Handayani,081500453585,2024-07-16
+C1438,PT Jaya Teknologi,Corporate,Teknologi Informasi,Bandung,Lokal,Bagus Wibowo,082239801387,2022-06-24
+C1439,PT Solusi Nusantara,Corporate,Pendidikan & EdTech,Jakarta,Multinasional,Amelia Anggara,081227728715,2023-02-09
+C1440,CV Mitra Terapan,Startup,Kesehatan & Farmasi,Yogyakarta,Nasional,Budi Maulana,085682403532,2024-08-06
+C1441,CV Techno Karya,Corporate,Keuangan & Perbankan,Jakarta,Lokal,Tiara Safitri,081204794123,2024-09-06
+C1442,CV Sejahtera Perkasa,Corporate,E-commerce,Surakarta,Multinasional,Ilham Kurniawan,082102913813,2022-09-21
+C1443,PT Global Media,Corporate,Keuangan & Perbankan,Yogyakarta,Multinasional,Umar Syahputra,083831723667,2023-03-21
+C1444,PT Mandiri Teknologi,Startup,Teknologi Informasi,Surakarta,Lokal,Gibran Wijaya,085749560714,2022-11-22
+C1445,PT Media Teknologi,BUMN,Agribisnis,Yogyakarta,Nasional,Mira Oktaviani,087723163160,2022-11-11
+C1446,CV Bina Kreatif,UMKM,Keuangan & Perbankan,Surakarta,Nasional,Rendy Saputra,085271408633,2024-12-06
+C1447,CV Esa Bangsa,BUMN,Travel & Hospitality,Surabaya,Nasional,Ratna Suryadi,085645513919,2022-10-17
+C1448,CV Solusi Teknologi,Startup,Manufaktur,Jakarta,Nasional,Nurul Permana,083867416371,2024-04-26
+C1449,CV Cipta Sentosa,Startup,Retail,Jakarta,Lokal,Amelia Nugroho,081345840811,2024-06-24
+C1450,CV Abadi Data,Startup,Media & Kreatif,Jakarta,Lokal,Vina Handayani,085346542683,2023-11-13
+C1451,CV Media Abadi,Startup,Energi & Pertambangan,Jakarta,Lokal,Galuh Fitriani,085656275280,2022-06-23
+C1452,PT Sentosa Gemilang,Corporate,Telekomunikasi,Semarang,Multinasional,Umar Ningsih,081363832648,2023-01-13
+C1453,PT Makmur Sentosa,Pemerintah,Manufaktur,Surakarta,Lokal,Fitri Fitriani,081642355283,2023-09-10
+C1454,CV Andalas Solusi,UMKM,Agribisnis,Semarang,Lokal,Hafiz Sari,081226564771,2024-10-04
+C1455,PT Mega Systems,Startup,Manufaktur,Surakarta,Lokal,Gibran Oktaviani,085680822679,2022-11-18
+C1456,CV Kreasi Karya,Corporate,FMCG,Yogyakarta,Nasional,Galih Nugraha,085600370907,2024-12-20
+C1457,PT Jaya Inovasi,Corporate,FMCG,Surakarta,Lokal,Salma Ramadhani,081520262693,2023-09-22
+C1458,CV Bina Digital,UMKM,Keuangan & Perbankan,Bogor,Nasional,Olivia Suryadi,081368522476,2022-03-22
+C1459,CV Graha Logistik,Corporate,Agribisnis,Semarang,Multinasional,Galuh Sari,087869332763,2022-05-07
+C1460,CV Media Logistik,Corporate,Otomotif,Jakarta,Multinasional,Ika Utami,082159310337,2023-03-25
+C1461,CV Mega Systems,UMKM,Otomotif,Jakarta,Nasional,Yoga Oktaviani,087780473719,2022-06-18
+C1462,CV Indo Systems,BUMN,Pendidikan & EdTech,Bandung,Nasional,Anggi Sari,085728839039,2024-05-27
+C1463,PT Sejahtera Media,UMKM,Pendidikan & EdTech,Semarang,Nasional,Kevin Hidayat,085285965510,2022-02-16
+C1464,CV Graha Digital,Corporate,Asuransi,Malang,Nasional,Farah Anggara,082247671499,2022-03-17
+C1465,CV Andalas Sentosa,Startup,Logistik & Supply Chain,Jakarta,Nasional,Sari Sari,085263994959,2023-05-11
+C1466,PT Media Utama,BUMN,Telekomunikasi,Jakarta,Nasional,Maya Santoso,087708730021,2024-06-10
+C1467,CV Mandiri Informatika,Corporate,Pendidikan & EdTech,Bandung,Multinasional,Aditya Hidayat,085210904886,2024-03-12
+C1468,CV Cakra Mandiri,Startup,Retail,Surabaya,Lokal,Anggi Ramadhan,085341760909,2024-08-18
+C1469,PT Mandiri Cerdas,UMKM,FMCG,Bandung,Lokal,Salma Firdaus,081634669447,2023-08-08
+C1470,CV Digital Konsultan,Corporate,Travel & Hospitality,Malang,Nasional,Januar Safitri,081256651837,2023-10-29
+C1471,PT Jaya Sejahtera,BUMN,FMCG,Surakarta,Nasional,Anggi Sari,083806250230,2024-04-05
+C1472,CV Sentosa Cerdas,BUMN,FMCG,Jakarta,Nasional,Lestari Kurniawan,082115603871,2024-04-10
+C1473,CV Nusa Nusantara,BUMN,Keuangan & Perbankan,Bogor,Nasional,Lina Prabowo,085886819004,2023-05-02
+C1474,PT Bakti Informatika,UMKM,Pendidikan & EdTech,Jakarta,Nasional,Galih Dewi,083855002957,2024-04-01
+C1475,CV Mandiri Terapan,Corporate,Retail,Surakarta,Multinasional,Riska Oktaviani,081519499913,2022-04-23
+C1476,CV Kreasi Logistik,Startup,Travel & Hospitality,Tangerang,Lokal,Ivan Fitriani,081396129332,2024-01-19
+C1477,CV Cakra Terapan,Pemerintah,Kesehatan & Farmasi,Semarang,Nasional,Tiara Ramadhan,081365712118,2022-05-02
+C1478,CV Perkasa Digital,Corporate,Energi & Pertambangan,Surabaya,Multinasional,Qonita Sulistyo,081560819714,2022-01-28
+C1479,PT Mandiri Gemilang,Corporate,Energi & Pertambangan,Bandung,Multinasional,Galih Syahputra,081647286174,2023-02-04
+C1480,PT Prima Global,BUMN,Energi & Pertambangan,Surakarta,Nasional,Indah Nugraha,085686603498,2024-03-10
+C1481,CV Jaya Terapan,NGO,Travel & Hospitality,Bandung,Nasional,Farah Nugroho,081365627740,2024-04-25
+C1482,CV Karya Bersama,Corporate,Agribisnis,Bekasi,Multinasional,Julia Permana,082135256008,2022-10-30
+C1483,CV Global Pratama,Pemerintah,Keuangan & Perbankan,Jakarta,Lokal,Vino Lestari,081513184560,2024-01-08
+C1484,CV Bina Indonesia,Startup,Logistik & Supply Chain,Surakarta,Lokal,Lutfia Sulistyo,082214140878,2023-07-09
+C1485,CV Inti Logistik,NGO,Pendidikan & EdTech,Semarang,Nasional,Aldi Budiman,081221168231,2024-09-13
+C1486,CV Graha Pratama,Corporate,Retail,Depok,Multinasional,Nisa Nugraha,085648882372,2022-09-19
+C1487,CV Prima Systems,Startup,Properti & Konstruksi,Surakarta,Lokal,Maulana Saputra,085803455388,2024-12-14
+C1488,CV Daya Inovasi,Startup,Konsultan Manajemen,Jakarta,Nasional,Luthfi Ramadhani,083887458712,2024-02-15
+C1489,CV Karya Media,BUMN,Pendidikan & EdTech,Semarang,Nasional,Winda Lestari,081352621074,2024-03-09
+C1490,CV Bina Bersama,Startup,Retail,Surakarta,Nasional,Budi Ardiansyah,081234344997,2022-02-28
+C1491,CV Sinergi Kreatif,UMKM,Teknologi Informasi,Semarang,Nasional,Isna Saputra,081211139154,2022-08-24
+C1492,CV Cakra Abadi,Corporate,Media & Kreatif,Semarang,Multinasional,Ahmad Wulandari,083861647904,2022-01-27
+C1493,CV Cakra Digital,BUMN,Asuransi,Yogyakarta,Nasional,Salma Santoso,081285973586,2024-04-12
+C1494,CV Jaya Bangsa,Corporate,Konsultan Manajemen,Malang,Nasional,Bella Nugraha,085837729084,2022-09-23
+C1495,PT Solusi Inovasi,Startup,Pendidikan & EdTech,Surakarta,Lokal,Wahyu Pratama,085663240510,2023-07-17
+C1496,CV Cakra Pratama,Corporate,Travel & Hospitality,Yogyakarta,Lokal,Intan Permana,085364660332,2023-08-20
+C1497,CV Bangkit Gemilang,Startup,Otomotif,Depok,Lokal,Pandu Firdaus,087887058079,2022-07-29
+C1498,PT Cipta Systems,BUMN,Energi & Pertambangan,Surabaya,Nasional,Farel Saputra,081664070783,2024-01-15
+C1499,PT Inti Abadi,BUMN,Travel & Hospitality,Yogyakarta,Nasional,Budi Lestari,082107560526,2023-10-09
+C1500,CV Digital Global,BUMN,Media & Kreatif,Tangerang,Nasional,Wulan Kusuma,081230799154,2024-01-04
