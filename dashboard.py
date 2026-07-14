@@ -1,23 +1,17 @@
-"""
-SSDC 2026 — Dashboard Student Placement System
-Struktur: 4 tab (Overview, Funnel, Mitra, Kesiapan)
-"""
 
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# ============================================================
-# KONFIGURASI HALAMAN
-# ============================================================
+
 st.set_page_config(
     page_title="SSDC 2026 — Student Placement Dashboard",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Palet warna autumn (dari referensi tema SSF)
+
 COLOR_SIENNA = "#872408"       # merah-coklat gelap — warning/negatif
 COLOR_COCOA = "#E2782F"        # oranye — aksen utama
 COLOR_JASMINE = "#F7D475"      # kuning — highlight/positif
@@ -26,21 +20,16 @@ COLOR_SEAL_BROWN = "#4A230E"   # coklat sangat gelap — background aksen
 
 PALETTE_SEQUENTIAL = [COLOR_JASMINE, COLOR_COCOA, COLOR_SIENNA, COLOR_SEAL_BROWN, COLOR_DRAB_DARK]
 
-# ============================================================
-# LOAD DATA
-# ============================================================
-@st.cache_data
-def load_data():
-    company = pd.read_csv("data/cleaned_company.csv", parse_dates=["created_at"])
-    status_student = pd.read_csv("data/cleaned_status_student.csv", parse_dates=["sync_date"])
-    student_all = pd.read_csv("data/cleaned_student_all.csv")
-    talent_request = pd.read_csv("data/cleaned_talent_request.csv", parse_dates=["request_date"])
-    tracking_company = pd.read_csv(
-        "data/cleaned_tracking_company.csv", parse_dates=["request_date", "send_date"]
-    )
-    tracking_student = pd.read_csv("data/cleaned_tracking_student.csv", parse_dates=["last_update"])
 
-    # pastikan kolom key konsisten string (jaga-jaga kalau ke-load sebagai angka)
+def load_data():
+   company = pd.read_csv("cleaned_company.csv", parse_dates=["created_at"])
+status_student = pd.read_csv("cleaned_status_student.csv", parse_dates=["sync_date"])
+student_all = pd.read_csv("cleaned_student_all.csv")
+talent_request = pd.read_csv("cleaned_talent_request.csv", parse_dates=["request_date"])
+tracking_company = pd.read_csv("cleaned_tracking_company.csv", parse_dates=["request_date", "send_date"])
+tracking_student = pd.read_csv("cleaned_tracking_student.csv", parse_dates=["last_update"])
+
+    
     for df, col in [
         (company, "id_company"), (talent_request, "id_talent_req"), (talent_request, "id_company"),
         (tracking_company, "id_tracking_company"), (tracking_company, "id_talent_req"),
@@ -55,9 +44,7 @@ def load_data():
 
 company, status_student, student_all, talent_request, tracking_company, tracking_student = load_data()
 
-# ============================================================
-# SIDEBAR — FILTER GLOBAL (BT-07: pelaporan per dimensi)
-# ============================================================
+
 st.sidebar.title("🍂 SSDC 2026")
 st.sidebar.markdown("**Filter Laporan**")
 
@@ -71,29 +58,24 @@ prodi_pilihan = st.sidebar.multiselect("Program Studi", prodi_list, default=[])
 jenis_list = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist())
 jenis_pilihan = st.sidebar.multiselect("Jenis Penempatan", jenis_list, default=[])
 
-# Terapkan filter tahun ke tracking_student
 ts_filtered = tracking_student[tracking_student["tahun_update"].isin(tahun_pilihan)].copy()
 
-# Terapkan filter prodi (lewat NIM -> student_all) kalau dipilih
+
 if prodi_pilihan:
     nim_prodi = student_all[student_all["program_studi"].isin(prodi_pilihan)]["NIM"]
     ts_filtered = ts_filtered[ts_filtered["NIM"].isin(nim_prodi)]
 
-# Terapkan filter jenis penempatan kalau dipilih
+
 if jenis_pilihan:
     ts_filtered = ts_filtered[ts_filtered["jenis_penempatan"].isin(jenis_pilihan)]
 
 st.sidebar.markdown("---")
 st.sidebar.caption(f"Data sync terakhir: {status_student['sync_date'].max().strftime('%d %B %Y')}")
 
-# ============================================================
-# TABS
-# ============================================================
+
 tab1, tab2, tab3, tab4 = st.tabs(["📊 Overview", "🔻 Funnel", "🤝 Mitra", "🎓 Kesiapan"])
 
-# ------------------------------------------------------------
-# TAB 1 — OVERVIEW
-# ------------------------------------------------------------
+
 with tab1:
     st.header("Ringkasan Program Placement")
 
@@ -111,7 +93,7 @@ with tab1:
 
     st.markdown("---")
 
-    # Tren placement per bulan
+   
     placement_df = ts_filtered[ts_filtered["rejection"] == "Placement"].copy()
     placement_df["bulan"] = placement_df["last_update"].dt.to_period("M").astype(str)
     tren = placement_df.groupby("bulan").size().reset_index(name="jumlah_placement")
@@ -124,9 +106,7 @@ with tab1:
     fig_tren.update_layout(xaxis_title="Bulan", yaxis_title="Jumlah Placement")
     st.plotly_chart(fig_tren, use_container_width=True)
 
-# ------------------------------------------------------------
-# TAB 2 — FUNNEL (tab utama insight: ghosting)
-# ------------------------------------------------------------
+
 with tab2:
     st.header("Alur Seleksi & Titik Kehilangan Kandidat")
 
@@ -194,9 +174,7 @@ with tab2:
                 "Perlu SOP follow-up yang lebih ketat untuk perusahaan dengan pola ghosting berulang."
             )
 
-# ------------------------------------------------------------
-# TAB 3 — MITRA
-# ------------------------------------------------------------
+
 with tab3:
     st.header("Performa Perusahaan Mitra")
 
@@ -253,9 +231,7 @@ with tab3:
         fig_sektor.update_layout(yaxis={"categoryorder": "total ascending"})
         st.plotly_chart(fig_sektor, use_container_width=True)
 
-# ------------------------------------------------------------
-# TAB 4 — KESIAPAN
-# ------------------------------------------------------------
+
 with tab4:
     st.header("Kesiapan & Kelayakan Mahasiswa")
 
@@ -290,7 +266,7 @@ with tab4:
 
     st.markdown("---")
 
-    # Matching gap: bidang studi dibutuhkan (talent_request) vs program studi tersedia (student_all)
+ 
     demand = (
         talent_request["bidang_studi_dibutuhkan"]
         .str.split(",")
