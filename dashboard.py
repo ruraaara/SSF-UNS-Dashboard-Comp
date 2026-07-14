@@ -478,20 +478,143 @@ with tab4:
 with tab5:
     with st.container(border=True):
         section("Cari Kandidat Terbaik untuk Talent Request")
+
         tr_options = talent_request.copy()
-        tr_options["label"] = tr_options["nama_posisi"].fillna("-") + " — " + tr_options["nama_perusahaan"].fillna("-") + " (" + tr_options["id_talent_req"].astype(str) + ")"
-        pilihan_label = st.selectbox("Pilih Talent Request", tr_options["label"].tolist())
-        selected = tr_options[tr_options["label"] == pilihan_label].iloc[0]
+        tr_options["label"] = (
+            tr_options["nama_posisi"].fillna("-")
+            + " — "
+            + tr_options["nama_perusahaan"].fillna("-")
+            + " ("
+            + tr_options["id_talent_req"].astype(str)
+            + ")"
+        )
 
-        bidang_dibutuhkan = [b.strip() for b in str(selected.get("bidang_studi_dibutuhkan", "")).split(",")]
+        pilihan_label = st.selectbox(
+            "Pilih Talent Request",
+            tr_options["label"].tolist()
+        )
+
+        selected = tr_options[
+            tr_options["label"] == pilihan_label
+        ].iloc[0]
+
+        bidang_dibutuhkan = [
+            x.strip()
+            for x in str(
+                selected.get("bidang_studi_dibutuhkan", "")
+            ).split(",")
+            if x.strip() != ""
+        ]
+
         min_semester = selected.get("minimum_semester", 0)
-        if pd.isna(min_semester): min_semester = 0
+        if pd.isna(min_semester):
+            min_semester = 0
 
-        candidates = student_all.merge(status_student, on="nim", how="inner")
-        candidates = candidates[candidates["program_studi"].isin(bidang_dibutuhkan) & (candidates["semester"] >= min_semester) & (candidates["ketersediaan"] == "Tersedia") & (candidates["status"] == "Aktif")].sort_values("ipk", ascending=False)
+        candidates = student_all.merge(
+            status_student,
+            on="nim",
+            how="inner",
+            suffixes=("_student", "_status")
+        )
+
+        prodi_col = (
+            "program_studi_student"
+            if "program_studi_student" in candidates.columns
+            else "program_studi"
+        )
+
+        semester_col = (
+            "semester_student"
+            if "semester_student" in candidates.columns
+            else "semester"
+        )
+
+        nama_col = (
+            "nama_student"
+            if "nama_student" in candidates.columns
+            else "nama"
+        )
+
+        candidates = candidates[
+            (candidates[prodi_col].isin(bidang_dibutuhkan))
+            & (candidates[semester_col] >= min_semester)
+            & (candidates["ketersediaan"] == "Tersedia")
+            & (candidates["status"] == "Aktif")
+        ].copy()
+
+        if len(candidates) > 0:
+            candidates["prodi_score"] = 1.0
+            candidates["ipk_score"] = (
+                candidates["ipk"] / candidates["ipk"].max()
+                if candidates["ipk"].max() > 0
+                else 0
+            )
+            candidates["semester_score"] = (
+                candidates[semester_col]
+                / candidates[semester_col].max()
+            )
+
+            candidates["cv_score"] = (
+                candidates["cv"]
+                .astype(str)
+                .str.lower()
+                .eq("ada")
+                .astype(int)
+            )
+
+            candidates["portfolio_score"] = (
+                candidates["portofolio"]
+                .astype(str)
+                .str.lower()
+                .eq("ada")
+                .astype(int)
+            )
+
+            # Bobot awal berbasis expert judgement (AHP dapat disesuaikan)
+            w_prodi = 0.40
+            w_ipk = 0.30
+            w_portfolio = 0.15
+            w_semester = 0.10
+            w_cv = 0.05
+
+            candidates["recommendation_score"] = (
+                w_prodi * candidates["prodi_score"]
+                + w_ipk * candidates["ipk_score"]
+                + w_portfolio * candidates["portfolio_score"]
+                + w_semester * candidates["semester_score"]
+                + w_cv * candidates["cv_score"]
+            )
+
+            candidates = candidates.sort_values(
+                "recommendation_score",
+                ascending=False
+            )
 
         st.markdown(f"**{len(candidates)} kandidat cocok ditemukan:**")
-        st.dataframe(candidates[["nim", "nama", "program_studi", "semester", "ipk", "cv", "portofolio", "domisili"]].head(30), use_container_width=True, hide_index=True)
+
+        if len(candidates) == 0:
+            st.info("Tidak ada kandidat yang memenuhi syarat.")
+        else:
+            show_cols = [
+                c for c in [
+                    "nim",
+                    nama_col,
+                    prodi_col,
+                    semester_col,
+                    "ipk",
+                    "cv",
+                    "portofolio",
+                    "domisili",
+                    "recommendation_score"
+                ]
+                if c in candidates.columns
+            ]
+
+            st.dataframe(
+                candidates[show_cols].head(50),
+                use_container_width=True,
+                hide_index=True
+            )
 
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
@@ -518,3 +641,69 @@ with tab6:
         st.metric("Mahasiswa Belum Ada Data Status (Belum Sync)", f"{len(belum_sync):,}")
         if len(belum_sync) > 0:
             st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20), use_container_width=True, hide_index=True)
+
+
+# =========================
+# PREDICTIVE ANALYTICS MODULE (ADD TO A NEW TAB)
+# =========================
+# Contoh penggunaan:
+#
+# with tab7:
+#     from sklearn.ensemble import RandomForestClassifier
+#     from sklearn.model_selection import train_test_split
+#     from sklearn.preprocessing import LabelEncoder
+#
+#     ml = tracking_student.copy()
+#     if "progress" in ml.columns:
+#         ml["placement_target"] = (
+#             ml["progress"].astype(str)
+#             .str.contains("Placement", case=False, na=False)
+#         ).astype(int)
+#
+#         features = []
+#         for c in [
+#             "ipk","semester","program_studi",
+#             "cv","portofolio","domisili"
+#         ]:
+#             if c in student_all.columns:
+#                 features.append(c)
+#
+#         st.info(
+#             "Gunakan model RandomForest/XGBoost setelah "
+#             "dataset placement final dibentuk melalui merge "
+#             "tracking_student + student_all."
+#         )
+#
+
+
+
+# =========================
+# GHOSTING RULE (BT-05)
+# =========================
+if "send_date" in tracking_company.columns:
+    tracking_company["send_date"] = pd.to_datetime(
+        tracking_company["send_date"],
+        errors="coerce"
+    )
+
+    today = pd.Timestamp.today().normalize()
+
+    tracking_company["days_no_response"] = (
+        today - tracking_company["send_date"]
+    ).dt.days
+
+    tracking_company["ghosting_status"] = np.select(
+        [
+            tracking_company["days_no_response"] > 28,
+            tracking_company["days_no_response"] > 21,
+            tracking_company["days_no_response"] > 14,
+            tracking_company["days_no_response"] > 7,
+        ],
+        [
+            "Ghosting",
+            "FU 3",
+            "FU 2",
+            "FU 1",
+        ],
+        default="Normal"
+    )
