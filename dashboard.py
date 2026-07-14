@@ -21,15 +21,17 @@ COLOR_SEAL_BROWN = "#4A230E"   # coklat sangat gelap — background aksen
 PALETTE_SEQUENTIAL = [COLOR_JASMINE, COLOR_COCOA, COLOR_SIENNA, COLOR_SEAL_BROWN, COLOR_DRAB_DARK]
 
 
+@st.cache_data
 def load_data():
-   company = pd.read_csv("cleaned_company.csv", parse_dates=["created_at"])
-status_student = pd.read_csv("cleaned_status_student.csv", parse_dates=["sync_date"])
-student_all = pd.read_csv("cleaned_student_all.csv")
-talent_request = pd.read_csv("cleaned_talent_request.csv", parse_dates=["request_date"])
-tracking_company = pd.read_csv("cleaned_tracking_company.csv", parse_dates=["request_date", "send_date"])
-tracking_student = pd.read_csv("cleaned_tracking_student.csv", parse_dates=["last_update"])
+    company = pd.read_csv("cleaned_company.csv", parse_dates=["created_at"])
+    status_student = pd.read_csv("cleaned_status_student.csv", parse_dates=["sync_date"])
+    student_all = pd.read_csv("cleaned_student_all.csv")
+    talent_request = pd.read_csv("cleaned_talent_request.csv", parse_dates=["request_date"])
+    tracking_company = pd.read_csv(
+        "cleaned_tracking_company.csv", parse_dates=["request_date", "send_date"]
+    )
+    tracking_student = pd.read_csv("cleaned_tracking_student.csv", parse_dates=["last_update"])
 
-    
     for df, col in [
         (company, "id_company"), (talent_request, "id_talent_req"), (talent_request, "id_company"),
         (tracking_company, "id_tracking_company"), (tracking_company, "id_talent_req"),
