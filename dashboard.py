@@ -18,16 +18,28 @@ st.set_page_config(
 # ---------------------------------------------------------------------------
 # PALET WARNA SEMANTIK
 # ---------------------------------------------------------------------------
-COLOR_SIENNA = "#872408"       # warning keras / negatif / ghosting / gap
-COLOR_COCOA = "#E2782F"        # aksen utama / positif / umum
-COLOR_JASMINE = "#F7D475"      # highlight / supply
+COLOR_SIENNA = "#872408"       # negatif / ghosting / rejection
+COLOR_COCOA = "#E2782F"        # aksen utama
+COLOR_JASMINE = "#F7D475"      # highlight / pembanding netral
 COLOR_DRAB_DARK = "#403314"    # teks / netral gelap
 COLOR_SEAL_BROWN = "#4A230E"   # background aksen
-COLOR_OLIVE = "#6B7A3D"        # sukses, senada earthy — pengganti hijau default
+COLOR_OLIVE = "#6B7A3D"        # sukses
 COLOR_BG_CARD = "#FBF4E8"      # background card lembut
 
-PALETTE_SEQUENTIAL = [COLOR_JASMINE, COLOR_COCOA, COLOR_SIENNA, COLOR_SEAL_BROWN, COLOR_DRAB_DARK]
 
+def tint(hex_color: str, factor: float) -> str:
+    """Campur warna dengan putih; factor 0 = warna asli, 1 = putih penuh.
+    Semua background turunan dihitung dari palet utama supaya kalau palet
+    diganti, seluruh dashboard ikut berubah konsisten."""
+    h = hex_color.lstrip("#")
+    r, g, b = (int(h[i:i + 2], 16) for i in (0, 2, 4))
+    r = round(r + (255 - r) * factor)
+    g = round(g + (255 - g) * factor)
+    b = round(b + (255 - b) * factor)
+    return f"#{r:02X}{g:02X}{b:02X}"
+
+
+# 6 tahap funnel butuh 6 warna — urut terang ke gelap
 FUNNEL_STAGES = [
     "Selecting Student by Company",
     "Study Case",
@@ -36,14 +48,36 @@ FUNNEL_STAGES = [
     "Final Interview",
     "Placement",
 ]
+PALETTE_SEQUENTIAL = [
+    COLOR_JASMINE,
+    tint(COLOR_COCOA, 0.35),
+    COLOR_COCOA,
+    COLOR_SIENNA,
+    COLOR_SEAL_BROWN,
+    COLOR_DRAB_DARK,
+]
 
-# Aturan resmi status follow-up / Ghosting (BT-05) — RULE-BASED, bukan ML.
-# Definisi ini datang dari panitia, jadi tidak perlu (dan tidak boleh) dimodelkan.
+# Aturan resmi FAQ BT-05: Ghosting diasumsikan dari PIHAK PERUSAHAAN,
+# dihitung dari send_date per batch pengiriman (baris tracking_company).
 FU1_DAYS = 7          # > 1 minggu tanpa respons -> FU 1
 FU2_DAYS = 14         # > 2 minggu tanpa respons -> FU 2
 FU3_DAYS = 21         # > 3 minggu tanpa respons -> FU 3
 GHOSTING_DAYS = 28    # > 4 minggu tanpa respons -> Ghosting
 SYNC_STALE_DAYS = 14
+
+# FAQ: kolom "eligible" = kolom "ketersediaan". Data bisa berbahasa
+# Inggris ("Active"/"Available") atau Indonesia ("Aktif"/"Tersedia"),
+# jadi keduanya diterima setelah normalisasi lowercase.
+VAL_STATUS_AKTIF = {"active", "aktif"}
+VAL_TERSEDIA = {"available", "tersedia"}
+VAL_ADA = {"ada"}
+
+REJECTION_STAGES = [
+    "Rejection Screening CV",
+    "Rejection Study Case",
+    "Rejection Interview User",
+    "Rejection Final Interview",
+]
 
 # ---------------------------------------------------------------------------
 # STYLE — CSS Custom
@@ -69,14 +103,14 @@ html, body, [class*="css"] {{
     margin: 0;
 }}
 .dash-header p {{
-    color: #F3D9BE;
+    color: {tint(COLOR_JASMINE, 0.4)};
     font-size: 0.9rem;
     margin: 4px 0 0 0;
 }}
 
 div[data-testid="stMetric"] {{
     background-color: {COLOR_BG_CARD};
-    border: 1px solid #EAD9BB;
+    border: 1px solid {tint(COLOR_COCOA, 0.65)};
     border-radius: 12px;
     padding: 14px 16px 10px 16px;
 }}
@@ -88,12 +122,9 @@ div[data-testid="stMetricValue"] {{ color: {COLOR_SIENNA}; font-weight: 700; }}
     font-weight: 700;
     color: {COLOR_SEAL_BROWN};
     margin: 4px 0 2px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }}
 .section-caption {{
-    color: #7A6449;
+    color: {tint(COLOR_DRAB_DARK, 0.35)};
     font-size: 0.85rem;
     margin-bottom: 10px;
 }}
@@ -112,7 +143,7 @@ div[data-testid="stMetricValue"] {{ color: {COLOR_SIENNA}; font-weight: 700; }}
 
 div[data-testid="stVerticalBlockBorderWrapper"] {{
     border-radius: 14px !important;
-    border-color: #EAD9BB !important;
+    border-color: {tint(COLOR_COCOA, 0.65)} !important;
     background-color: #FFFDF9;
 }}
 
@@ -120,21 +151,14 @@ button[data-baseweb="tab"] {{
     font-weight: 600;
 }}
 
-/* Reskin semua native alert (st.info/warning/success/error) biar nyatu
-   sama tema earthy, bukan biru/hijau default Streamlit */
 div[data-testid="stAlertContainer"], div[data-testid="stAlert"] {{
     background-color: {COLOR_BG_CARD} !important;
-    border: 1px solid #EAD9BB !important;
+    border: 1px solid {tint(COLOR_COCOA, 0.65)} !important;
     border-left: 5px solid {COLOR_COCOA} !important;
     border-radius: 10px !important;
 }}
 div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
     color: {COLOR_DRAB_DARK} !important;
-}}
-
-.match-summary-row-zero {{
-    color: {COLOR_SIENNA} !important;
-    font-weight: 700;
 }}
 
 #MainMenu, footer {{visibility: hidden;}}
@@ -143,7 +167,7 @@ div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
 
 st.markdown("""
 <div class="dash-header">
-    <h1>🍂 SSDC 2026 — Student Placement Dashboard</h1>
+    <h1>SSDC 2026 — Student Placement Dashboard</h1>
     <p>Ringkasan performa penempatan mahasiswa: dari permintaan perusahaan sampai placement.</p>
 </div>
 """, unsafe_allow_html=True)
@@ -156,16 +180,16 @@ def section(title: str, caption: str = ""):
 
 
 def insight(text: str, kind: str = "info"):
-    styles = {
-        "info":    {"accent": COLOR_COCOA,      "bg": "#FDF1E7", "icon": "💡"},
-        "success": {"accent": COLOR_OLIVE,       "bg": "#F1F4E9", "icon": "✅"},
-        "warning": {"accent": COLOR_JASMINE,     "bg": "#FFF8E1", "icon": "⚠️"},
-        "error":   {"accent": COLOR_SIENNA,      "bg": "#FBE9E4", "icon": "🔴"},
+    accents = {
+        "info": COLOR_COCOA,
+        "success": COLOR_OLIVE,
+        "warning": COLOR_JASMINE,
+        "error": COLOR_SIENNA,
     }
-    s = styles.get(kind, styles["info"])
+    accent = accents.get(kind, COLOR_COCOA)
     st.markdown(
-        f'<div class="insight-box" style="--accent:{s["accent"]}; --bg:{s["bg"]};">'
-        f'{s["icon"]} <b>Insight:</b> {text}</div>',
+        f'<div class="insight-box" style="--accent:{accent}; --bg:{tint(accent, 0.88)};">'
+        f'<b>Insight:</b> {text}</div>',
         unsafe_allow_html=True,
     )
 
@@ -200,11 +224,7 @@ def hitung_status_followup(hari_sejak_kirim, sudah_direspon) -> str:
 
 
 def resolve_col(df: pd.DataFrame, base: str, suffixes=("_student", "", "_status")):
-    """
-    Cari nama kolom yang benar setelah merge dengan suffixes.
-    Ini yang bikin KeyError kalau dipanggil pakai nama kolom mentah
-    (mis. 'program_studi') padahal hasil merge-nya jadi 'program_studi_student'.
-    """
+    """Cari nama kolom yang benar setelah merge dengan suffixes."""
     for suf in suffixes:
         cand = f"{base}{suf}"
         if cand in df.columns:
@@ -213,13 +233,7 @@ def resolve_col(df: pd.DataFrame, base: str, suffixes=("_student", "", "_status"
 
 
 def norm_text(series: pd.Series) -> pd.Series:
-    """
-    Normalisasi teks untuk matching: strip spasi + lowercase.
-    .isin() pandas itu exact-match & case-sensitive, jadi kalau data mentah
-    ada beda kapitalisasi/spasi ('Sistem Informasi ' vs 'sistem informasi'),
-    semua match bakal gagal walau isinya "sama" secara makna. Ini nyebabin
-    SEMUA talent request keliatan 0 kandidat padahal datanya sebenarnya ada.
-    """
+    """Normalisasi teks untuk matching: strip spasi + lowercase."""
     return series.astype(str).str.strip().str.lower()
 
 
@@ -274,8 +288,8 @@ def load_data():
         _clean_key(df, col)
 
     for col, df in [("jumlah_dikirimkan", tracking_company), ("jumlah_permintaan", tracking_company),
-                     ("headcount", talent_request), ("minimum_semester", talent_request),
-                     ("ipk", status_student), ("semester", student_all)]:
+                    ("headcount", talent_request), ("minimum_semester", talent_request),
+                    ("ipk", status_student), ("semester", student_all)]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
@@ -286,6 +300,9 @@ company, talent_request, tracking_company, tracking_student, student_all, status
 
 # ---------------------------------------------------------------------------
 # DATA MERGING
+# Prinsip ERD: nama perusahaan SELALU diambil dari master COMPANY via
+# id_company, bukan dari kolom teks denormalisasi (nama_perusahaan/company)
+# yang rawan beda penulisan antar tabel.
 # ---------------------------------------------------------------------------
 master = tracking_student.merge(tracking_company, on="id_tracking_company", how="left", suffixes=("", "_tc"))
 master = master.merge(company, on="id_company", how="left", suffixes=("", "_co"))
@@ -294,11 +311,16 @@ master = master.merge(student_all, on="nim", how="left", suffixes=("", "_sa"))
 master = master.merge(status_student, on="nim", how="left", suffixes=("", "_ss"))
 
 master["tahun_update"] = master["last_update"].dt.year
+# lama proses per kandidat: dari batch dikirim sampai update terakhir
+if "send_date" in master.columns:
+    master["lama_proses_hari"] = (master["last_update"] - master["send_date"]).dt.days
+
+COMPANY_NAME_COL = "company_name" if "company_name" in master.columns else "company"
 
 # ---------------------------------------------------------------------------
 # SIDEBAR FILTERS
 # ---------------------------------------------------------------------------
-st.sidebar.markdown("### 🍂 Filter Laporan")
+st.sidebar.markdown("### :material/tune: Filter Laporan")
 
 tahun_list = sorted(master["tahun_update"].dropna().unique().tolist())
 tahun_pilihan = st.sidebar.multiselect("Tahun", tahun_list, default=tahun_list)
@@ -309,6 +331,11 @@ prodi_pilihan = st.sidebar.multiselect("Program Studi", prodi_list, default=[])
 jenis_list = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist()) if "jenis_penempatan" in talent_request.columns else []
 jenis_pilihan = st.sidebar.multiselect("Jenis Penempatan", jenis_list, default=[])
 
+st.sidebar.caption(
+    "Filter berlaku untuk data proses seleksi (tracking). "
+    "Tab Kesiapan & Matching memakai data master terkini sehingga tidak terpengaruh filter."
+)
+
 m = master[master["tahun_update"].isin(tahun_pilihan)].copy() if tahun_pilihan else master.copy()
 if prodi_pilihan and "program_studi" in m.columns:
     m = m[m["program_studi"].isin(prodi_pilihan)]
@@ -316,7 +343,8 @@ if jenis_pilihan and "jenis_penempatan" in m.columns:
     m = m[m["jenis_penempatan"].isin(jenis_pilihan)]
 
 tc_scope = tracking_company.merge(
-    talent_request[["id_talent_req", "jenis_penempatan"]] if "jenis_penempatan" in talent_request.columns else talent_request[["id_talent_req"]],
+    talent_request[["id_talent_req", "jenis_penempatan", "headcount"]]
+    if "jenis_penempatan" in talent_request.columns else talent_request[["id_talent_req"]],
     on="id_talent_req", how="left",
 )
 tc_scope["tahun_tc"] = tc_scope["send_date"].dt.year if "send_date" in tc_scope.columns else tc_scope.get("request_date").dt.year
@@ -339,11 +367,12 @@ tanggal_acuan = st.sidebar.date_input(
 )
 tanggal_acuan = pd.Timestamp(tanggal_acuan)
 
-st.sidebar.markdown("---")
-st.sidebar.caption("Peta Business Task → Tab: Overview · Ghosting · Mitra · Kesiapan · Matching (ML) · Laporan")
-
 # ---------------------------------------------------------------------------
-# GHOSTING LOGIC (RULE-BASED — BT-05, TIDAK PAKAI ML)
+# GHOSTING LOGIC — RULE-BASED sesuai FAQ BT-05:
+# Ghosting diasumsikan dari PIHAK PERUSAHAAN, dihitung dari send_date,
+# per BATCH pengiriman (satu baris tracking_company).
+# Batch dianggap "direspon" jika minimal satu mahasiswa di batch itu sudah
+# bergerak melewati tahap awal, atau sudah ada keputusan Placement/Rejected.
 # ---------------------------------------------------------------------------
 respon_per_tc = tracking_student.groupby("id_tracking_company").agg(
     ada_progress_lanjut=("progress_student", lambda s: (s != "Selecting Student by Company").any()),
@@ -362,6 +391,8 @@ tc_status = tc_status.merge(
     talent_request[["id_talent_req", "jenis_penempatan"]] if "jenis_penempatan" in talent_request.columns else talent_request[["id_talent_req"]],
     on="id_talent_req", how="left", suffixes=("", "_tr2"),
 )
+# nama perusahaan resmi dari master COMPANY
+tc_status = tc_status.merge(company[["id_company", "company_name"]], on="id_company", how="left")
 tc_status["tahun_tc"] = tc_status["send_date"].dt.year
 if tahun_pilihan:
     tc_status = tc_status[tc_status["tahun_tc"].isin(tahun_pilihan)]
@@ -371,9 +402,6 @@ if jenis_pilihan and jenis_col_status in tc_status.columns:
 
 # ---------------------------------------------------------------------------
 # ML MODEL — MATCHING TALENT (RandomForest, prediksi peluang placement)
-# Dilatih dari histori keputusan (Placement vs Rejected). Kalau data histori
-# belum cukup / hanya 1 kelas, otomatis fallback ke skor AHP (weighted sum)
-# supaya tab tetap jalan dan tidak error.
 # ---------------------------------------------------------------------------
 ML_FEATURE_BASE = ["program_studi", "semester", "ipk", "cv", "portofolio", "domisili"]
 MIN_TRAIN_ROWS = 50
@@ -445,27 +473,49 @@ def train_matching_model(student_all_df: pd.DataFrame, status_student_df: pd.Dat
 ml_bundle = train_matching_model(student_all, status_student, tracking_student)
 
 # ---------------------------------------------------------------------------
-# TABS DECLARATION
+# TABS
 # ---------------------------------------------------------------------------
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📊 Overview", "🔻 Funnel & Ghosting", "🤝 Mitra", "🎓 Kesiapan", "🔍 Matching Talent (ML)", "📁 Laporan"
+    ":material/monitoring: Overview",
+    ":material/filter_alt: Funnel & Ghosting",
+    ":material/handshake: Mitra",
+    ":material/school: Kesiapan",
+    ":material/person_search: Matching Talent",
+    ":material/description: Laporan",
 ])
 
 # ---------------------------------------------------------------------------
 # TAB 1 — OVERVIEW
 # ---------------------------------------------------------------------------
 with tab1:
-    total_company = company["id_company"].nunique()
-    total_mahasiswa = student_all["nim"].nunique()
+    # Sumber tunggal untuk success rate: tracking_student (1 baris = 1
+    # kandidat dikirim ke 1 perusahaan). Pembilang & penyebut satu tabel,
+    # tidak mencampur dengan field manual jumlah_dikirimkan.
+    total_dikirim_individu = m["id_tracking_student"].nunique()
     total_placement = int((m["rejection"] == "Placement").sum())
-    total_dikirimkan = tc_scope["jumlah_dikirimkan"].sum() if "jumlah_dikirimkan" in tc_scope.columns else 0
-    success_rate = (total_placement / total_dikirimkan * 100) if total_dikirimkan > 0 else 0
+    success_rate = (total_placement / total_dikirim_individu * 100) if total_dikirim_individu > 0 else 0
+
+    total_diminta = tc_scope["headcount"].sum() if "headcount" in tc_scope.columns else tc_scope.get("jumlah_permintaan", pd.Series(dtype=float)).sum()
+    total_dikirim_batch = tc_scope["jumlah_dikirimkan"].sum() if "jumlah_dikirimkan" in tc_scope.columns else 0
+    fulfillment_rate = (total_dikirim_batch / total_diminta * 100) if total_diminta and total_diminta > 0 else 0
 
     col1, col2, col3, col4 = st.columns(4)
-    col1.metric("Total Company", f"{total_company:,}")
-    col2.metric("Total Mahasiswa Terdaftar", f"{total_mahasiswa:,}")
-    col3.metric("Total Placement Berhasil", f"{total_placement:,}")
-    col4.metric("Overall Success Rate", f"{success_rate:.1f}%")
+    col1.metric("Kandidat Dikirim (proses seleksi)", f"{total_dikirim_individu:,}")
+    col2.metric("Placement Berhasil", f"{total_placement:,}")
+    col3.metric("Success Rate", f"{success_rate:.1f}%",
+                help="Placement / kandidat dikirim, dihitung dari tracking_student (sumber yang sama).")
+    col4.metric("Fulfillment Rate", f"{fulfillment_rate:.1f}%",
+                help="Jumlah dikirim vs headcount yang diminta perusahaan (BT-03).")
+
+    col5, col6, col7 = st.columns(3)
+    col5.metric("Total Perusahaan Mitra", f"{company['id_company'].nunique():,}", help="Data master, di luar filter.")
+    col6.metric("Total Mahasiswa Terdaftar", f"{student_all['nim'].nunique():,}", help="Data master, di luar filter.")
+    selesai = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)]
+    if "lama_proses_hari" in selesai.columns and selesai["lama_proses_hari"].notna().any():
+        col7.metric("Rata-rata Lama Proses", f"{selesai['lama_proses_hari'].mean():.0f} hari",
+                    help="Dari batch dikirim (send_date) sampai keputusan terakhir.")
+    else:
+        col7.metric("Rata-rata Lama Proses", "—")
 
     with st.container(border=True):
         placement_df = m[m["rejection"] == "Placement"].copy()
@@ -480,16 +530,16 @@ with tab1:
             delta = tren["jumlah_placement"].iloc[-1] - tren["jumlah_placement"].iloc[-2]
             arah = "naik" if delta > 0 else ("turun" if delta < 0 else "stagnan")
             kind = "success" if delta >= 0 else "warning"
-            insight(f"Placement bulan **{tren['bulan'].iloc[-1]}** {arah} {abs(int(delta))} dibanding bulan sebelumnya.", kind=kind)
+            insight(f"Placement bulan <b>{tren['bulan'].iloc[-1]}</b> {arah} {abs(int(delta))} dibanding bulan sebelumnya.", kind=kind)
         else:
             insight("Data belum cukup untuk membandingkan tren antar bulan pada rentang filter ini.")
 
 # ---------------------------------------------------------------------------
-# TAB 2 — FUNNEL & GHOSTING (rule-based)
+# TAB 2 — FUNNEL & GHOSTING
 # ---------------------------------------------------------------------------
 with tab2:
     with st.container(border=True):
-        section("Funnel Seleksi Kandidat")
+        section("Funnel Seleksi Kandidat", "Persentase menunjukkan konversi dari tahap sebelumnya — tahap dengan drop terbesar adalah titik bocor utama.")
         stage_rank = {stage: i for i, stage in enumerate(FUNNEL_STAGES)}
         m_funnel = m[m["progress_student"].isin(FUNNEL_STAGES)].copy()
         m_funnel["stage_rank"] = m_funnel["progress_student"].map(stage_rank)
@@ -497,17 +547,41 @@ with tab2:
 
         fig_funnel = go.Figure(go.Funnel(
             y=FUNNEL_STAGES, x=funnel_counts,
-            marker={"color": PALETTE_SEQUENTIAL[:len(FUNNEL_STAGES)] if len(PALETTE_SEQUENTIAL) >= len(FUNNEL_STAGES) else COLOR_COCOA},
-            textinfo="value+percent initial",
+            marker={"color": PALETTE_SEQUENTIAL},
+            textinfo="value+percent previous",
         ))
         st.plotly_chart(style_fig(fig_funnel), use_container_width=True)
 
+        konversi = [
+            (FUNNEL_STAGES[i], funnel_counts[i] / funnel_counts[i - 1] * 100)
+            for i in range(1, len(FUNNEL_STAGES)) if funnel_counts[i - 1] > 0
+        ]
+        if konversi:
+            tahap_bocor, rate_bocor = min(konversi, key=lambda t: t[1])
+            insight(
+                f"Konversi terendah ada di tahap <b>{tahap_bocor}</b> ({rate_bocor:.0f}% dari tahap sebelumnya) — "
+                "prioritaskan pendampingan CDC di tahap ini.",
+                kind="warning",
+            )
+
     with st.container(border=True):
-        section("Deteksi Ghosting Perusahaan", "Rule resmi BT-05: >7 hari FU1, >14 FU2, >21 FU3, >28 Ghosting (dihitung dari tanggal acuan di sidebar).")
+        section("Rejection Breakdown per Tahap", "Di tahap mana mahasiswa paling banyak gagal (BT-04).")
+        rej = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts().reindex(REJECTION_STAGES).fillna(0).reset_index()
+        rej.columns = ["tahap_rejection", "jumlah"]
+        fig_rej = px.bar(rej, x="jumlah", y="tahap_rejection", orientation="h",
+                         title="Jumlah Rejection per Tahap", color_discrete_sequence=[COLOR_SIENNA])
+        st.plotly_chart(style_fig(fig_rej), use_container_width=True)
+
+    with st.container(border=True):
+        section(
+            "Deteksi Ghosting Perusahaan",
+            "Sesuai FAQ BT-05: Ghosting diasumsikan dari pihak perusahaan, dihitung dari send_date per batch pengiriman — "
+            ">7 hari FU1, >14 FU2, >21 FU3, >28 Ghosting (dari tanggal acuan di sidebar).",
+        )
         total_tc_diproses = len(tc_status)
         total_ghosting_tc = int((tc_status["status_followup"] == "Ghosting").sum())
         ghosting_rate = (total_ghosting_tc / total_tc_diproses * 100) if total_tc_diproses > 0 else 0
-        st.metric("Ghosting Rate", f"{ghosting_rate:.1f}%")
+        st.metric("Ghosting Rate (per batch pengiriman)", f"{ghosting_rate:.1f}%")
 
         ghosted = tc_status[tc_status["status_followup"] == "Ghosting"]
         col1, col2 = st.columns(2)
@@ -515,56 +589,83 @@ with tab2:
             ghosted_children = tracking_student[tracking_student["id_tracking_company"].isin(ghosted["id_tracking_company"])]
             ghosting_by_stage = ghosted_children["progress_student"].value_counts().reset_index()
             ghosting_by_stage.columns = ["tahap", "jumlah"]
-            fig_gs = px.bar(ghosting_by_stage, x="jumlah", y="tahap", orientation="h", title="Ghosting berdasarkan Tahap Terakhir", color_discrete_sequence=[COLOR_SIENNA])
+            fig_gs = px.bar(ghosting_by_stage, x="jumlah", y="tahap", orientation="h",
+                            title="Ghosting berdasarkan Tahap Terakhir", color_discrete_sequence=[COLOR_SIENNA])
             st.plotly_chart(style_fig(fig_gs), use_container_width=True)
         with col2:
-            ghosting_by_company = ghosted["nama_perusahaan"].value_counts().head(10).reset_index()
+            ghosting_by_company = ghosted["company_name"].value_counts().head(10).reset_index()
             ghosting_by_company.columns = ["perusahaan", "jumlah_ghosting"]
-            fig_gc = px.bar(ghosting_by_company, x="perusahaan", y="jumlah_ghosting", title="Top Perusahaan Kontributor Ghosting", color_discrete_sequence=[COLOR_SIENNA])
+            fig_gc = px.bar(ghosting_by_company, x="perusahaan", y="jumlah_ghosting",
+                            title="Top Perusahaan Kontributor Ghosting", color_discrete_sequence=[COLOR_SIENNA])
             st.plotly_chart(style_fig(fig_gc), use_container_width=True)
 
     with st.container(border=True):
         section("Status Follow-up Saat Ini")
-        followup_counts = tc_status["status_followup"].value_counts().reindex(["Menunggu Respons (Normal)", "FU 1", "FU 2", "FU 3", "Ghosting"]).fillna(0).astype(int)
+        followup_counts = tc_status["status_followup"].value_counts().reindex(
+            ["Menunggu Respons (Normal)", "FU 1", "FU 2", "FU 3", "Ghosting"]).fillna(0).astype(int)
         kolom_status = st.columns(5)
         for col_widget, label in zip(kolom_status, ["Menunggu Respons (Normal)", "FU 1", "FU 2", "FU 3", "Ghosting"]):
             col_widget.metric(label.replace(" (Normal)", ""), f"{followup_counts.get(label, 0):,}")
 
         perlu_followup = tc_status[tc_status["status_followup"].isin(["FU 1", "FU 2", "FU 3", "Ghosting"])].sort_values("hari_sejak_kirim", ascending=False)
-        with st.expander(f"📋 Lihat {len(perlu_followup)} batch yang butuh follow-up"):
-            st.dataframe(perlu_followup[["id_tracking_company", "nama_perusahaan", "posisi", "send_date", "hari_sejak_kirim", "status_followup"]], use_container_width=True, hide_index=True)
+        with st.expander(f"Lihat {len(perlu_followup)} batch yang butuh follow-up", icon=":material/list_alt:"):
+            st.dataframe(
+                perlu_followup[["id_tracking_company", "company_name", "posisi", "send_date", "hari_sejak_kirim", "status_followup"]],
+                use_container_width=True, hide_index=True,
+            )
 
 # ---------------------------------------------------------------------------
 # TAB 3 — MITRA
 # ---------------------------------------------------------------------------
 with tab3:
     with st.container(border=True):
-        section("Performa Perusahaan Mitra")
+        section("Performa Perusahaan Mitra", "Kedua chart memakai nama resmi dari master COMPANY agar identitas perusahaan konsisten.")
         col1, col2 = st.columns(2)
         with col1:
-            perf = m.groupby("company").agg(total=("id_tracking_student", "count"), placement=("rejection", lambda x: (x == "Placement").sum())).reset_index()
+            perf = m.groupby(COMPANY_NAME_COL).agg(
+                total=("id_tracking_student", "count"),
+                placement=("rejection", lambda x: (x == "Placement").sum()),
+            ).reset_index()
             perf["acceptance_rate"] = (perf["placement"] / perf["total"] * 100).round(1)
-            perf = perf[perf["total"] >= 3].sort_values("acceptance_rate", ascending=False).head(10).rename(columns={"company": "perusahaan"})
-            fig_acc = px.bar(perf, x="acceptance_rate", y="perusahaan", orientation="h", title="Top 10 Acceptance Rate (min. 3 kandidat)", color_discrete_sequence=[COLOR_COCOA])
+            perf = perf[perf["total"] >= 3].sort_values("acceptance_rate", ascending=False).head(10).rename(columns={COMPANY_NAME_COL: "perusahaan"})
+            fig_acc = px.bar(perf, x="acceptance_rate", y="perusahaan", orientation="h",
+                             title="Top 10 Acceptance Rate (min. 3 kandidat)", color_discrete_sequence=[COLOR_COCOA])
             st.plotly_chart(style_fig(fig_acc), use_container_width=True)
         with col2:
-            volume = talent_request["nama_perusahaan"].value_counts().head(10).reset_index()
+            tr_named = talent_request.merge(company[["id_company", "company_name"]], on="id_company", how="left")
+            volume = tr_named["company_name"].value_counts().head(10).reset_index()
             volume.columns = ["perusahaan", "jumlah_request"]
-            fig_vol = px.treemap(volume, path=["perusahaan"], values="jumlah_request", title="Top 10 Volume Talent Request", color_discrete_sequence=PALETTE_SEQUENTIAL)
+            fig_vol = px.treemap(volume, path=["perusahaan"], values="jumlah_request",
+                                 title="Top 10 Volume Talent Request", color_discrete_sequence=PALETTE_SEQUENTIAL)
             st.plotly_chart(style_fig(fig_vol), use_container_width=True)
 
     with st.container(border=True):
-        section("Prioritas Talent Request")
-        tr_fulfill = talent_request.merge(tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(), on="id_talent_req", how="left")
+        section("Prioritas Talent Request", "Diurutkan dari request paling lama (BT-03).")
+        tr_fulfill = talent_request.merge(
+            tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(),
+            on="id_talent_req", how="left",
+        )
+        tr_fulfill = tr_fulfill.merge(company[["id_company", "company_name"]], on="id_company", how="left")
         tr_fulfill["jumlah_dikirimkan"] = tr_fulfill["jumlah_dikirimkan"].fillna(0)
         tr_fulfill["belum_terpenuhi"] = tr_fulfill["headcount"] - tr_fulfill["jumlah_dikirimkan"]
         prioritas = tr_fulfill[tr_fulfill["belum_terpenuhi"] > 0].sort_values("request_date")
-        st.dataframe(prioritas[["id_talent_req", "nama_perusahaan", "nama_posisi", "headcount", "jumlah_dikirimkan", "belum_terpenuhi", "request_date"]], use_container_width=True, hide_index=True)
+        st.dataframe(
+            prioritas[["id_talent_req", "company_name", "nama_posisi", "headcount", "jumlah_dikirimkan", "belum_terpenuhi", "request_date"]],
+            use_container_width=True, hide_index=True,
+        )
 
 # ---------------------------------------------------------------------------
-# TAB 4 — KESIAPAN
+# TAB 4 — KESIAPAN  (data master terkini — tidak terpengaruh filter sidebar)
 # ---------------------------------------------------------------------------
 with tab4:
+    st.caption("Tab ini memakai data master terkini (snapshot status mahasiswa), di luar filter sidebar.")
+
+    ss = status_student.copy()
+    ss["_status_norm"] = norm_text(ss["status"]) if "status" in ss.columns else ""
+    ss["_ketersediaan_norm"] = norm_text(ss["ketersediaan"]) if "ketersediaan" in ss.columns else ""
+    ss["_cv_norm"] = norm_text(ss["cv"]) if "cv" in ss.columns else ""
+    ss["_porto_norm"] = norm_text(ss["portofolio"]) if "portofolio" in ss.columns else ""
+
     with st.container(border=True):
         section("Matching Gap: Demand vs Supply Bidang Studi")
         demand = talent_request["bidang_studi_dibutuhkan"].dropna().str.split(",").explode().str.strip().value_counts().reset_index()
@@ -576,33 +677,54 @@ with tab4:
         top_bidang = gap_melt.groupby("bidang_studi")["jumlah"].sum().sort_values(ascending=False).head(10).index
         gap_melt = gap_melt[gap_melt["bidang_studi"].isin(top_bidang)]
 
-        fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group", title="Top 10 Bidang Studi Demand vs Supply", color_discrete_map={"Demand": COLOR_SIENNA, "Supply": COLOR_JASMINE})
+        # dua warna netral setara — Demand bukan hal negatif, jangan pakai warna warning
+        fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group",
+                         title="Top 10 Bidang Studi Demand vs Supply",
+                         color_discrete_map={"Demand": COLOR_COCOA, "Supply": COLOR_JASMINE})
         st.plotly_chart(style_fig(fig_gap), use_container_width=True)
 
     with st.container(border=True):
-        section("Kesiapan Dokumen & Mahasiswa Layak Kirim")
+        section("Kesiapan Dokumen & Mahasiswa Layak Kirim",
+                "Sesuai FAQ: kolom 'eligible' = kolom 'ketersediaan'.")
         col1, col2 = st.columns(2)
         with col1:
             elig = status_student.groupby(["ketersediaan", "status"]).size().reset_index(name="jumlah")
-            fig_elig = px.bar(elig, x="ketersediaan", y="jumlah", color="status", title="Eligibility Mahasiswa", color_discrete_sequence=PALETTE_SEQUENTIAL)
+            fig_elig = px.bar(elig, x="ketersediaan", y="jumlah", color="status",
+                              title="Eligibility Mahasiswa", color_discrete_sequence=PALETTE_SEQUENTIAL)
             st.plotly_chart(style_fig(fig_elig), use_container_width=True)
         with col2:
-            fig_ipk = px.histogram(status_student, x="ipk", nbins=20, title="Distribusi IPK Mahasiswa", color_discrete_sequence=[COLOR_COCOA])
+            fig_ipk = px.histogram(status_student, x="ipk", nbins=20,
+                                   title="Distribusi IPK Mahasiswa", color_discrete_sequence=[COLOR_COCOA])
             st.plotly_chart(style_fig(fig_ipk), use_container_width=True)
 
-        eligible = status_student[(status_student["status"] == "Aktif") & (status_student["ketersediaan"] == "Tersedia") & (status_student["cv"] == "Ada") & (status_student["portofolio"] == "Ada")].merge(student_all[["nim", "program_studi", "semester"]], on="nim", how="left")
-        st.metric("Total Mahasiswa Layak Kirim Saat Ini", f"{len(eligible):,}")
+        eligible = ss[
+            ss["_status_norm"].isin(VAL_STATUS_AKTIF)
+            & ss["_ketersediaan_norm"].isin(VAL_TERSEDIA)
+            & ss["_cv_norm"].isin(VAL_ADA)
+            & ss["_porto_norm"].isin(VAL_ADA)
+        ].merge(student_all[["nim", "program_studi", "semester"]], on="nim", how="left")
+
+        pernah_dikirim = set(tracking_student["nim"].unique())
+        eligible_nganggur = eligible[~eligible["nim"].isin(pernah_dikirim)]
+
+        col_a, col_b = st.columns(2)
+        col_a.metric("Mahasiswa Layak Kirim Saat Ini", f"{len(eligible):,}")
+        col_b.metric("Layak tapi Belum Pernah Dikirim", f"{len(eligible_nganggur):,}",
+                     help="Supply yang belum tersalurkan — prioritas untuk dicarikan penempatan (BT-06).")
+        if len(eligible_nganggur) > 0:
+            with st.expander(f"Lihat {len(eligible_nganggur)} mahasiswa layak yang belum pernah dikirim", icon=":material/person_alert:"):
+                nama_col_e = resolve_col(eligible_nganggur, "nama") or "nama"
+                cols_show = [c for c in ["nim", nama_col_e, "program_studi", "semester", "ipk"] if c in eligible_nganggur.columns]
+                st.dataframe(eligible_nganggur[cols_show], use_container_width=True, hide_index=True)
 
 # ---------------------------------------------------------------------------
-# TAB 5 — MATCHING TALENT (ML: placement probability)
+# TAB 5 — MATCHING TALENT (data master terkini — di luar filter sidebar)
 # ---------------------------------------------------------------------------
 @st.cache_data
 def compute_match_summary(talent_request_df: pd.DataFrame, student_all_df: pd.DataFrame, status_student_df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Hitung jumlah kandidat cocok untuk SEMUA talent request sekaligus, bertahap
-    (cocok prodi -> cocok semester -> cocok status & ketersediaan), supaya kalau
-    hasil akhirnya 0 kita tau persis di tahap mana kandidat hilang.
-    """
+    """Hitung jumlah kandidat cocok per talent request secara bertahap
+    (prodi -> semester -> status & ketersediaan) supaya kelihatan di tahap
+    mana kandidat hilang."""
     pool = student_all_df.merge(status_student_df, on="nim", how="inner", suffixes=("_student", "_status"))
     prodi_col = resolve_col(pool, "program_studi") or "program_studi"
     semester_col = resolve_col(pool, "semester") or "semester"
@@ -622,7 +744,8 @@ def compute_match_summary(talent_request_df: pd.DataFrame, student_all_df: pd.Da
         cocok_prodi = pool[pool["_prodi_norm"].isin(bidang_norm)] if bidang_norm else pool.iloc[0:0]
         cocok_semester = cocok_prodi[cocok_prodi[semester_col] >= min_sem]
         cocok_final = cocok_semester[
-            (cocok_semester["_ketersediaan_norm"] == "tersedia") & (cocok_semester["_status_norm"] == "aktif")
+            cocok_semester["_ketersediaan_norm"].isin(VAL_TERSEDIA)
+            & cocok_semester["_status_norm"].isin(VAL_STATUS_AKTIF)
         ]
 
         rows.append({
@@ -640,12 +763,13 @@ def compute_match_summary(talent_request_df: pd.DataFrame, student_all_df: pd.Da
 
 
 with tab5:
+    st.caption("Tab ini memakai data master terkini, di luar filter sidebar.")
     match_summary = compute_match_summary(talent_request, student_all, status_student)
 
     with st.container(border=True):
         section(
             "Ringkasan Kecocokan — Semua Talent Request",
-            "Biar nggak perlu klik satu-satu buat tau mana yang 0 kandidat. Urut dari yang paling krisis kandidat.",
+            "Diurutkan dari yang paling kritis kandidat.",
         )
         n_zero = int((match_summary["kandidat_final"] == 0).sum())
         col_a, col_b = st.columns(2)
@@ -654,11 +778,10 @@ with tab5:
 
         if n_zero > 0:
             insight(
-                f"Ada **{n_zero} talent request** dengan 0 kandidat cocok. "
-                "Cek kolom bertahap di tabel: kalau 'cocok_prodi' sudah 0, berarti tidak ada mahasiswa "
-                "dari bidang studi yang diminta. Kalau baru drop di 'kandidat_final', "
-                "biasanya penyebabnya mahasiswa yang cocok prodi & semester belum submit status "
-                "kesiapan (belum 'Aktif' / belum 'Tersedia').",
+                f"Ada <b>{n_zero} talent request</b> dengan 0 kandidat cocok. "
+                "Cek kolom bertahap di tabel: kalau 'Cocok Prodi' sudah 0, tidak ada mahasiswa "
+                "dari bidang studi yang diminta. Kalau baru drop di 'Kandidat Final', "
+                "penyebabnya mahasiswa yang cocok belum berstatus aktif/tersedia.",
                 kind="warning" if n_zero < len(match_summary) else "error",
             )
         else:
@@ -686,17 +809,12 @@ with tab5:
         )
 
         if int((match_summary["cocok_prodi"] == 0).sum()) == len(match_summary):
-            with st.expander("🔍 Debug: kenapa 'Cocok Prodi' 0 di semua baris?"):
+            with st.expander("Debug: kenapa 'Cocok Prodi' 0 di semua baris?", icon=":material/troubleshoot:"):
                 st.caption(
-                    "Kalau daftar nilai program_studi mahasiswa TIDAK PERNAH muncul persis "
-                    "di daftar bidang_studi_dibutuhkan (walau kelihatan 'sama' secara arti), "
-                    "berarti penulisannya beda (typo, singkatan, urutan kata, dll) — bukan bug matching. "
-                    "Samakan dulu nilainya di sumber data (CSV/Sheet), baru refresh dashboard."
+                    "Kalau nilai program_studi mahasiswa tidak pernah muncul persis di "
+                    "bidang_studi_dibutuhkan (walau artinya sama), berarti penulisannya beda "
+                    "(typo, singkatan, urutan kata). Samakan dulu nilainya di sumber data, baru refresh."
                 )
-                _prodi_col_dbg = resolve_col(
-                    student_all.merge(status_student, on="nim", how="inner", suffixes=("_student", "_status")),
-                    "program_studi",
-                ) or "program_studi"
                 col_x, col_y = st.columns(2)
                 with col_x:
                     st.markdown("**Nilai unik `program_studi` (mahasiswa):**")
@@ -714,10 +832,10 @@ with tab5:
                     st.dataframe(bidang_unik.rename("bidang_studi_dibutuhkan"), use_container_width=True, hide_index=True)
 
         if int((match_summary["cocok_prodi"] > 0).sum()) > 0 and int((match_summary["kandidat_final"] == 0).sum()) == len(match_summary):
-            with st.expander("🔍 Debug: kenapa 'Kandidat Final' 0 padahal 'Cocok Prodi' > 0?"):
+            with st.expander("Debug: kenapa 'Kandidat Final' 0 padahal 'Cocok Prodi' > 0?", icon=":material/troubleshoot:"):
                 st.caption(
-                    "Berarti masalahnya di kolom `ketersediaan` / `status` — nilainya bukan persis "
-                    "'Tersedia' / 'Aktif'. Cek daftar nilai unik di bawah."
+                    "Berarti masalahnya di kolom `ketersediaan` / `status` — nilainya tidak termasuk "
+                    "Available/Tersedia dan Active/Aktif. Cek daftar nilai unik di bawah."
                 )
                 col_x, col_y = st.columns(2)
                 with col_x:
@@ -730,15 +848,14 @@ with tab5:
     with st.container(border=True):
         section(
             "Cari Kandidat Terbaik untuk Talent Request",
-            "Skor kandidat = probabilitas placement dari model ML (RandomForest), "
-            "dilatih dari histori keputusan Placement/Rejected. Kalau histori belum cukup, "
-            "otomatis fallback ke skor AHP (weighted sum) supaya tetap ada hasil.",
+            "Skor kandidat = probabilitas placement dari model ML (RandomForest), dilatih dari histori "
+            "keputusan Placement/Rejected. Kalau histori belum cukup, otomatis fallback ke skor AHP.",
         )
 
         if ml_bundle is not None:
             insight(
-                f"Model aktif: RandomForest, dilatih dari {ml_bundle['n_train']:,} baris histori "
-                f"keputusan, akurasi test ≈ {ml_bundle['test_accuracy']*100:.1f}%.",
+                f"Model aktif: RandomForest, dilatih dari {ml_bundle['n_train']:,} baris histori keputusan, "
+                f"akurasi test sekitar {ml_bundle['test_accuracy']*100:.1f}%.",
                 kind="success",
             )
         else:
@@ -748,8 +865,6 @@ with tab5:
                 kind="warning",
             )
 
-        # Urutkan pilihan: yang kandidatnya paling banyak di atas, biar nggak
-        # nyasar milih request yang bakal 0 hasil.
         tr_sorted = match_summary.sort_values("kandidat_final", ascending=False).copy()
         tr_sorted["label"] = (
             tr_sorted["nama_posisi"].fillna("-")
@@ -760,37 +875,21 @@ with tab5:
             + ") — "
             + tr_sorted["kandidat_final"].astype(str)
             + " kandidat"
-            + tr_sorted["kandidat_final"].apply(lambda x: " ⚠️" if x == 0 else "")
         )
 
-        pilihan_label = st.selectbox(
-            "Pilih Talent Request",
-            tr_sorted["label"].tolist()
-        )
+        pilihan_label = st.selectbox("Pilih Talent Request", tr_sorted["label"].tolist())
 
         selected_id = tr_sorted.loc[tr_sorted["label"] == pilihan_label, "id_talent_req"].iloc[0]
         selected = talent_request[talent_request["id_talent_req"] == selected_id].iloc[0]
 
         bidang_dibutuhkan = [
-            x.strip()
-            for x in str(
-                selected.get("bidang_studi_dibutuhkan", "")
-            ).split(",")
-            if x.strip() != ""
+            x.strip() for x in str(selected.get("bidang_studi_dibutuhkan", "")).split(",") if x.strip() != ""
         ]
-
         min_semester = selected.get("minimum_semester", 0)
         if pd.isna(min_semester):
             min_semester = 0
 
-        candidates = student_all.merge(
-            status_student,
-            on="nim",
-            how="inner",
-            suffixes=("_student", "_status")
-        )
-
-        # resolve_col menangani KeyError akibat suffix _student/_status setelah merge
+        candidates = student_all.merge(status_student, on="nim", how="inner", suffixes=("_student", "_status"))
         prodi_col = resolve_col(candidates, "program_studi") or "program_studi"
         semester_col = resolve_col(candidates, "semester") or "semester"
         nama_col = resolve_col(candidates, "nama") or "nama"
@@ -803,13 +902,12 @@ with tab5:
         cocok_prodi_df = candidates[candidates["_prodi_norm"].isin(bidang_dibutuhkan_norm)]
         cocok_semester_df = cocok_prodi_df[cocok_prodi_df[semester_col] >= min_semester]
         candidates = cocok_semester_df[
-            (cocok_semester_df["_ketersediaan_norm"] == "tersedia")
-            & (cocok_semester_df["_status_norm"] == "aktif")
+            cocok_semester_df["_ketersediaan_norm"].isin(VAL_TERSEDIA)
+            & cocok_semester_df["_status_norm"].isin(VAL_STATUS_AKTIF)
         ].copy()
 
         if len(candidates) > 0:
             if ml_bundle is not None:
-                # ---- Skor ML: placement_probability ----
                 model = ml_bundle["model"]
                 encoders = ml_bundle["encoders"]
                 resolved_cols = ml_bundle["resolved_cols"]
@@ -820,7 +918,6 @@ with tab5:
                 for feat, train_col in resolved_cols.items():
                     cand_col = resolve_col(candidates, feat) or train_col
                     if cand_col not in candidates.columns:
-                        # fitur tidak tersedia di candidates -> isi netral
                         X_cand[train_col] = 0
                         continue
                     if feat in numeric_feats:
@@ -840,22 +937,13 @@ with tab5:
                 candidates["recommendation_score"] = model.predict_proba(X_cand)[:, 1]
                 candidates["metode_skor"] = "ML (placement probability)"
             else:
-                # ---- Fallback AHP kalau data histori belum cukup ----
                 candidates["prodi_score"] = 1.0
                 candidates["ipk_score"] = (
-                    candidates["ipk"] / candidates["ipk"].max()
-                    if candidates["ipk"].max() > 0
-                    else 0
+                    candidates["ipk"] / candidates["ipk"].max() if candidates["ipk"].max() > 0 else 0
                 )
-                candidates["semester_score"] = (
-                    candidates[semester_col] / candidates[semester_col].max()
-                )
-                candidates["cv_score"] = (
-                    candidates["cv"].astype(str).str.lower().eq("ada").astype(int)
-                )
-                candidates["portfolio_score"] = (
-                    candidates["portofolio"].astype(str).str.lower().eq("ada").astype(int)
-                )
+                candidates["semester_score"] = candidates[semester_col] / candidates[semester_col].max()
+                candidates["cv_score"] = candidates["cv"].astype(str).str.lower().eq("ada").astype(int)
+                candidates["portfolio_score"] = candidates["portofolio"].astype(str).str.lower().eq("ada").astype(int)
 
                 w_prodi, w_ipk, w_portfolio, w_semester, w_cv = 0.40, 0.30, 0.15, 0.10, 0.05
                 candidates["recommendation_score"] = (
@@ -873,41 +961,28 @@ with tab5:
 
         if len(candidates) == 0:
             if len(cocok_prodi_df) == 0:
-                sebab = f"tidak ada mahasiswa terdaftar dari bidang studi **{', '.join(bidang_dibutuhkan) or '(kosong)'}**."
+                sebab = f"tidak ada mahasiswa terdaftar dari bidang studi <b>{', '.join(bidang_dibutuhkan) or '(kosong)'}</b>."
             elif len(cocok_semester_df) == 0:
                 sebab = f"ada {len(cocok_prodi_df)} mahasiswa dari bidang yang cocok, tapi semuanya di bawah minimum semester ({int(min_semester)})."
             else:
                 sebab = (
                     f"ada {len(cocok_semester_df)} mahasiswa yang cocok bidang & semester, "
-                    "tapi belum ada yang berstatus 'Aktif' dan 'Tersedia' di data status kesiapan."
+                    "tapi belum ada yang berstatus aktif dan tersedia di data status kesiapan."
                 )
             insight(f"Tidak ada kandidat yang memenuhi syarat — {sebab}", kind="error")
         else:
             show_cols = [
                 c for c in [
-                    "nim",
-                    nama_col,
-                    prodi_col,
-                    semester_col,
-                    "ipk",
-                    "cv",
-                    "portofolio",
-                    "domisili",
-                    "recommendation_score",
-                    "metode_skor",
+                    "nim", nama_col, prodi_col, semester_col, "ipk", "cv",
+                    "portofolio", "domisili", "recommendation_score", "metode_skor",
                 ]
                 if c in candidates.columns
             ]
-
-            st.dataframe(
-                candidates[show_cols].head(50),
-                use_container_width=True,
-                hide_index=True
-            )
+            st.dataframe(candidates[show_cols].head(50), use_container_width=True, hide_index=True)
 
     if ml_bundle is not None:
         with st.container(border=True):
-            section("Feature Importance Model", "Fitur mana yang paling berpengaruh terhadap peluang placement menurut model.")
+            section("Feature Importance Model", "Fitur yang paling berpengaruh terhadap peluang placement menurut model.")
             fig_fi = px.bar(
                 ml_bundle["feature_importance"],
                 x="importance", y="fitur", orientation="h",
@@ -921,8 +996,12 @@ with tab5:
 # ---------------------------------------------------------------------------
 with tab6:
     with st.container(border=True):
-        section("Rekapitulasi Placement")
-        dim_options = {"Program Studi": "program_studi", "Perusahaan": "company", "Jenis Penempatan": "jenis_penempatan"}
+        section("Rekapitulasi Placement", "Laporan periodik untuk evaluasi institusi (BT-07).")
+        dim_options = {
+            "Program Studi": "program_studi",
+            "Perusahaan": COMPANY_NAME_COL,
+            "Jenis Penempatan": "jenis_penempatan",
+        }
         dims_pilihan = st.multiselect("Kelompokkan berdasarkan", list(dim_options.keys()), default=["Program Studi"])
 
         placement_only = m[m["rejection"] == "Placement"].copy()
@@ -931,13 +1010,32 @@ with tab6:
         if dims_pilihan:
             group_cols = ["periode"] + [dim_options[d] for d in dims_pilihan]
             recap = placement_only.groupby(group_cols).size().reset_index(name="jumlah_placement").sort_values("periode", ascending=False)
+
+            # visual dulu, tabel belakangan — tren per periode langsung terbaca
+            dim_utama = dim_options[dims_pilihan[0]]
+            fig_recap = px.bar(
+                recap.sort_values("periode"), x="periode", y="jumlah_placement", color=dim_utama,
+                title=f"Placement per Kuartal berdasarkan {dims_pilihan[0]}",
+                color_discrete_sequence=PALETTE_SEQUENTIAL,
+            )
+            st.plotly_chart(style_fig(fig_recap), use_container_width=True)
+
             st.dataframe(recap, use_container_width=True, hide_index=True)
-            st.download_button("⬇️ Unduh Rekap CSV", recap.to_csv(index=False).encode("utf-8"), "rekap_placement.csv", "text/csv")
+            st.download_button("Unduh Rekap CSV", recap.to_csv(index=False).encode("utf-8"),
+                               "rekap_placement.csv", "text/csv", icon=":material/download:")
 
     with st.container(border=True):
-        section("Kualitas Data & Sinkronisasi")
+        section("Kualitas Data & Sinkronisasi", "BT-08: konsistensi STUDENT ALL vs STATUS STUDENT.")
         merged_check = student_all.merge(status_student[["nim", "sync_date"]], on="nim", how="left", indicator=True)
         belum_sync = merged_check[merged_check["_merge"] == "left_only"]
-        st.metric("Mahasiswa Belum Ada Data Status (Belum Sync)", f"{len(belum_sync):,}")
+
+        stale_days = (tanggal_acuan - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
+        n_stale = int((stale_days > SYNC_STALE_DAYS).sum()) if stale_days.notna().any() else 0
+
+        col_a, col_b, col_c = st.columns(3)
+        col_a.metric("Mahasiswa Belum Ada Data Status", f"{len(belum_sync):,}")
+        col_b.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
+        col_c.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "—")
+
         if len(belum_sync) > 0:
             st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20), use_container_width=True, hide_index=True)
