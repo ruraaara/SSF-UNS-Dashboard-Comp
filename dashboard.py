@@ -12,7 +12,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import roc_auc_score
 
 st.set_page_config(
-    page_title="SSDC 2026 — Student Placement Dashboard",
+    page_title="CDC SSF UNS — Placement Monitoring",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
@@ -106,8 +106,19 @@ CARD_BG = "#FFFFFF"
 
 st.markdown(f"""
 <style>
-@import url('https://api.fontshare.com/v2/css?f[]=nohemi@400,500,600,700,800&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Nohemi tidak tersedia di Google Fonts/Fontshare — di-load dari folder
+   static/ repo (butuh [server] enableStaticServing di config.toml).
+   Kalau filenya belum ada, browser otomatis jatuh ke Space Grotesk
+   (fallback dengan karakter paling mirip Nohemi). */
+@font-face {{
+    font-family: 'Nohemi';
+    src: url('./app/static/Nohemi-Bold.woff2') format('woff2'),
+         url('./app/static/Nohemi-Bold.otf') format('opentype');
+    font-weight: 500 800;
+    font-display: swap;
+}}
 
 html, body, [class*="css"] {{
     font-family: 'Inter', -apple-system, sans-serif;
@@ -158,7 +169,7 @@ div[data-testid="stVerticalBlock"] {{ gap: 0.55rem; }}
 }}
 .dash-header h1 {{
     color: #FFF8EE !important;
-    font-family: 'Nohemi', 'Inter', sans-serif;
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
     font-size: 1.35rem;
     font-weight: 700;
     line-height: 1.25;
@@ -178,39 +189,46 @@ div[data-testid="stMarkdownContainer"] .dash-header p {{
     margin: 2px 0 8px 0;
     flex-wrap: wrap;
 }}
+/* kartu biasa: krem terang; kartu highlight: gelap + outline gradasi + glow
+   -> satu kartu terpenting langsung menonjol di antara kartu terang */
 .kpi-card {{
     flex: 1;
     min-width: 150px;
-    background: {COLOR_SEAL_BROWN};
-    border: 2px solid transparent;
+    background: #FFFDF6;
+    border: 2px solid {tint(COLOR_COCOA, 0.72)};
     border-radius: 14px;
     padding: 14px 12px 11px 12px;
     text-align: center;
+    box-shadow: 0 1px 5px rgba(74, 35, 14, 0.05);
 }}
 .kpi-card.kpi-hl {{
+    border: 2px solid transparent;
     background:
         linear-gradient({COLOR_SEAL_BROWN}, {COLOR_SEAL_BROWN}) padding-box,
         linear-gradient(135deg, {COLOR_JASMINE} 0%, {COLOR_COCOA} 45%, {COLOR_SIENNA} 100%) border-box;
-    box-shadow: 0 0 16px rgba(226, 120, 47, 0.45);
+    box-shadow: 0 0 18px rgba(226, 120, 47, 0.55);
 }}
 .kpi-value {{
-    color: {COLOR_JASMINE};
-    font-family: 'Nohemi', 'Inter', sans-serif;
+    color: {COLOR_SIENNA};
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
     font-size: 1.6rem;
     font-weight: 800;
     line-height: 1.1;
 }}
 .kpi-label {{
-    color: {tint(COLOR_JASMINE, 0.55)};
+    color: {tint(COLOR_DRAB_DARK, 0.15)};
     font-size: 0.76rem;
     font-weight: 600;
     margin-top: 4px;
 }}
 .kpi-sub {{
-    color: {tint(COLOR_COCOA, 0.35)};
+    color: {tint(COLOR_DRAB_DARK, 0.4)};
     font-size: 0.7rem;
     margin-top: 2px;
 }}
+.kpi-card.kpi-hl .kpi-value {{ color: {COLOR_JASMINE}; }}
+.kpi-card.kpi-hl .kpi-label {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
+.kpi-card.kpi-hl .kpi-sub {{ color: {tint(COLOR_COCOA, 0.35)}; }}
 
 div[data-testid="stMetric"] {{
     background-color: {COLOR_BG_CARD};
@@ -232,7 +250,7 @@ div[data-testid="stMetricValue"] {{
 }}
 
 .section-title {{
-    font-family: 'Nohemi', 'Inter', sans-serif;
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: {COLOR_SEAL_BROWN};
@@ -647,6 +665,16 @@ def train_matching_model():
 
 ml_bundle = train_matching_model()
 
+# Bobot ML adaptif: w = (AUC - 0.5) x 2, dibatasi 0..1.
+# AUC 0.5 (tidak ada sinyal, kasus data sintetis) -> ranking dipegang AHP;
+# AUC 1.0 (sinyal sempurna) -> ranking sepenuhnya dari model.
+# Dengan begitu skor rekomendasi selalu masuk akal, dan otomatis bergeser
+# ke ML begitu pipeline dipakai pada data operasional riil.
+if ml_bundle is not None and not np.isnan(ml_bundle["test_auc"]):
+    ML_WEIGHT = float(min(1.0, max(0.0, (ml_bundle["test_auc"] - 0.5) * 2)))
+else:
+    ML_WEIGHT = 0.0
+
 # ---------------------------------------------------------------------------
 # FILTER — di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
 # ---------------------------------------------------------------------------
@@ -713,8 +741,8 @@ if "sync_date" in status_student.columns and status_student["sync_date"].notna()
 
 st.markdown(f"""
 <div class="dash-header">
-    <h1>SSDC 2026 — Student Placement Dashboard</h1>
-    <p>Ringkasan performa penempatan mahasiswa: dari permintaan perusahaan sampai placement.{last_sync_txt}</p>
+    <h1>Career Development Center — SSF UNS</h1>
+    <p>Dashboard monitoring penempatan mahasiswa: dari permintaan perusahaan sampai placement.{last_sync_txt}</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1120,16 +1148,15 @@ with tab5:
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
     if ml_bundle is not None:
-        auc_txt = f"{ml_bundle['test_auc']:.2f}" if not np.isnan(ml_bundle["test_auc"]) else "-"
-        model_label = "RandomForest Aktif"
-        model_sub = f"AUC {auc_txt} | akurasi {ml_bundle['test_accuracy']*100:.0f}%"
-        model_help = (f"Dilatih dari {ml_bundle['n_train']:,} histori keputusan. "
-                      f"Baseline kelas mayoritas {ml_bundle['baseline']*100:.0f}%. "
-                      "AUC mendekati 0.5 menandakan data sintetis ini tidak mengandung sinyal prediktif — lihat penjelasan di bawah.")
+        model_label = "Hybrid"
+        model_sub = f"ML {ML_WEIGHT*100:.0f}% + AHP {(1-ML_WEIGHT)*100:.0f}% (adaptif)"
+        model_help = (f"Skor = gabungan probabilitas RandomForest ({ml_bundle['n_train']:,} histori keputusan) "
+                      "dan skor AHP berbasis kriteria. Bobot ML mengikuti kualitas prediksi model (AUC) — "
+                      "detail di expander 'Tentang model' di bawah.")
     else:
-        model_label = "Fallback AHP"
+        model_label = "AHP"
         model_sub = f"histori < {MIN_TRAIN_ROWS} baris"
-        model_help = "Histori keputusan belum cukup — skor memakai AHP."
+        model_help = "Histori keputusan belum cukup untuk melatih model — skor memakai AHP."
 
     kpi_row([
         {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
@@ -1141,7 +1168,7 @@ with tab5:
 
     with st.container(border=True):
         section("Cari Kandidat Terbaik untuk Talent Request",
-                "Pilih perusahaan lalu posisinya. Skor = probabilitas placement dari model (fallback AHP otomatis).")
+                "Pilih perusahaan lalu posisinya. Skor = hybrid adaptif ML + AHP (bobot mengikuti kualitas model).")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -1174,6 +1201,19 @@ with tab5:
         candidates = cocok_semester_df[cocok_semester_df["_eligible"]].copy()
 
         if len(candidates) > 0:
+            # skor AHP selalu dihitung (kriteria transparan: IPK, portofolio,
+            # semester, CV; bobot prodi 0.40 selalu penuh karena kandidat di
+            # sini sudah lolos filter prodi)
+            sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
+            ipk_max = candidates["ipk"].max()
+            candidates["skor_ahp"] = (
+                0.40 * 1.0
+                + 0.30 * (candidates["ipk"] / ipk_max if ipk_max and ipk_max > 0 else 0)
+                + 0.15 * norm_text(candidates["portofolio"]).isin(VAL_ADA).astype(int)
+                + 0.10 * (sem_num / sem_num.max() if sem_num.max() > 0 else 0)
+                + 0.05 * norm_text(candidates["cv"]).isin(VAL_ADA).astype(int)
+            )
+
             if ml_bundle is not None:
                 model = ml_bundle["model"]
                 encoders = ml_bundle["encoders"]
@@ -1201,22 +1241,14 @@ with tab5:
                             X_cand[train_col] = 0
 
                 X_cand = X_cand[feature_cols]
-                candidates["recommendation_score"] = model.predict_proba(X_cand)[:, 1]
-                candidates["metode_skor"] = "ML (placement probability)"
-            else:
-                sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
-                candidates["ipk_score"] = candidates["ipk"] / candidates["ipk"].max() if candidates["ipk"].max() > 0 else 0
-                candidates["semester_score"] = sem_num / sem_num.max() if sem_num.max() > 0 else 0
-                candidates["cv_score"] = norm_text(candidates["cv"]).isin(VAL_ADA).astype(int)
-                candidates["portfolio_score"] = norm_text(candidates["portofolio"]).isin(VAL_ADA).astype(int)
+                candidates["skor_ml"] = model.predict_proba(X_cand)[:, 1]
                 candidates["recommendation_score"] = (
-                    0.40 * 1.0
-                    + 0.30 * candidates["ipk_score"]
-                    + 0.15 * candidates["portfolio_score"]
-                    + 0.10 * candidates["semester_score"]
-                    + 0.05 * candidates["cv_score"]
+                    ML_WEIGHT * candidates["skor_ml"] + (1 - ML_WEIGHT) * candidates["skor_ahp"]
                 )
-                candidates["metode_skor"] = "AHP (fallback)"
+                candidates["metode_skor"] = f"Hybrid (ML {ML_WEIGHT*100:.0f}% + AHP {(1-ML_WEIGHT)*100:.0f}%)"
+            else:
+                candidates["recommendation_score"] = candidates["skor_ahp"]
+                candidates["metode_skor"] = "AHP"
 
             candidates = candidates.sort_values("recommendation_score", ascending=False)
 
@@ -1271,15 +1303,16 @@ with tab5:
         )
 
     if ml_bundle is not None:
-        with st.expander("Tentang model: feature importance & interpretasi AUC", icon=":material/psychology:"):
+        with st.expander("Tentang model: skoring hybrid, feature importance & evaluasi", icon=":material/psychology:"):
             auc = ml_bundle["test_auc"]
             insight(
-                f"AUC model {auc:.2f} dengan baseline kelas mayoritas {ml_bundle['baseline']*100:.0f}%. "
-                "AUC mendekati 0.50 berarti pada data kompetisi (sintetis) ini keputusan placement TIDAK berkorelasi "
-                "dengan profil mahasiswa — tidak ada model yang bisa menang di data acak, dan itu temuan yang valid "
-                "untuk disampaikan. Pipeline ini tetap dipakai untuk ranking kandidat, dan akan otomatis belajar pola "
-                "sebenarnya begitu dijalankan pada data operasional riil CDC.",
-                kind="warning" if not np.isnan(auc) and auc < 0.6 else "success",
+                f"Skor rekomendasi = <b>{ML_WEIGHT*100:.0f}% ML + {(1-ML_WEIGHT)*100:.0f}% AHP</b>, dengan bobot ML "
+                f"dihitung otomatis dari kualitas prediksi model: w = (AUC − 0.5) × 2. Evaluasi RandomForest pada "
+                f"{ml_bundle['n_train']:,} histori keputusan menghasilkan AUC {auc:.2f} — artinya pada data kompetisi "
+                "(sintetis) ini keputusan placement tidak berkorelasi dengan profil mahasiswa, sehingga ranking "
+                "dipegang AHP yang kriterianya transparan (IPK, portofolio, semester, CV). Begitu pipeline yang sama "
+                "dijalankan pada data operasional riil dan AUC naik, bobot ML ikut naik otomatis tanpa mengubah kode.",
+                kind="info",
             )
             fig_fi = px.bar(ml_bundle["feature_importance"], x="importance", y="fitur", orientation="h",
                             color_discrete_sequence=[COLOR_SEAL_BROWN])
