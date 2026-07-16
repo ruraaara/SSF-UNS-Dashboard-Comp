@@ -110,11 +110,15 @@ st.markdown(f"""
 
 /* Nohemi tidak tersedia di Google Fonts/Fontshare — di-load dari folder
    static/ repo (butuh [server] enableStaticServing di config.toml).
-   Kalau filenya belum ada, browser otomatis jatuh ke Space Grotesk
-   (fallback dengan karakter paling mirip Nohemi). */
+   Urutan sumber: font ter-install lokal dulu (local), lalu beberapa
+   kemungkinan nama file di static/. Kalau semuanya tidak ada, browser
+   jatuh ke Space Grotesk (fallback paling mirip Nohemi). */
 @font-face {{
     font-family: 'Nohemi';
-    src: url('./app/static/Nohemi-Bold.woff2') format('woff2'),
+    src: local('Nohemi SemiBold'), local('Nohemi SemBd'), local('Nohemi Bold'), local('Nohemi'),
+         url('./app/static/Nohemi-SemiBold.woff2') format('woff2'),
+         url('./app/static/Nohemi-Bold.woff2') format('woff2'),
+         url('./app/static/Nohemi-SemiBold.otf') format('opentype'),
          url('./app/static/Nohemi-Bold.otf') format('opentype');
     font-weight: 500 800;
     font-display: swap;
