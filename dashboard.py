@@ -96,16 +96,49 @@ REJECTION_TO_RANK = {
 }
 
 # ---------------------------------------------------------------------------
-# STYLE — CSS Custom
-# Tema dikunci light via .streamlit/config.toml supaya render sama di semua
-# device; !important di bawah ini pengaman kalau ada yang override manual.
+# STYLE — CSS Custom, gaya BENTO BOX
+# Halaman krem hangat + kartu putih rounded ber-shadow + tile KPI gelap.
+# Tema tetap dikunci light via .streamlit/config.toml, TAPI semua permukaan
+# utama juga dipaksa lewat !important di sini — jadi kalaupun config belum
+# terbaca atau viewer pernah memilih dark mode manual, dashboard tetap
+# tampil sesuai palet di semua device.
 # ---------------------------------------------------------------------------
+PAGE_BG = "#F6EFE3"
+CARD_BG = "#FFFFFF"
+
 st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] {{
     font-family: 'Inter', -apple-system, sans-serif;
+}}
+
+/* ===== paksa latar & teks dasar (dark-mode proof) ===== */
+.stApp {{ background-color: {PAGE_BG} !important; }}
+header[data-testid="stHeader"] {{ background-color: {PAGE_BG} !important; }}
+div[data-testid="stMarkdownContainer"] p {{ color: {COLOR_DRAB_DARK} !important; }}
+div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font-weight: 600; }}
+
+/* tab bar */
+button[data-baseweb="tab"] p {{ color: {tint(COLOR_DRAB_DARK, 0.25)} !important; font-weight: 600; }}
+button[data-baseweb="tab"][aria-selected="true"] p {{ color: {COLOR_SIENNA} !important; }}
+div[data-baseweb="tab-highlight"] {{ background-color: {COLOR_SIENNA} !important; }}
+div[data-baseweb="tab-border"] {{ background-color: {tint(COLOR_COCOA, 0.7)} !important; }}
+
+/* input & multiselect */
+div[data-baseweb="select"] > div {{
+    background-color: {CARD_BG} !important;
+    border-color: {tint(COLOR_COCOA, 0.55)} !important;
+    color: {COLOR_DRAB_DARK} !important;
+}}
+span[data-baseweb="tag"] {{
+    background-color: {COLOR_COCOA} !important;
+    color: #FFFFFF !important;
+}}
+div[data-testid="stDateInput"] input {{
+    background-color: {CARD_BG} !important;
+    color: {COLOR_DRAB_DARK} !important;
 }}
 
 /* layout lebih rapat */
@@ -205,13 +238,23 @@ div[data-testid="stMetricValue"] {{
 }}
 .insight-box b {{ color: {COLOR_SEAL_BROWN}; }}
 
+/* ===== kartu bento: putih, rounded besar, shadow lembut ===== */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
-    border-radius: 14px !important;
-    border-color: {tint(COLOR_COCOA, 0.65)} !important;
-    background-color: #FFFDF9;
+    border-radius: 16px !important;
+    border: 1px solid {tint(COLOR_COCOA, 0.78)} !important;
+    background-color: {CARD_BG} !important;
+    box-shadow: 0 2px 10px rgba(74, 35, 14, 0.06);
 }}
-
-button[data-baseweb="tab"] {{ font-weight: 600; }}
+div[data-testid="stExpander"] {{
+    background-color: {CARD_BG} !important;
+    border-radius: 16px !important;
+    border: 1px solid {tint(COLOR_COCOA, 0.78)} !important;
+}}
+div[data-testid="stExpander"] summary,
+div[data-testid="stExpander"] summary p {{
+    color: {COLOR_SEAL_BROWN} !important;
+    font-weight: 600;
+}}
 
 div[data-testid="stAlertContainer"], div[data-testid="stAlert"] {{
     background-color: {COLOR_BG_CARD} !important;
@@ -264,17 +307,23 @@ def kpi_row(cards):
 
 
 def style_fig(fig, height=300):
+    has_title = bool(fig.layout.title.text)
+    has_legend = len(fig.data) > 1 or any(tr.type == "pie" for tr in fig.data)
+    top_margin = 38 if has_title else (34 if has_legend else 16)
     fig.update_layout(
         font=dict(family="Inter, sans-serif", color=COLOR_DRAB_DARK, size=11),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=8, r=8, t=38, b=8),
-        title_font=dict(size=13, color=COLOR_SEAL_BROWN),
+        margin=dict(l=8, r=8, t=top_margin, b=8),
         legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10), orientation="h",
                     yanchor="bottom", y=1.0, xanchor="right", x=1.0),
         hoverlabel=dict(bgcolor="white", font_size=11),
         height=height,
     )
+    # title_font hanya diset bila chart punya judul — plotly.js merender
+    # teks "undefined" kalau properti title diisi tanpa title text.
+    if has_title:
+        fig.update_layout(title_font=dict(size=13, color=COLOR_SEAL_BROWN))
     return fig
 
 
