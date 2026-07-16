@@ -9,6 +9,7 @@ from datetime import datetime
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import roc_auc_score
 
 st.set_page_config(
     page_title="SSDC 2026 — Student Placement Dashboard",
@@ -78,8 +79,6 @@ REJECTION_STAGES = [
 ]
 
 # Tahap terjauh yang dicapai kandidat (untuk funnel & sinyal respons).
-# progress_student punya nilai terminal (Placement/Finish/Rejected/Ghosting/FU x)
-# di luar 6 tahap funnel, jadi dipetakan eksplisit ke peringkat tahap.
 STAGE_RANK = {s: i for i, s in enumerate(FUNNEL_STAGES)}
 PROGRESS_TO_RANK = {
     **STAGE_RANK,
@@ -97,17 +96,17 @@ REJECTION_TO_RANK = {
 
 # ---------------------------------------------------------------------------
 # STYLE — CSS Custom, gaya BENTO BOX
-# Halaman krem hangat + kartu putih rounded ber-shadow + tile KPI gelap.
-# Tema tetap dikunci light via .streamlit/config.toml, TAPI semua permukaan
-# utama juga dipaksa lewat !important di sini — jadi kalaupun config belum
-# terbaca atau viewer pernah memilih dark mode manual, dashboard tetap
-# tampil sesuai palet di semua device.
+# - Font judul: Nohemi (Fontshare); body: Inter.
+# - Background halaman: gradasi krem lembut.
+# - Kartu KPI: flat gelap; kartu paling penting diberi OUTLINE GRADASI + glow.
+# - Semua permukaan utama dipaksa !important -> tahan dark mode di device mana pun.
 # ---------------------------------------------------------------------------
-PAGE_BG = "#F6EFE3"
+PAGE_BG_GRAD = "linear-gradient(165deg, #FBF6EC 0%, #F6EFE3 45%, #EEDFC8 100%)"
 CARD_BG = "#FFFFFF"
 
 st.markdown(f"""
 <style>
+@import url('https://api.fontshare.com/v2/css?f[]=nohemi@400,500,600,700,800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 html, body, [class*="css"] {{
@@ -115,8 +114,11 @@ html, body, [class*="css"] {{
 }}
 
 /* ===== paksa latar & teks dasar (dark-mode proof) ===== */
-.stApp {{ background-color: {PAGE_BG} !important; }}
-header[data-testid="stHeader"] {{ background-color: {PAGE_BG} !important; }}
+.stApp {{
+    background: {PAGE_BG_GRAD} !important;
+    background-attachment: fixed !important;
+}}
+header[data-testid="stHeader"] {{ background: transparent !important; }}
 div[data-testid="stMarkdownContainer"] p {{ color: {COLOR_DRAB_DARK} !important; }}
 div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font-weight: 600; }}
 
@@ -141,58 +143,73 @@ div[data-testid="stDateInput"] input {{
     color: {COLOR_DRAB_DARK} !important;
 }}
 
-/* layout lebih rapat */
+/* layout rapat: target muat satu layar tanpa scroll */
 .block-container {{
-    padding-top: 1.2rem !important;
-    padding-bottom: 1rem !important;
+    padding-top: 0.8rem !important;
+    padding-bottom: 0.6rem !important;
 }}
-div[data-testid="stVerticalBlock"] {{ gap: 0.6rem; }}
+div[data-testid="stVerticalBlock"] {{ gap: 0.55rem; }}
 
 .dash-header {{
-    padding: 14px 22px;
+    padding: 12px 22px 13px 22px;
     border-radius: 14px;
     background: linear-gradient(135deg, {COLOR_SEAL_BROWN} 0%, {COLOR_SIENNA} 100%);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }}
 .dash-header h1 {{
     color: #FFF8EE !important;
+    font-family: 'Nohemi', 'Inter', sans-serif;
     font-size: 1.35rem;
     font-weight: 700;
+    line-height: 1.25;
     margin: 0;
 }}
-.dash-header p {{
+/* selector panjang: harus menang dari aturan stMarkdownContainer p di atas */
+div[data-testid="stMarkdownContainer"] .dash-header p {{
     color: {tint(COLOR_JASMINE, 0.4)} !important;
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     margin: 2px 0 0 0;
 }}
 
-/* KPI cards gaya referensi: angka besar di atas, label di bawah */
+/* ===== KPI cards: FLAT; kartu terpenting diberi outline gradasi + glow ===== */
 .kpi-row {{
     display: flex;
     gap: 12px;
-    margin: 4px 0 10px 0;
+    margin: 2px 0 8px 0;
     flex-wrap: wrap;
 }}
 .kpi-card {{
     flex: 1;
     min-width: 150px;
-    background: linear-gradient(160deg, {COLOR_SEAL_BROWN} 0%, #2E1608 100%);
+    background: {COLOR_SEAL_BROWN};
+    border: 2px solid transparent;
     border-radius: 14px;
-    padding: 16px 12px 13px 12px;
+    padding: 14px 12px 11px 12px;
     text-align: center;
-    box-shadow: 0 2px 6px rgba(74, 35, 14, 0.25);
+}}
+.kpi-card.kpi-hl {{
+    background:
+        linear-gradient({COLOR_SEAL_BROWN}, {COLOR_SEAL_BROWN}) padding-box,
+        linear-gradient(135deg, {COLOR_JASMINE} 0%, {COLOR_COCOA} 45%, {COLOR_SIENNA} 100%) border-box;
+    box-shadow: 0 0 16px rgba(226, 120, 47, 0.45);
 }}
 .kpi-value {{
     color: {COLOR_JASMINE};
-    font-size: 1.65rem;
+    font-family: 'Nohemi', 'Inter', sans-serif;
+    font-size: 1.6rem;
     font-weight: 800;
     line-height: 1.1;
 }}
 .kpi-label {{
     color: {tint(COLOR_JASMINE, 0.55)};
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
-    margin-top: 5px;
+    margin-top: 4px;
+}}
+.kpi-sub {{
+    color: {tint(COLOR_COCOA, 0.35)};
+    font-size: 0.7rem;
+    margin-top: 2px;
 }}
 
 div[data-testid="stMetric"] {{
@@ -211,10 +228,11 @@ div[data-testid="stMetric"] label p {{
 div[data-testid="stMetricValue"] {{
     color: {COLOR_SIENNA} !important;
     font-weight: 700;
-    font-size: 1.55rem;
+    font-size: 1.5rem;
 }}
 
 .section-title {{
+    font-family: 'Nohemi', 'Inter', sans-serif;
     font-size: 1rem;
     font-weight: 700;
     color: {COLOR_SEAL_BROWN};
@@ -222,33 +240,33 @@ div[data-testid="stMetricValue"] {{
 }}
 .section-caption {{
     color: {tint(COLOR_DRAB_DARK, 0.35)};
-    font-size: 0.82rem;
-    margin-bottom: 6px;
+    font-size: 0.8rem;
+    margin-bottom: 4px;
 }}
 
 .insight-box {{
     border-left: 5px solid var(--accent);
     background-color: var(--bg);
-    padding: 10px 14px;
+    padding: 9px 14px;
     border-radius: 8px;
-    margin: 6px 0 10px 0;
-    font-size: 0.88rem;
+    margin: 4px 0 8px 0;
+    font-size: 0.86rem;
     line-height: 1.45;
-    color: {COLOR_DRAB_DARK};
+    color: {COLOR_DRAB_DARK} !important;
 }}
 .insight-box b {{ color: {COLOR_SEAL_BROWN}; }}
 
 /* ===== kartu bento: putih, rounded besar, shadow lembut ===== */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
     border-radius: 16px !important;
-    border: 1px solid {tint(COLOR_COCOA, 0.78)} !important;
+    border: 1px solid {tint(COLOR_COCOA, 0.8)} !important;
     background-color: {CARD_BG} !important;
     box-shadow: 0 2px 10px rgba(74, 35, 14, 0.06);
 }}
 div[data-testid="stExpander"] {{
     background-color: {CARD_BG} !important;
     border-radius: 16px !important;
-    border: 1px solid {tint(COLOR_COCOA, 0.78)} !important;
+    border: 1px solid {tint(COLOR_COCOA, 0.8)} !important;
 }}
 div[data-testid="stExpander"] summary,
 div[data-testid="stExpander"] summary p {{
@@ -293,14 +311,17 @@ def insight(text: str, kind: str = "info"):
 
 
 def kpi_row(cards):
-    """Deret kartu KPI gaya referensi: angka besar di atas, label di bawah."""
+    """Deret kartu KPI flat; beri "highlight": True pada SATU kartu terpenting
+    untuk memberi outline gradasi + glow (pola aksen tunggal)."""
     html = '<div class="kpi-row">'
     for c in cards:
+        cls = "kpi-card kpi-hl" if c.get("highlight") else "kpi-card"
         help_attr = f' title="{c["help"]}"' if c.get("help") else ""
+        sub = f'<div class="kpi-sub">{c["sub"]}</div>' if c.get("sub") else ""
         html += (
-            f'<div class="kpi-card"{help_attr}>'
+            f'<div class="{cls}"{help_attr}>'
             f'<div class="kpi-value">{c["value"]}</div>'
-            f'<div class="kpi-label">{c["label"]}</div></div>'
+            f'<div class="kpi-label">{c["label"]}</div>{sub}</div>'
         )
     html += "</div>"
     st.markdown(html, unsafe_allow_html=True)
@@ -309,7 +330,7 @@ def kpi_row(cards):
 def style_fig(fig, height=300):
     has_title = bool(fig.layout.title.text)
     has_legend = len(fig.data) > 1 or any(tr.type == "pie" for tr in fig.data)
-    top_margin = 38 if has_title else (34 if has_legend else 16)
+    top_margin = 38 if has_title else (34 if has_legend else 14)
     fig.update_layout(
         font=dict(family="Inter, sans-serif", color=COLOR_DRAB_DARK, size=11),
         plot_bgcolor="rgba(0,0,0,0)",
@@ -362,11 +383,9 @@ def norm_text(series: pd.Series) -> pd.Series:
 
 # ---------------------------------------------------------------------------
 # LOAD + PREPARE DATA (SEKALI SAJA)
-# Semua pembacaan CSV, pembersihan tipe, DAN merge master dilakukan di dalam
-# satu fungsi ber-cache_resource, sehingga rerun halaman (ganti filter, ganti
-# tab) tidak mengulang komputasi berat sama sekali. cache_resource dipilih
-# (bukan cache_data) supaya hasilnya tidak di-copy ulang tiap rerun; sebagai
-# gantinya, SEMUA konsumen wajib .copy() sebelum mengubah frame.
+# Semua pembacaan CSV, pembersihan tipe, dan merge dilakukan dalam satu fungsi
+# ber-cache_resource: rerun halaman tidak mengulang komputasi berat apa pun.
+# Konsekuensi cache_resource: konsumen WAJIB .copy() sebelum mengubah frame.
 # ---------------------------------------------------------------------------
 @st.cache_resource(show_spinner="Menyiapkan data (hanya sekali)...")
 def load_all() -> dict:
@@ -413,9 +432,7 @@ def load_all() -> dict:
     rank = rank.mask(mask_rejected, tracking_student["rejection"].map(REJECTION_TO_RANK))
     tracking_student["stage_reached"] = rank.fillna(0).astype(int)
 
-    # ---- MASTER: tracking_student -> tracking_company -> company ->
-    #      talent_request -> student_all -> status_student (prinsip ERD,
-    #      nama perusahaan selalu dari master COMPANY via id_company) ----
+    # ---- MASTER (prinsip ERD: nama perusahaan dari master COMPANY) ----
     master = tracking_student.merge(tracking_company, on="id_tracking_company", how="left", suffixes=("", "_tc"))
     master = master.merge(company, on="id_company", how="left", suffixes=("", "_co"))
     master = master.merge(talent_request, on="id_talent_req", how="left", suffixes=("", "_tr"))
@@ -427,7 +444,6 @@ def load_all() -> dict:
         master["lama_proses_hari"] = (master["last_update"] - master["send_date"]).dt.days
 
     # ---- BATCH PENGIRIMAN (basis ghosting BT-05) ----
-    # Hanya batch yang benar-benar sudah dikirim yang dimonitor ghosting-nya.
     tc_base = tracking_company[tracking_company["send_date"].notna()].copy()
     tc_base = tc_base.merge(company[["id_company", "company_name"]], on="id_company", how="left")
     tc_base["tahun_tc"] = tc_base["send_date"].dt.year
@@ -459,6 +475,16 @@ def load_all() -> dict:
         & norm_text(pool["status"]).isin(VAL_STATUS_AKTIF)
     )
 
+    # pemenuhan talent request (dipakai Overview & Mitra)
+    tr_fulfill = talent_request.merge(
+        tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(),
+        on="id_talent_req", how="left",
+    )
+    tr_fulfill = tr_fulfill.merge(company[["id_company", "company_name"]], on="id_company", how="left")
+    tr_fulfill["jumlah_dikirimkan"] = tr_fulfill["jumlah_dikirimkan"].fillna(0)
+    tr_fulfill["belum_terpenuhi"] = tr_fulfill["headcount"] - tr_fulfill["jumlah_dikirimkan"]
+    tr_fulfill["pemenuhan"] = (tr_fulfill["jumlah_dikirimkan"] / tr_fulfill["headcount"]).clip(0, 1)
+
     return {
         "company": company,
         "talent_request": talent_request,
@@ -471,6 +497,7 @@ def load_all() -> dict:
         "pool": pool,
         "pool_prodi_col": prodi_col,
         "pool_semester_col": semester_col,
+        "tr_fulfill": tr_fulfill,
         "default_ref_date": default_ref,
     }
 
@@ -484,6 +511,7 @@ student_all = DATA["student_all"]
 status_student = DATA["status_student"]
 master = DATA["master"]
 tc_base = DATA["tc_base"]
+tr_fulfill = DATA["tr_fulfill"]
 DEFAULT_REF_DATE = DATA["default_ref_date"]
 
 COMPANY_NAME_COL = "company_name" if "company_name" in master.columns else "company"
@@ -491,10 +519,8 @@ COMPANY_NAME_COL = "company_name" if "company_name" in master.columns else "comp
 
 # ---------------------------------------------------------------------------
 # MATCH SUMMARY (VEKTORISASI)
-# Versi lama me-loop 12.000 talent request dan memfilter 25.000 mahasiswa di
-# tiap iterasi — inilah penyebab utama loading lama. Sekarang jumlah kandidat
-# per (prodi, minimum semester) dihitung SEKALI sebagai matriks lookup, lalu
-# tiap request tinggal menjumlahkan angka dari matriks itu.
+# Jumlah kandidat per (prodi, ambang semester) dihitung SEKALI sebagai matriks
+# lookup; tiap talent request tinggal menjumlahkan dari matriks itu.
 # ---------------------------------------------------------------------------
 @st.cache_data(show_spinner="Menghitung ringkasan kecocokan (hanya sekali)...")
 def compute_match_summary() -> pd.DataFrame:
@@ -540,10 +566,13 @@ def compute_match_summary() -> pd.DataFrame:
 
 # ---------------------------------------------------------------------------
 # ML MODEL — MATCHING TALENT
-# Perbaikan penting: label negatif diambil dari SEMUA nilai "Rejection ..."
-# (di data tidak ada nilai "Rejected" pada kolom rejection — inilah yang
-# membuat model lama selalu fallback ke AHP). "On Progress" dan "Ghosting"
-# dikeluarkan karena belum/bukan keputusan perusahaan atas kualitas kandidat.
+# Label negatif = SEMUA nilai "Rejection ..." (di data tidak ada nilai
+# "Rejected" pada kolom rejection). "On Progress" dan "Ghosting" dikeluarkan
+# karena belum/bukan keputusan perusahaan atas kualitas kandidat.
+# Metrik utama: ROC-AUC — lebih jujur daripada akurasi untuk kelas tak
+# seimbang. AUC 0.5 berarti fitur profil tidak mengandung sinyal prediktif
+# (kasus data sintetis kompetisi ini); pipeline yang sama akan belajar pola
+# sebenarnya begitu dipakai pada data operasional riil.
 # ---------------------------------------------------------------------------
 ML_FEATURE_BASE = ["program_studi", "semester", "ipk", "cv", "portofolio", "domisili"]
 MIN_TRAIN_ROWS = 15
@@ -596,9 +625,14 @@ def train_matching_model():
     )
     model.fit(X_train, y_train)
     test_accuracy = model.score(X_test, y_test) if len(X_test) > 0 else np.nan
+    try:
+        test_auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
+    except ValueError:
+        test_auc = np.nan
+    baseline = float(max(y.mean(), 1 - y.mean()))
 
     feature_importance = pd.DataFrame({
-        "fitur": [f for f in resolved_cols.keys()],
+        "fitur": list(resolved_cols.keys()),
         "importance": model.feature_importances_,
     }).sort_values("importance", ascending=False)
 
@@ -606,14 +640,15 @@ def train_matching_model():
         "model": model, "encoders": encoders, "feature_cols": feature_cols,
         "resolved_cols": resolved_cols, "numeric_feats": numeric_feats,
         "feature_importance": feature_importance,
-        "test_accuracy": test_accuracy, "n_train": len(base),
+        "test_accuracy": test_accuracy, "test_auc": test_auc,
+        "baseline": baseline, "n_train": len(base),
     }
 
 
 ml_bundle = train_matching_model()
 
 # ---------------------------------------------------------------------------
-# FILTER BAR PER TAB (bukan sidebar — tiap tab bisa dipilih independen)
+# FILTER — di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
 # ---------------------------------------------------------------------------
 FILTER_TAHUN = sorted(int(t) for t in master["tahun_update"].dropna().unique())
 FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) if "program_studi" in student_all.columns else []
@@ -621,29 +656,33 @@ FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolis
 
 
 def filter_bar(key: str, with_prodi: bool = True, with_ref_date: bool = False):
-    n_cols = 2 + int(with_prodi) + int(with_ref_date)
-    with st.container(border=True):
-        cols = st.columns(n_cols)
-        i = 0
-        tahun = cols[i].multiselect("Tahun", FILTER_TAHUN, default=FILTER_TAHUN, key=f"f_tahun_{key}")
-        i += 1
-        prodi = []
-        if with_prodi:
-            prodi = cols[i].multiselect("Program Studi", FILTER_PRODI, default=[],
-                                        placeholder="Semua program studi", key=f"f_prodi_{key}")
-            i += 1
-        jenis = cols[i].multiselect("Jenis Penempatan", FILTER_JENIS, default=[],
-                                    placeholder="Semua jenis", key=f"f_jenis_{key}")
-        i += 1
+    col_btn, col_info = st.columns([1, 5])
+    with col_btn:
+        with st.popover(":material/tune: Filter"):
+            tahun = st.multiselect("Tahun", FILTER_TAHUN, default=FILTER_TAHUN, key=f"f_tahun_{key}")
+            prodi = []
+            if with_prodi:
+                prodi = st.multiselect("Program Studi", FILTER_PRODI, default=[],
+                                       placeholder="Semua program studi", key=f"f_prodi_{key}")
+            jenis = st.multiselect("Jenis Penempatan", FILTER_JENIS, default=[],
+                                   placeholder="Semua jenis", key=f"f_jenis_{key}")
+            ref_date = None
+            if with_ref_date:
+                ref_raw = st.date_input(
+                    "Tanggal Acuan Ghosting",
+                    value=DEFAULT_REF_DATE.date() if hasattr(DEFAULT_REF_DATE, "date") else DEFAULT_REF_DATE,
+                    key=f"f_ref_{key}",
+                    help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ BT-05).",
+                )
+                ref_date = pd.Timestamp(ref_raw)
+    with col_info:
+        tahun_txt = ", ".join(str(t) for t in tahun) if tahun and len(tahun) < len(FILTER_TAHUN) else "semua tahun"
+        prodi_txt = f"{len(prodi)} prodi" if prodi else "semua prodi"
+        jenis_txt = ", ".join(jenis) if jenis else "semua jenis"
+        extra = f" | acuan ghosting: {ref_date.strftime('%d %b %Y')}" if with_ref_date and ref_date is not None else ""
+        st.caption(f"Menampilkan: {tahun_txt} | {prodi_txt} | {jenis_txt}{extra}")
+    if not with_ref_date:
         ref_date = None
-        if with_ref_date:
-            ref_raw = cols[i].date_input(
-                "Tanggal Acuan Ghosting",
-                value=DEFAULT_REF_DATE.date() if hasattr(DEFAULT_REF_DATE, "date") else DEFAULT_REF_DATE,
-                key=f"f_ref_{key}",
-                help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ BT-05).",
-            )
-            ref_date = pd.Timestamp(ref_raw)
     return tahun, prodi, jenis, ref_date
 
 
@@ -706,45 +745,60 @@ with tab1:
 
     selesai = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)]
     lama_proses = selesai["lama_proses_hari"].mean() if "lama_proses_hari" in selesai.columns and selesai["lama_proses_hari"].notna().any() else None
+    n_request_belum = int((tr_fulfill["belum_terpenuhi"] > 0).sum())
 
     kpi_row([
         {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim",
          "help": "Jumlah proses seleksi kandidat (baris tracking_student) pada rentang filter."},
-        {"value": f"{total_placement:,}", "label": "Placement Berhasil"},
-        {"value": f"{success_rate:.1f}%", "label": "Success Rate",
-         "help": "Placement dibagi kandidat dikirim — pembilang & penyebut sama-sama dari tracking_student."},
+        {"value": f"{total_placement:,}", "label": "Placement Berhasil",
+         "sub": f"{success_rate:.1f}% dari kandidat dikirim", "highlight": True,
+         "help": "Placement dan success rate memang satu keluarga: success rate = placement dibagi kandidat dikirim, jadi keduanya digabung di satu kartu."},
         {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
          "help": "Jumlah dikirim vs diminta (BT-03). Di atas 100% berarti CDC mengirim lebih banyak kandidat dari kuota — wajar untuk shortlist."},
         {"value": f"{lama_proses:.0f} hari" if lama_proses is not None else "-", "label": "Rata-rata Lama Proses",
          "help": "Dari batch dikirim (send_date) sampai keputusan terakhir."},
+        {"value": f"{n_request_belum:,}", "label": "Request Belum Terpenuhi",
+         "sub": "data master, di luar filter",
+         "help": "Talent request yang jumlah kirimnya masih di bawah headcount (BT-03)."},
     ])
 
     col_kiri, col_kanan = st.columns([2, 1])
     with col_kiri:
         with st.container(border=True):
             section("Placement & Success Rate per Bulan",
-                    "Batang = jumlah placement; garis = success rate dari keputusan yang keluar di bulan itu.")
+                    "Batang = jumlah placement; garis = success rate. Gunakan tombol rentang untuk zoom.")
             dec = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)].copy()
-            dec["bulan"] = dec["last_update"].dt.to_period("M").astype(str)
+            dec["bulan"] = dec["last_update"].dt.to_period("M")
             per_bulan = dec.groupby("bulan").agg(
                 placement=("rejection", lambda s: (s == "Placement").sum()),
                 keputusan=("rejection", "size"),
             ).reset_index().sort_values("bulan")
             per_bulan["success_pct"] = (per_bulan["placement"] / per_bulan["keputusan"] * 100).round(1)
+            per_bulan["bulan_dt"] = per_bulan["bulan"].dt.to_timestamp()
 
             fig_combo = make_subplots(specs=[[{"secondary_y": True}]])
             fig_combo.add_trace(go.Bar(
-                x=per_bulan["bulan"], y=per_bulan["placement"], name="Placement",
+                x=per_bulan["bulan_dt"], y=per_bulan["placement"], name="Placement",
                 marker_color=COLOR_COCOA,
             ), secondary_y=False)
             fig_combo.add_trace(go.Scatter(
-                x=per_bulan["bulan"], y=per_bulan["success_pct"], name="Success Rate (%)",
+                x=per_bulan["bulan_dt"], y=per_bulan["success_pct"], name="Success Rate (%)",
                 mode="lines+markers", line=dict(color=COLOR_SEAL_BROWN, width=2.5),
                 marker=dict(color=COLOR_SIENNA, size=6),
             ), secondary_y=True)
-            fig_combo.update_yaxes(title_text="Placement", secondary_y=False)
-            fig_combo.update_yaxes(title_text="%", secondary_y=True, rangemode="tozero")
-            show_chart(fig_combo, height=330)
+            fig_combo.update_yaxes(title_text=None, secondary_y=False)
+            fig_combo.update_yaxes(title_text=None, secondary_y=True, rangemode="tozero")
+            # elemen dinamis: tombol rentang waktu
+            fig_combo.update_xaxes(rangeselector=dict(
+                buttons=[
+                    dict(count=6, label="6 bln", step="month", stepmode="backward"),
+                    dict(count=12, label="1 thn", step="month", stepmode="backward"),
+                    dict(step="all", label="Semua"),
+                ],
+                bgcolor=tint(COLOR_JASMINE, 0.6), activecolor=COLOR_COCOA,
+                font=dict(size=10, color=COLOR_DRAB_DARK),
+            ))
+            show_chart(fig_combo, height=310)
 
     with col_kanan:
         with st.container(border=True):
@@ -765,11 +819,11 @@ with tab1:
                 },
             )
             fig_donut.update_traces(textinfo="percent", textfont_size=11)
-            show_chart(fig_donut, height=330)
+            show_chart(fig_donut, height=310)
 
     with st.container(border=True):
         section("Perjalanan Kandidat: dari Dikirim sampai Placement",
-                "Waterfall: dari semua kandidat yang dikirim, berapa yang hilang di tiap penyebab, dan berapa yang berakhir placement.")
+                "Waterfall: berapa kandidat hilang di tiap penyebab, dan berapa yang berakhir placement.")
         wf_vals = {
             "Rej. Screening CV": -int((m["rejection"] == "Rejection Screening CV").sum()),
             "Rej. Study Case": -int((m["rejection"] == "Rejection Study Case").sum()),
@@ -790,14 +844,7 @@ with tab1:
             decreasing={"marker": {"color": COLOR_SIENNA}},
             totals={"marker": {"color": COLOR_COCOA}},
         ))
-        show_chart(fig_wf, height=360)
-
-        if len(m) > 0:
-            on_progress_pct = -wf_vals["Masih Berjalan"] / len(m) * 100
-            insight(
-                f"Dari <b>{total_dikirim_individu:,}</b> kandidat dikirim, <b>{total_placement:,}</b> berakhir placement "
-                f"({success_rate:.1f}%), sementara {on_progress_pct:.0f}% masih berjalan prosesnya.",
-            )
+        show_chart(fig_wf, height=290)
 
 # ---------------------------------------------------------------------------
 # TAB 2 — FUNNEL & GHOSTING
@@ -813,18 +860,33 @@ with tab2:
         for h, r in zip(tc_status["hari_sejak_kirim"], tc_status["sudah_direspon"])
     ]
 
+    followup_counts = tc_status["status_followup"].value_counts()
+    total_tc = len(tc_status)
+    n_ghosting = int(followup_counts.get("Ghosting", 0))
+    ghosting_rate = (n_ghosting / total_tc * 100) if total_tc > 0 else 0
+
+    kpi_row([
+        {"value": f"{total_tc:,}", "label": "Batch Terkirim"},
+        {"value": f"{int(followup_counts.get('FU 1', 0)):,}", "label": "Butuh FU 1"},
+        {"value": f"{int(followup_counts.get('FU 2', 0)):,}", "label": "Butuh FU 2"},
+        {"value": f"{int(followup_counts.get('FU 3', 0)):,}", "label": "Butuh FU 3"},
+        {"value": f"{n_ghosting:,}", "label": "Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
+         "highlight": True,
+         "help": "Aturan FAQ BT-05: >28 hari sejak send_date tanpa respons perusahaan."},
+    ])
+
     col_kiri, col_kanan = st.columns(2)
     with col_kiri:
         with st.container(border=True):
             section("Funnel Seleksi Kandidat",
-                    "Jumlah kandidat yang MENCAPAI tiap tahap (persentase = konversi dari tahap sebelumnya).")
+                    "Kandidat yang MENCAPAI tiap tahap; persentase = konversi dari tahap sebelumnya.")
             funnel_counts = [int((m["stage_reached"] >= i).sum()) for i in range(len(FUNNEL_STAGES))]
             fig_funnel = go.Figure(go.Funnel(
                 y=FUNNEL_STAGES, x=funnel_counts,
                 marker={"color": PALETTE_SEQUENTIAL},
                 textinfo="value+percent previous",
             ))
-            show_chart(fig_funnel, height=360)
+            show_chart(fig_funnel, height=330)
 
     with col_kanan:
         with st.container(border=True):
@@ -834,7 +896,7 @@ with tab2:
             fig_rej = px.bar(rej, x="jumlah", y="tahap_rejection", orientation="h",
                              color_discrete_sequence=[COLOR_SIENNA])
             fig_rej.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_rej, height=360)
+            show_chart(fig_rej, height=330)
 
     konversi = [
         (FUNNEL_STAGES[i], funnel_counts[i] / funnel_counts[i - 1] * 100)
@@ -843,29 +905,21 @@ with tab2:
     if konversi:
         tahap_bocor, rate_bocor = min(konversi, key=lambda t: t[1])
         insight(f"Konversi terendah ada di tahap <b>{tahap_bocor}</b> ({rate_bocor:.0f}% dari tahap sebelumnya) — "
-                "prioritaskan pendampingan CDC di tahap ini.", kind="warning")
+                "prioritaskan pendampingan CDC di tahap ini. "
+                f"Ghosting menurut aturan FAQ: <b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).", kind="warning")
 
-    with st.container(border=True):
-        section("Deteksi Ghosting Perusahaan (BT-05)",
-                "Sesuai FAQ: Ghosting dari pihak perusahaan, dihitung dari send_date per batch pengiriman — "
-                ">7 hari FU1, >14 FU2, >21 FU3, >28 Ghosting. Filter Program Studi tidak berlaku di bagian ini (level batch).")
-
-        followup_counts = tc_status["status_followup"].value_counts()
-        total_tc = len(tc_status)
-        n_ghosting = int(followup_counts.get("Ghosting", 0))
-        ghosting_rate = (n_ghosting / total_tc * 100) if total_tc > 0 else 0
-
-        kpi_row([
-            {"value": f"{total_tc:,}", "label": "Batch Terkirim"},
-            {"value": f"{int(followup_counts.get('FU 1', 0)):,}", "label": "Butuh FU 1"},
-            {"value": f"{int(followup_counts.get('FU 2', 0)):,}", "label": "Butuh FU 2"},
-            {"value": f"{int(followup_counts.get('FU 3', 0)):,}", "label": "Butuh FU 3"},
-            {"value": f"{n_ghosting:,}", "label": f"Ghosting ({ghosting_rate:.1f}%)"},
-        ])
-
+    ghosted = tc_status[tc_status["status_followup"] == "Ghosting"]
+    with st.expander("Analisis ghosting lanjutan (per perusahaan, per tahap, tren bulanan)", icon=":material/query_stats:"):
         col1, col2 = st.columns(2)
-        ghosted = tc_status[tc_status["status_followup"] == "Ghosting"]
         with col1:
+            ghosting_by_company = ghosted["company_name"].value_counts().head(10).reset_index()
+            ghosting_by_company.columns = ["perusahaan", "jumlah_ghosting"]
+            fig_gc = px.bar(ghosting_by_company, x="jumlah_ghosting", y="perusahaan", orientation="h",
+                            title="Top Perusahaan Kontributor Ghosting",
+                            color_discrete_sequence=[COLOR_SEAL_BROWN])
+            fig_gc.update_layout(yaxis_title=None, xaxis_title=None)
+            show_chart(fig_gc, height=290)
+        with col2:
             ghosted_children = tracking_student[tracking_student["id_tracking_company"].isin(ghosted["id_tracking_company"])]
             ghosting_by_stage = ghosted_children["progress_student"].value_counts().head(8).reset_index()
             ghosting_by_stage.columns = ["tahap", "jumlah"]
@@ -873,17 +927,8 @@ with tab2:
                             title="Kandidat pada Batch Ghosting — Tahap Terakhir",
                             color_discrete_sequence=[COLOR_SIENNA])
             fig_gs.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_gs, height=300)
-        with col2:
-            ghosting_by_company = ghosted["company_name"].value_counts().head(10).reset_index()
-            ghosting_by_company.columns = ["perusahaan", "jumlah_ghosting"]
-            fig_gc = px.bar(ghosting_by_company, x="jumlah_ghosting", y="perusahaan", orientation="h",
-                            title="Top Perusahaan Kontributor Ghosting",
-                            color_discrete_sequence=[COLOR_SEAL_BROWN])
-            fig_gc.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_gc, height=300)
+            show_chart(fig_gs, height=290)
 
-        # tren komposisi status follow-up per bulan pengiriman
         tren_fu = tc_status.copy()
         tren_fu["bulan_kirim"] = tren_fu["send_date"].dt.to_period("M").astype(str)
         tren_fu = tren_fu.groupby(["bulan_kirim", "status_followup"]).size().reset_index(name="jumlah")
@@ -900,23 +945,21 @@ with tab2:
             },
         )
         fig_fu.update_layout(xaxis_title=None, yaxis_title=None, legend_title=None)
-        show_chart(fig_fu, height=300)
+        show_chart(fig_fu, height=280)
 
         n_ghosting_tercatat = int((m["rejection"] == "Ghosting").sum())
         insight(
-            f"Berdasarkan aturan FAQ (per batch, dari send_date), <b>{n_ghosting:,} batch</b> berstatus Ghosting "
-            f"({ghosting_rate:.1f}% dari batch terkirim) pada tanggal acuan. Sebagai pembanding, data mencatat "
-            f"{n_ghosting_tercatat:,} kandidat dengan label Ghosting — angka per kandidat itu tidak setara dengan "
-            "aturan FAQ karena satu batch bisa berisi campuran kandidat ghosting dan kandidat yang tetap diproses. "
-            "Untuk monitoring follow-up, gunakan angka aturan FAQ karena konsisten dan bisa dihitung ulang kapan pun.",
+            f"Data mencatat {n_ghosting_tercatat:,} kandidat berlabel Ghosting — angka per kandidat itu tidak setara "
+            "dengan aturan FAQ karena satu batch bisa berisi campuran kandidat ghosting dan kandidat yang tetap "
+            "diproses. Untuk monitoring follow-up, gunakan angka aturan FAQ karena bisa dihitung ulang kapan pun.",
         )
 
-        perlu_followup = tc_status[tc_status["status_followup"].isin(["FU 1", "FU 2", "FU 3", "Ghosting"])].sort_values("hari_sejak_kirim", ascending=False)
-        with st.expander(f"Daftar {len(perlu_followup):,} batch yang butuh follow-up", icon=":material/list_alt:"):
-            st.dataframe(
-                perlu_followup[["id_tracking_company", "company_name", "posisi", "send_date", "hari_sejak_kirim", "status_followup"]],
-                width="stretch", hide_index=True, height=320,
-            )
+    perlu_followup = tc_status[tc_status["status_followup"].isin(["FU 1", "FU 2", "FU 3", "Ghosting"])].sort_values("hari_sejak_kirim", ascending=False)
+    with st.expander(f"Daftar {len(perlu_followup):,} batch yang butuh follow-up", icon=":material/list_alt:"):
+        st.dataframe(
+            perlu_followup[["id_tracking_company", "company_name", "posisi", "send_date", "hari_sejak_kirim", "status_followup"]],
+            width="stretch", hide_index=True, height=320,
+        )
 
 # ---------------------------------------------------------------------------
 # TAB 3 — MITRA
@@ -928,8 +971,9 @@ with tab3:
     kpi_row([
         {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra (master)"},
         {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request (master)"},
-        {"value": f"{m[COMPANY_NAME_COL].nunique():,}", "label": "Perusahaan Aktif (sesuai filter)"},
-        {"value": f"{m['nama_posisi'].nunique():,}" if "nama_posisi" in m.columns else "-", "label": "Posisi Dibuka (sesuai filter)"},
+        {"value": f"{m[COMPANY_NAME_COL].nunique():,}", "label": "Perusahaan Aktif (filter)", "highlight": True,
+         "help": "Perusahaan yang punya proses seleksi berjalan pada rentang filter."},
+        {"value": f"{m['nama_posisi'].nunique():,}" if "nama_posisi" in m.columns else "-", "label": "Posisi Dibuka (filter)"},
     ])
 
     col1, col2 = st.columns(2)
@@ -945,7 +989,7 @@ with tab3:
             fig_acc = px.bar(perf, x="acceptance_rate", y="perusahaan", orientation="h",
                              color_discrete_sequence=[COLOR_COCOA])
             fig_acc.update_layout(yaxis_title=None, xaxis_title="%")
-            show_chart(fig_acc, height=320)
+            show_chart(fig_acc, height=310)
     with col2:
         with st.container(border=True):
             section("Top 10 Volume Talent Request")
@@ -955,40 +999,30 @@ with tab3:
             fig_vol = px.treemap(volume, path=["perusahaan"], values="jumlah_request",
                                  color_discrete_sequence=PALETTE_SEQUENTIAL)
             fig_vol.update_layout(margin=dict(l=4, r=4, t=8, b=4))
-            show_chart(fig_vol, height=320)
+            show_chart(fig_vol, height=310)
 
-    col3, col4 = st.columns(2)
-    with col3:
-        with st.container(border=True):
-            section("Permintaan per Sektor Industri", "Sektor mana yang paling banyak mencari talent.")
+    with st.expander("Profil mitra: sektor industri & tipe perusahaan", icon=":material/domain:"):
+        col3, col4 = st.columns(2)
+        with col3:
             sektor = tr_named["industri_sektor"].value_counts().head(10).reset_index() if "industri_sektor" in tr_named.columns else pd.DataFrame(columns=["a", "b"])
             sektor.columns = ["sektor", "jumlah"]
             fig_sektor = px.bar(sektor, x="jumlah", y="sektor", orientation="h",
+                                title="Permintaan per Sektor Industri",
                                 color_discrete_sequence=[COLOR_SEAL_BROWN])
             fig_sektor.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_sektor, height=300)
-    with col4:
-        with st.container(border=True):
-            section("Profil Perusahaan Mitra", "Komposisi tipe dan skala dari master COMPANY.")
+            show_chart(fig_sektor, height=290)
+        with col4:
             tipe = company["company_type"].value_counts().reset_index() if "company_type" in company.columns else pd.DataFrame(columns=["a", "b"])
             tipe.columns = ["tipe", "jumlah"]
             fig_tipe = px.pie(tipe, names="tipe", values="jumlah", hole=0.5,
+                              title="Komposisi Tipe Perusahaan",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
             fig_tipe.update_traces(textinfo="percent+label", textfont_size=10)
-            show_chart(fig_tipe, height=300)
+            show_chart(fig_tipe, height=290)
 
-    with st.container(border=True):
-        section("Prioritas Talent Request Belum Terpenuhi",
-                "Diurutkan dari request paling lama (BT-03). Data master, di luar filter.")
-        tr_fulfill = talent_request.merge(
-            tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(),
-            on="id_talent_req", how="left",
-        )
-        tr_fulfill = tr_fulfill.merge(company[["id_company", "company_name"]], on="id_company", how="left")
-        tr_fulfill["jumlah_dikirimkan"] = tr_fulfill["jumlah_dikirimkan"].fillna(0)
-        tr_fulfill["belum_terpenuhi"] = tr_fulfill["headcount"] - tr_fulfill["jumlah_dikirimkan"]
-        tr_fulfill["pemenuhan"] = (tr_fulfill["jumlah_dikirimkan"] / tr_fulfill["headcount"]).clip(0, 1)
-        prioritas = tr_fulfill[tr_fulfill["belum_terpenuhi"] > 0].sort_values("request_date")
+    prioritas = tr_fulfill[tr_fulfill["belum_terpenuhi"] > 0].sort_values("request_date")
+    with st.expander(f"Prioritas {len(prioritas):,} talent request belum terpenuhi (BT-03)", icon=":material/priority_high:"):
+        st.caption("Diurutkan dari request paling lama. Data master, di luar filter.")
         st.dataframe(
             prioritas[["id_talent_req", "company_name", "nama_posisi", "headcount",
                        "jumlah_dikirimkan", "belum_terpenuhi", "pemenuhan", "request_date"]],
@@ -1025,8 +1059,9 @@ with tab4:
         {"value": f"{student_all['nim'].nunique():,}", "label": "Mahasiswa Terdaftar"},
         {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini",
          "help": "Status aktif + tersedia + CV ada + portofolio ada. Sesuai FAQ, 'eligible' = kolom 'ketersediaan'."},
-        {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim",
-         "help": "Supply belum tersalurkan — prioritas dicarikan penempatan (BT-06)."},
+        {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim", "highlight": True,
+         "sub": "supply belum tersalurkan (BT-06)",
+         "help": "Prioritas untuk dicarikan penempatan."},
         {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV"},
         {"value": f"{(porto_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya Portofolio"},
     ])
@@ -1045,7 +1080,7 @@ with tab4:
             fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group",
                              color_discrete_map={"Demand": COLOR_COCOA, "Supply": COLOR_JASMINE})
             fig_gap.update_layout(yaxis_title=None, xaxis_title=None, legend_title=None)
-            show_chart(fig_gap, height=340)
+            show_chart(fig_gap, height=330)
     with col2:
         with st.container(border=True):
             section("Eligibility Mahasiswa", "Sesuai FAQ: kolom 'eligible' = kolom 'ketersediaan'.")
@@ -1053,23 +1088,22 @@ with tab4:
             fig_elig = px.bar(elig_ct, x="ketersediaan", y="jumlah", color="status",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
             fig_elig.update_layout(xaxis_title=None, yaxis_title=None, legend_title=None)
-            show_chart(fig_elig, height=340)
+            show_chart(fig_elig, height=330)
 
-    col3, col4 = st.columns(2)
-    with col3:
-        with st.container(border=True):
-            section("Distribusi IPK")
-            fig_ipk = px.histogram(ss, x="ipk", nbins=20, color_discrete_sequence=[COLOR_COCOA])
+    with st.expander("Distribusi IPK & semester mahasiswa", icon=":material/bar_chart:"):
+        col3, col4 = st.columns(2)
+        with col3:
+            fig_ipk = px.histogram(ss, x="ipk", nbins=20, title="Distribusi IPK",
+                                   color_discrete_sequence=[COLOR_COCOA])
             fig_ipk.update_layout(xaxis_title="IPK", yaxis_title=None)
-            show_chart(fig_ipk, height=280)
-    with col4:
-        with st.container(border=True):
-            section("Distribusi Semester Mahasiswa")
+            show_chart(fig_ipk, height=270)
+        with col4:
             sem_ct = student_all["semester"].value_counts().sort_index().reset_index()
             sem_ct.columns = ["semester", "jumlah"]
-            fig_sem = px.bar(sem_ct, x="semester", y="jumlah", color_discrete_sequence=[COLOR_SEAL_BROWN])
+            fig_sem = px.bar(sem_ct, x="semester", y="jumlah", title="Distribusi Semester",
+                             color_discrete_sequence=[COLOR_SEAL_BROWN])
             fig_sem.update_layout(xaxis_title="Semester", yaxis_title=None)
-            show_chart(fig_sem, height=280)
+            show_chart(fig_sem, height=270)
 
     if len(eligible_nganggur) > 0:
         with st.expander(f"Daftar {len(eligible_nganggur):,} mahasiswa layak yang belum pernah dikirim", icon=":material/person_alert:"):
@@ -1086,48 +1120,28 @@ with tab5:
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
     if ml_bundle is not None:
-        model_label = f"ML aktif (akurasi {ml_bundle['test_accuracy']*100:.0f}%)"
-        model_help = f"RandomForest dilatih dari {ml_bundle['n_train']:,} histori keputusan Placement vs Rejection."
+        auc_txt = f"{ml_bundle['test_auc']:.2f}" if not np.isnan(ml_bundle["test_auc"]) else "-"
+        model_label = "RandomForest Aktif"
+        model_sub = f"AUC {auc_txt} | akurasi {ml_bundle['test_accuracy']*100:.0f}%"
+        model_help = (f"Dilatih dari {ml_bundle['n_train']:,} histori keputusan. "
+                      f"Baseline kelas mayoritas {ml_bundle['baseline']*100:.0f}%. "
+                      "AUC mendekati 0.5 menandakan data sintetis ini tidak mengandung sinyal prediktif — lihat penjelasan di bawah.")
     else:
         model_label = "Fallback AHP"
-        model_help = f"Histori keputusan < {MIN_TRAIN_ROWS} baris atau hanya 1 kelas — skor memakai AHP."
+        model_sub = f"histori < {MIN_TRAIN_ROWS} baris"
+        model_help = "Histori keputusan belum cukup — skor memakai AHP."
 
     kpi_row([
         {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
-        {"value": f"{n_zero:,}", "label": "Request Tanpa Kandidat Cocok"},
+        {"value": f"{n_zero:,}", "label": "Request Tanpa Kandidat Cocok", "highlight": True,
+         "help": "Paling kritis: tidak ada satu pun mahasiswa yang memenuhi syarat prodi + semester + eligible."},
         {"value": f"{ml_bundle['n_train']:,}" if ml_bundle else "0", "label": "Histori Keputusan (data latih)"},
-        {"value": model_label, "label": "Metode Skoring", "help": model_help},
+        {"value": model_label, "label": "Metode Skoring", "sub": model_sub, "help": model_help},
     ])
 
     with st.container(border=True):
-        section("Ringkasan Kecocokan — Semua Talent Request",
-                "Kolom bertahap memperlihatkan di filter mana kandidat berkurang: prodi lalu semester lalu status aktif+tersedia. "
-                "Diurutkan dari yang paling kritis.")
-        if n_zero > 0:
-            insight(
-                f"Ada <b>{n_zero:,} talent request</b> dengan 0 kandidat cocok. Kalau kolom 'Cocok Prodi' sudah 0, tidak ada "
-                "mahasiswa dari bidang studi yang diminta; kalau baru habis di 'Kandidat Final', mahasiswanya ada tapi belum "
-                "aktif/tersedia.", kind="warning",
-            )
-        st.dataframe(
-            match_summary.sort_values(["kandidat_final", "cocok_prodi"]).reset_index(drop=True),
-            width="stretch", hide_index=True, height=300,
-            column_config={
-                "id_talent_req": "ID",
-                "nama_posisi": "Posisi",
-                "company_name": "Perusahaan",
-                "bidang_dibutuhkan": "Bidang Dibutuhkan",
-                "min_semester": "Min. Smt",
-                "cocok_prodi": "Cocok Prodi",
-                "cocok_prodi_semester": "+ Semester",
-                "kandidat_final": "Kandidat Final",
-            },
-        )
-
-    with st.container(border=True):
         section("Cari Kandidat Terbaik untuk Talent Request",
-                "Pilih perusahaan lalu posisinya. Skor = probabilitas placement dari model RandomForest "
-                "(fallback otomatis ke AHP bila histori belum cukup).")
+                "Pilih perusahaan lalu posisinya. Skor = probabilitas placement dari model (fallback AHP otomatis).")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -1223,7 +1237,7 @@ with tab5:
                                          "portofolio", "domisili", "recommendation_score", "metode_skor"]
                              if c in candidates.columns]
                 st.dataframe(
-                    candidates[show_cols].head(50), width="stretch", hide_index=True, height=340,
+                    candidates[show_cols].head(50), width="stretch", hide_index=True, height=320,
                     column_config={
                         "recommendation_score": st.column_config.ProgressColumn("Skor", format="%.2f", min_value=0, max_value=1),
                     },
@@ -1234,16 +1248,43 @@ with tab5:
                                          title="Distribusi Skor Kandidat",
                                          color_discrete_sequence=[COLOR_COCOA])
                 fig_score.update_layout(xaxis_title="Skor", yaxis_title=None)
-                show_chart(fig_score, height=340)
+                show_chart(fig_score, height=320)
+
+    with st.expander(f"Ringkasan kecocokan semua talent request ({n_zero:,} request tanpa kandidat)", icon=":material/table_view:"):
+        st.caption(
+            "Kolom bertahap memperlihatkan di filter mana kandidat berkurang: prodi, lalu semester, lalu status "
+            "aktif+tersedia. Diurutkan dari yang paling kritis."
+        )
+        st.dataframe(
+            match_summary.sort_values(["kandidat_final", "cocok_prodi"]).reset_index(drop=True),
+            width="stretch", hide_index=True, height=320,
+            column_config={
+                "id_talent_req": "ID",
+                "nama_posisi": "Posisi",
+                "company_name": "Perusahaan",
+                "bidang_dibutuhkan": "Bidang Dibutuhkan",
+                "min_semester": "Min. Smt",
+                "cocok_prodi": "Cocok Prodi",
+                "cocok_prodi_semester": "+ Semester",
+                "kandidat_final": "Kandidat Final",
+            },
+        )
 
     if ml_bundle is not None:
-        with st.container(border=True):
-            section("Feature Importance Model",
-                    "Fitur yang paling berpengaruh terhadap peluang placement menurut RandomForest.")
+        with st.expander("Tentang model: feature importance & interpretasi AUC", icon=":material/psychology:"):
+            auc = ml_bundle["test_auc"]
+            insight(
+                f"AUC model {auc:.2f} dengan baseline kelas mayoritas {ml_bundle['baseline']*100:.0f}%. "
+                "AUC mendekati 0.50 berarti pada data kompetisi (sintetis) ini keputusan placement TIDAK berkorelasi "
+                "dengan profil mahasiswa — tidak ada model yang bisa menang di data acak, dan itu temuan yang valid "
+                "untuk disampaikan. Pipeline ini tetap dipakai untuk ranking kandidat, dan akan otomatis belajar pola "
+                "sebenarnya begitu dijalankan pada data operasional riil CDC.",
+                kind="warning" if not np.isnan(auc) and auc < 0.6 else "success",
+            )
             fig_fi = px.bar(ml_bundle["feature_importance"], x="importance", y="fitur", orientation="h",
                             color_discrete_sequence=[COLOR_SEAL_BROWN])
             fig_fi.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_fi, height=260)
+            show_chart(fig_fi, height=250)
 
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
@@ -1259,7 +1300,10 @@ with tab6:
             "Perusahaan": COMPANY_NAME_COL,
             "Jenis Penempatan": "jenis_penempatan",
         }
-        dims_pilihan = st.multiselect("Kelompokkan berdasarkan", list(dim_options.keys()), default=["Program Studi"])
+        col_dim, col_anim = st.columns([3, 1])
+        dims_pilihan = col_dim.multiselect("Kelompokkan berdasarkan", list(dim_options.keys()), default=["Program Studi"])
+        mode_animasi = col_anim.toggle("Mode animasi", value=False,
+                                       help="Putar perubahan komposisi placement antar kuartal (tombol play di bawah chart).")
 
         placement_only = m[m["rejection"] == "Placement"].copy()
         placement_only["periode"] = placement_only["last_update"].dt.to_period("Q").astype(str)
@@ -1267,26 +1311,45 @@ with tab6:
         if dims_pilihan:
             group_cols = ["periode"] + [dim_options[d] for d in dims_pilihan]
             recap = placement_only.groupby(group_cols).size().reset_index(name="jumlah_placement")
+            dim_utama = dim_options[dims_pilihan[0]]
+            n_kategori = recap[dim_utama].nunique()
 
-            col_chart, col_table = st.columns([3, 2])
-            with col_chart:
-                dim_utama = dim_options[dims_pilihan[0]]
+            if mode_animasi and n_kategori <= 20:
+                # lengkapi kombinasi kosong supaya tiap frame animasi konsisten
+                pv = recap.pivot_table(index="periode", columns=dim_utama,
+                                       values="jumlah_placement", aggfunc="sum").fillna(0)
+                anim = pv.reset_index().melt(id_vars="periode", var_name=dim_utama, value_name="jumlah_placement")
+                anim = anim.sort_values("periode")
+                fig_recap = px.bar(
+                    anim, x=dim_utama, y="jumlah_placement", color=dim_utama,
+                    animation_frame="periode",
+                    title=f"Placement per Kuartal berdasarkan {dims_pilihan[0]} (animasi)",
+                    color_discrete_sequence=PALETTE_SEQUENTIAL,
+                )
+                fig_recap.update_layout(
+                    showlegend=False, xaxis_title=None, yaxis_title=None,
+                    yaxis_range=[0, float(anim["jumlah_placement"].max()) * 1.15],
+                )
+                show_chart(fig_recap, height=380)
+            else:
+                if mode_animasi and n_kategori > 20:
+                    st.caption(f"Mode animasi dinonaktifkan: kategori terlalu banyak ({n_kategori}). Pilih dimensi dengan kategori lebih sedikit.")
                 fig_recap = px.bar(
                     recap.sort_values("periode"), x="periode", y="jumlah_placement", color=dim_utama,
                     title=f"Placement per Kuartal berdasarkan {dims_pilihan[0]}",
                     color_discrete_sequence=PALETTE_SEQUENTIAL,
                 )
                 fig_recap.update_layout(xaxis_title=None, yaxis_title=None, legend_title=None)
-                show_chart(fig_recap, height=360)
-            with col_table:
+                show_chart(fig_recap, height=380)
+
+            with st.expander("Tabel rekap & unduh CSV", icon=":material/table_view:"):
                 st.dataframe(recap.sort_values("periode", ascending=False),
-                             width="stretch", hide_index=True, height=330)
+                             width="stretch", hide_index=True, height=300)
                 st.download_button("Unduh Rekap CSV", recap.to_csv(index=False).encode("utf-8"),
                                    "rekap_placement.csv", "text/csv", icon=":material/download:")
 
-    with st.container(border=True):
-        section("Kualitas Data & Sinkronisasi",
-                "BT-08: konsistensi STUDENT ALL vs STATUS STUDENT. Data master, di luar filter.")
+    with st.expander("Kualitas data & sinkronisasi (BT-08)", icon=":material/rule:"):
+        st.caption("Konsistensi STUDENT ALL vs STATUS STUDENT. Data master, di luar filter.")
         merged_check = student_all.merge(status_student[["nim", "sync_date"]], on="nim", how="left", indicator=True)
         belum_sync = merged_check[merged_check["_merge"] == "left_only"]
 
@@ -1308,7 +1371,7 @@ with tab6:
                               title="Sebaran Waktu Sinkronisasi Data Mahasiswa",
                               color_discrete_sequence=[COLOR_COCOA])
             fig_sync.update_layout(xaxis_title=None, yaxis_title=None)
-            show_chart(fig_sync, height=280)
+            show_chart(fig_sync, height=270)
 
         if len(belum_sync) > 0:
             st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20),
