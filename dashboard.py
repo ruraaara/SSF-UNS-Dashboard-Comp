@@ -150,7 +150,11 @@ div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font
 
 /* ===== SIDEBAR navigasi: panel gelap membulat gaya bento ===== */
 section[data-testid="stSidebar"] {{
-    background: linear-gradient(180deg, #6B3416 0%, {COLOR_SEAL_BROWN} 55%, #33170A 100%) !important;
+    background:
+        radial-gradient(at 88% 10%, rgba(247, 212, 117, 0.28) 0px, transparent 40%),
+        radial-gradient(at 8% 42%, rgba(226, 120, 47, 0.35) 0px, transparent 45%),
+        radial-gradient(at 82% 88%, rgba(164, 176, 94, 0.22) 0px, transparent 45%),
+        linear-gradient(180deg, #A64B1A 0%, #7C3413 45%, {COLOR_SEAL_BROWN} 100%) !important;
     border-radius: 0 22px 22px 0;
 }}
 /* sidebar tidak bisa ditutup */
@@ -186,6 +190,12 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
 div[data-testid="stPopover"] {{
     display: flex;
     justify-content: flex-end;
+}}
+div[data-testid="stPopover"] > div {{
+    margin-left: auto;
+}}
+div[data-testid="stPopover"] button {{
+    margin-left: auto;
 }}
 /* logo + daun autumn di belakangnya */
 .side-logo {{
@@ -858,7 +868,7 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
         unsafe_allow_html=True,
     )
 
-    col_t, col_f = st.columns([5, 1], vertical_alignment="center")
+    col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
         st.markdown(f'<div class="page-title">{title}</div>', unsafe_allow_html=True)
 
@@ -1635,6 +1645,24 @@ PAGES = [
     st.Page(page_laporan, title="Laporan", icon=":material/description:"),
 ]
 nav = st.navigation(PAGES, position="hidden")
+
+# CSS penanda menu aktif disuntik dinamis berdasarkan halaman terpilih:
+# tidak bergantung pada atribut aria-current yang tidak selalu dirender.
+_current_href = "/" + (nav.url_path or "")
+st.markdown(
+    f"<style>"
+    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] {{"
+    f"  background: #FFF6E6 !important;"
+    f"  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);"
+    f"}}"
+    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] p,"
+    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] span {{"
+    f"  color: {COLOR_SEAL_BROWN} !important;"
+    f"  font-weight: 700;"
+    f"}}"
+    f"</style>",
+    unsafe_allow_html=True,
+)
 
 def _img_b64(path: str) -> str:
     with open(path, "rb") as f:
