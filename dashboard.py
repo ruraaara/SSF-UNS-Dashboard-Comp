@@ -403,6 +403,21 @@ def norm_text(series: pd.Series) -> pd.Series:
     return series.astype(str).str.strip().str.lower()
 
 
+BULAN_ID = {
+    "januari": 1, "februari": 2, "maret": 3, "april": 4, "mei": 5, "juni": 6,
+    "juli": 7, "agustus": 8, "september": 9, "oktober": 10, "november": 11, "desember": 12,
+}
+
+
+def parse_bulan_masuk(x):
+    """Parse 'Februari 2023' (nama bulan Indonesia) menjadi Timestamp awal bulan."""
+    try:
+        b, t = str(x).strip().lower().split()
+        return pd.Timestamp(int(t), BULAN_ID[b], 1)
+    except (ValueError, KeyError):
+        return pd.NaT
+
+
 # ---------------------------------------------------------------------------
 # LOAD + PREPARE DATA (SEKALI SAJA)
 # Semua pembacaan CSV, pembersihan tipe, dan merge dilakukan dalam satu fungsi
@@ -497,6 +512,25 @@ def load_all() -> dict:
         & norm_text(pool["status"]).isin(VAL_STATUS_AKTIF)
     )
 
+    # dimensi waktu untuk analisis demand vs supply per bulan:
+    # - supply: bulan_masuk mahasiswa (2019-2023), dijadikan stok kumulatif
+    # - demand: request_date + headcount, di-explode per bidang studi
+    if "bulan_masuk" in student_all.columns:
+        student_all["masuk_dt"] = student_all["bulan_masuk"].map(parse_bulan_masuk)
+    else:
+        student_all["masuk_dt"] = pd.NaT
+
+    dm = talent_request.loc[
+        talent_request["request_date"].notna(),
+        ["request_date", "headcount", "bidang_studi_dibutuhkan"],
+    ].copy()
+    dm["bidang_norm"] = dm["bidang_studi_dibutuhkan"].astype(str).str.split(",")
+    dm = dm.explode("bidang_norm")
+    dm["bidang_norm"] = dm["bidang_norm"].str.strip().str.lower()
+    dm = dm[dm["bidang_norm"] != ""]
+    dm["bulan"] = dm["request_date"].dt.to_period("M").dt.to_timestamp()
+    demand_monthly = dm.groupby(["bulan", "bidang_norm"])["headcount"].sum().reset_index()
+
     # pemenuhan talent request (dipakai Overview & Mitra)
     tr_fulfill = talent_request.merge(
         tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(),
@@ -520,6 +554,7 @@ def load_all() -> dict:
         "pool_prodi_col": prodi_col,
         "pool_semester_col": semester_col,
         "tr_fulfill": tr_fulfill,
+        "demand_monthly": demand_monthly,
         "default_ref_date": default_ref,
     }
 
@@ -1101,18 +1136,47 @@ with tab4:
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Matching Gap: Demand vs Supply Bidang Studi")
-            demand = talent_request["bidang_studi_dibutuhkan"].dropna().str.split(",").explode().str.strip().value_counts().reset_index()
-            demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand"
-            supply = student_all["program_studi"].dropna().value_counts().reset_index()
-            supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply"
-            gap_melt = pd.concat([demand, supply], ignore_index=True)
-            top_bidang = gap_melt.groupby("bidang_studi")["jumlah"].sum().sort_values(ascending=False).head(10).index
-            gap_melt = gap_melt[gap_melt["bidang_studi"].isin(top_bidang)]
-            fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group",
-                             color_discrete_map={"Demand": COLOR_COCOA, "Supply": COLOR_JASMINE})
-            fig_gap.update_layout(yaxis_title=None, xaxis_title=None, legend_title=None)
-            show_chart(fig_gap, height=330)
+            section("Demand vs Supply per Bulan",
+                    "Area halus: garis oranye = headcount diminta per bulan; area zaitun = stok kumulatif "
+                    "mahasiswa terdaftar (dari bulan masuk). Rentang data: supply 2019-2023, demand 2023-2025.")
+            prodi_pilih = st.selectbox(
+                "Fokus jurusan / bidang studi",
+                ["Semua bidang"] + FILTER_PRODI,
+                key="ks_prodi_ts",
+            )
+
+            dm_view = DATA["demand_monthly"]
+            sup_view = student_all[student_all["masuk_dt"].notna()]
+            if prodi_pilih != "Semua bidang":
+                p_norm = prodi_pilih.strip().lower()
+                dm_view = dm_view[dm_view["bidang_norm"] == p_norm]
+                sup_view = sup_view[norm_text(sup_view["program_studi"]) == p_norm]
+
+            d_series = dm_view.groupby("bulan")["headcount"].sum()
+            s_entry = sup_view.groupby(sup_view["masuk_dt"].dt.to_period("M").dt.to_timestamp()).size()
+
+            if len(d_series) == 0 and len(s_entry) == 0:
+                insight("Tidak ada data demand maupun supply untuk bidang ini.", kind="error")
+            else:
+                tanggal_semua = list(d_series.index) + list(s_entry.index)
+                idx = pd.date_range(min(tanggal_semua), max(tanggal_semua), freq="MS")
+                d_full = d_series.reindex(idx, fill_value=0)
+                s_cum = s_entry.reindex(idx, fill_value=0).cumsum()
+
+                fig_ts = make_subplots(specs=[[{"secondary_y": True}]])
+                fig_ts.add_trace(go.Scatter(
+                    x=idx, y=s_cum, name="Stok Mahasiswa (kumulatif)",
+                    mode="lines", line=dict(color=COLOR_OLIVE, width=2, shape="spline"),
+                    fill="tozeroy", fillcolor="rgba(107, 122, 61, 0.28)",
+                ), secondary_y=True)
+                fig_ts.add_trace(go.Scatter(
+                    x=idx, y=d_full, name="Headcount Diminta / bulan",
+                    mode="lines", line=dict(color=COLOR_COCOA, width=2.5, shape="spline"),
+                    fill="tozeroy", fillcolor="rgba(226, 120, 47, 0.35)",
+                ), secondary_y=False)
+                fig_ts.update_yaxes(title_text=None, secondary_y=False, rangemode="tozero")
+                fig_ts.update_yaxes(title_text=None, secondary_y=True, rangemode="tozero", showgrid=False)
+                show_chart(fig_ts, height=300)
     with col2:
         with st.container(border=True):
             section("Eligibility Mahasiswa", "Sesuai FAQ: kolom 'eligible' = kolom 'ketersediaan'.")
@@ -1122,7 +1186,20 @@ with tab4:
             fig_elig.update_layout(xaxis_title=None, yaxis_title=None, legend_title=None)
             show_chart(fig_elig, height=330)
 
-    with st.expander("Distribusi IPK & semester mahasiswa", icon=":material/bar_chart:"):
+    with st.expander("Gap total per bidang, distribusi IPK & semester", icon=":material/bar_chart:"):
+        demand = talent_request["bidang_studi_dibutuhkan"].dropna().str.split(",").explode().str.strip().value_counts().reset_index()
+        demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand"
+        supply = student_all["program_studi"].dropna().value_counts().reset_index()
+        supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply"
+        gap_melt = pd.concat([demand, supply], ignore_index=True)
+        top_bidang = gap_melt.groupby("bidang_studi")["jumlah"].sum().sort_values(ascending=False).head(10).index
+        gap_melt = gap_melt[gap_melt["bidang_studi"].isin(top_bidang)]
+        fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group",
+                         title="Matching Gap Total: Demand vs Supply per Bidang Studi",
+                         color_discrete_map={"Demand": COLOR_COCOA, "Supply": COLOR_JASMINE})
+        fig_gap.update_layout(yaxis_title=None, xaxis_title=None, legend_title=None)
+        show_chart(fig_gap, height=320)
+
         col3, col4 = st.columns(2)
         with col3:
             fig_ipk = px.histogram(ss, x="ipk", nbins=20, title="Distribusi IPK",
