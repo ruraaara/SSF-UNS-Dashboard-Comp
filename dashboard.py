@@ -187,15 +187,25 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
     font-size: 0.72rem;
     color: {tint(COLOR_JASMINE, 0.45)} !important;
 }}
-div[data-testid="stPopover"] {{
+div[data-testid="stPopover"], .stPopover {{
+    width: 100%;
     display: flex;
     justify-content: flex-end;
 }}
-div[data-testid="stPopover"] > div {{
-    margin-left: auto;
+div[data-testid="stPopover"] > div, .stPopover > div {{
+    margin-left: auto !important;
 }}
-div[data-testid="stPopover"] button {{
-    margin-left: auto;
+div[data-testid="stPopover"] button, .stPopover button {{
+    margin-left: auto !important;
+}}
+div[data-testid="stColumn"]:has(div[data-testid="stPopover"]) > div {{
+    display: flex;
+    justify-content: flex-end;
+}}
+/* izinkan pill menu aktif menembus tepi kanan sidebar (efek tab menyatu);
+   konten sidebar pendek sehingga scroll tidak dibutuhkan */
+section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
+    overflow: visible !important;
 }}
 /* logo + daun autumn di belakangnya */
 .side-logo {{
@@ -1646,21 +1656,49 @@ PAGES = [
 ]
 nav = st.navigation(PAGES, position="hidden")
 
-# CSS penanda menu aktif disuntik dinamis berdasarkan halaman terpilih:
-# tidak bergantung pada atribut aria-current yang tidak selalu dirender.
+# CSS penanda menu aktif disuntik dinamis berdasarkan halaman terpilih.
+# Efek "tab menyatu": pill terang menempel ke tepi kanan sidebar dan
+# menyambung ke area konten, dengan lekukan cekung di atas & bawah
+# (pseudo-element lingkaran transparan + box-shadow berwarna latar konten).
 _current_href = "/" + (nav.url_path or "")
+_ACTIVE_BG = "#FBF2E0"  # samakan dengan warna dasar latar konten
 st.markdown(
-    f"<style>"
-    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] {{"
-    f"  background: #FFF6E6 !important;"
-    f"  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);"
-    f"}}"
-    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] p,"
-    f"section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] span {{"
-    f"  color: {COLOR_SEAL_BROWN} !important;"
-    f"  font-weight: 700;"
-    f"}}"
-    f"</style>",
+    f"""<style>
+    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] {{
+        position: relative;
+        background: {_ACTIVE_BG} !important;
+        border-radius: 999px 0 0 999px !important;
+        margin-right: -1.6rem !important;
+        padding-right: 1.4rem !important;
+    }}
+    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] p,
+    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] span {{
+        color: {COLOR_SEAL_BROWN} !important;
+        font-weight: 700;
+    }}
+    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}']::before {{
+        content: "";
+        position: absolute;
+        right: 0;
+        top: -22px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 11px 11px 0 {_ACTIVE_BG};
+    }}
+    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}']::after {{
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: -22px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: transparent;
+        box-shadow: 11px -11px 0 {_ACTIVE_BG};
+    }}
+    </style>""",
     unsafe_allow_html=True,
 )
 
