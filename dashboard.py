@@ -1,3 +1,5 @@
+import os
+
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -14,7 +16,7 @@ from sklearn.metrics import roc_auc_score
 st.set_page_config(
     page_title="CDC SSF UNS — Placement Monitoring",
     layout="wide",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 # ---------------------------------------------------------------------------
@@ -128,20 +130,74 @@ html, body, [class*="css"] {{
     font-family: 'Inter', -apple-system, sans-serif;
 }}
 
-/* ===== paksa latar & teks dasar (dark-mode proof) ===== */
+/* ===== paksa latar & teks dasar (dark-mode proof) =====
+   background: MESH GRADIENT lembut dari palet — beberapa radial-gradient
+   ditumpuk di atas warna dasar krem */
 .stApp {{
-    background: {PAGE_BG_GRAD} !important;
+    background:
+        radial-gradient(at 12% 15%, rgba(247, 212, 117, 0.40) 0px, transparent 45%),
+        radial-gradient(at 88% 8%, rgba(226, 120, 47, 0.20) 0px, transparent 42%),
+        radial-gradient(at 75% 85%, rgba(135, 36, 8, 0.10) 0px, transparent 48%),
+        radial-gradient(at 20% 92%, rgba(107, 122, 61, 0.14) 0px, transparent 45%),
+        #F7F0E4 !important;
     background-attachment: fixed !important;
 }}
 header[data-testid="stHeader"] {{ background: transparent !important; }}
 div[data-testid="stMarkdownContainer"] p {{ color: {COLOR_DRAB_DARK} !important; }}
 div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font-weight: 600; }}
 
-/* tab bar */
-button[data-baseweb="tab"] p {{ color: {tint(COLOR_DRAB_DARK, 0.25)} !important; font-weight: 600; }}
-button[data-baseweb="tab"][aria-selected="true"] p {{ color: {COLOR_SIENNA} !important; }}
-div[data-baseweb="tab-highlight"] {{ background-color: {COLOR_SIENNA} !important; }}
-div[data-baseweb="tab-border"] {{ background-color: {tint(COLOR_COCOA, 0.7)} !important; }}
+/* ===== SIDEBAR navigasi: panel gelap membulat gaya bento ===== */
+section[data-testid="stSidebar"] {{
+    background: linear-gradient(180deg, {COLOR_SEAL_BROWN} 0%, #2A1305 100%) !important;
+    border-radius: 0 22px 22px 0;
+}}
+section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
+.side-brand {{
+    text-align: center;
+    margin: 4px 0 14px 0;
+}}
+.side-brand .brand-name {{
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: {COLOR_JASMINE} !important;
+    line-height: 1.15;
+}}
+.side-brand .brand-sub {{
+    font-size: 0.78rem;
+    color: {tint(COLOR_JASMINE, 0.5)} !important;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}}
+div[data-testid="stPageLink"] a {{
+    border-radius: 12px;
+    padding: 4px 10px;
+}}
+div[data-testid="stPageLink"] a p,
+div[data-testid="stPageLink"] a span {{
+    color: {tint(COLOR_JASMINE, 0.5)} !important;
+    font-weight: 600;
+}}
+div[data-testid="stPageLink"] a:hover {{
+    background: rgba(226, 120, 47, 0.22) !important;
+}}
+div[data-testid="stPageLink"] a[aria-current="page"] {{
+    background: {COLOR_COCOA} !important;
+    box-shadow: 0 2px 8px rgba(226, 120, 47, 0.4);
+}}
+div[data-testid="stPageLink"] a[aria-current="page"] p,
+div[data-testid="stPageLink"] a[aria-current="page"] span {{
+    color: #FFF8EE !important;
+}}
+
+/* animasi transisi halus setiap pindah halaman / interaksi */
+.block-container {{
+    animation: pagein 0.45s ease;
+}}
+@keyframes pagein {{
+    from {{ opacity: 0; transform: translateY(10px); }}
+    to   {{ opacity: 1; transform: none; }}
+}}
 
 /* input & multiselect */
 div[data-baseweb="select"] > div {{
@@ -785,19 +841,12 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    ":material/monitoring: Overview",
-    ":material/filter_alt: Funnel & Ghosting",
-    ":material/handshake: Mitra",
-    ":material/school: Kesiapan",
-    ":material/person_search: Matching Talent",
-    ":material/description: Laporan",
-])
+
 
 # ---------------------------------------------------------------------------
 # TAB 1 — OVERVIEW
 # ---------------------------------------------------------------------------
-with tab1:
+def page_overview():
     tahun_f, prodi_f, jenis_f, _ = filter_bar("overview")
     m = scope_master(tahun_f, prodi_f, jenis_f)
     tc_scope = scope_tc(tahun_f, jenis_f)
@@ -916,7 +965,7 @@ with tab1:
 # ---------------------------------------------------------------------------
 # TAB 2 — FUNNEL & GHOSTING
 # ---------------------------------------------------------------------------
-with tab2:
+def page_funnel():
     tahun_f, prodi_f, jenis_f, tanggal_acuan = filter_bar("funnel", with_ref_date=True)
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
@@ -1031,7 +1080,7 @@ with tab2:
 # ---------------------------------------------------------------------------
 # TAB 3 — MITRA
 # ---------------------------------------------------------------------------
-with tab3:
+def page_mitra():
     tahun_f, prodi_f, jenis_f, _ = filter_bar("mitra")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
@@ -1103,7 +1152,7 @@ with tab3:
 # ---------------------------------------------------------------------------
 # TAB 4 — KESIAPAN (data master terkini — tanpa filter)
 # ---------------------------------------------------------------------------
-with tab4:
+def page_kesiapan():
     st.caption("Tab ini memakai data master terkini (snapshot status mahasiswa), sehingga tidak memakai filter.")
 
     ss = status_student
@@ -1174,8 +1223,16 @@ with tab4:
                     mode="lines", line=dict(color=COLOR_COCOA, width=2.5, shape="spline"),
                     fill="tozeroy", fillcolor="rgba(226, 120, 47, 0.35)",
                 ), secondary_y=False)
-                fig_ts.update_yaxes(title_text=None, secondary_y=False, rangemode="tozero")
-                fig_ts.update_yaxes(title_text=None, secondary_y=True, rangemode="tozero", showgrid=False)
+                # dua sumbu diberi warna sesuai kurvanya supaya tidak salah baca:
+                # kiri (cocoa) = demand bulanan, kanan (olive) = stok kumulatif
+                fig_ts.update_yaxes(
+                    title_text="Diminta / bln", secondary_y=False, rangemode="tozero",
+                    color=COLOR_COCOA, title_font=dict(size=10),
+                )
+                fig_ts.update_yaxes(
+                    title_text="Stok mahasiswa", secondary_y=True, rangemode="tozero",
+                    showgrid=False, color=COLOR_OLIVE, title_font=dict(size=10),
+                )
                 show_chart(fig_ts, height=300)
     with col2:
         with st.container(border=True):
@@ -1223,7 +1280,7 @@ with tab4:
 # ---------------------------------------------------------------------------
 # TAB 5 — MATCHING TALENT (data master terkini — tanpa filter)
 # ---------------------------------------------------------------------------
-with tab5:
+def page_matching():
     st.caption("Tab ini memakai data master terkini, sehingga tidak memakai filter.")
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
@@ -1403,7 +1460,7 @@ with tab5:
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
 # ---------------------------------------------------------------------------
-with tab6:
+def page_laporan():
     tahun_f, prodi_f, jenis_f, _ = filter_bar("laporan")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
@@ -1490,3 +1547,34 @@ with tab6:
         if len(belum_sync) > 0:
             st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20),
                          width="stretch", hide_index=True)
+
+# ---------------------------------------------------------------------------
+# NAVIGASI SIDEBAR (menggantikan tabs) — logo di atas, teks CDC di bawah logo,
+# lalu menu halaman. position="hidden" agar nav bawaan tidak dobel dengan
+# menu custom di bawah.
+# ---------------------------------------------------------------------------
+PAGES = [
+    st.Page(page_overview, title="Overview", icon=":material/monitoring:", default=True),
+    st.Page(page_funnel, title="Funnel & Ghosting", icon=":material/filter_alt:"),
+    st.Page(page_mitra, title="Mitra", icon=":material/handshake:"),
+    st.Page(page_kesiapan, title="Kesiapan", icon=":material/school:"),
+    st.Page(page_matching, title="Matching Talent", icon=":material/person_search:"),
+    st.Page(page_laporan, title="Laporan", icon=":material/description:"),
+]
+nav = st.navigation(PAGES, position="hidden")
+
+with st.sidebar:
+    if os.path.exists("static/logo.png"):
+        col_logo = st.columns([1, 2, 1])[1]
+        col_logo.image("static/logo.png", width="stretch")
+    st.markdown(
+        '<div class="side-brand">'
+        '<div class="brand-name">CDC</div>'
+        '<div class="brand-sub">SSF UNS</div>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    for p in PAGES:
+        st.page_link(p)
+
+nav.run()
