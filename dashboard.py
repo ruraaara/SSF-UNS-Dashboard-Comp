@@ -58,7 +58,7 @@ PALETTE_SEQUENTIAL = [
     COLOR_DRAB_DARK,
 ]
 
-# Aturan resmi FAQ BT-05: Ghosting diasumsikan dari PIHAK PERUSAHAAN,
+# Aturan resmi FAQ: Ghosting diasumsikan dari PIHAK PERUSAHAAN,
 # dihitung dari send_date per batch pengiriman (baris tracking_company).
 FU1_DAYS = 7
 FU2_DAYS = 14
@@ -135,11 +135,12 @@ html, body, [class*="css"] {{
    ditumpuk di atas warna dasar krem */
 .stApp {{
     background:
-        radial-gradient(at 12% 15%, rgba(247, 212, 117, 0.40) 0px, transparent 45%),
-        radial-gradient(at 88% 8%, rgba(226, 120, 47, 0.20) 0px, transparent 42%),
-        radial-gradient(at 75% 85%, rgba(135, 36, 8, 0.10) 0px, transparent 48%),
-        radial-gradient(at 20% 92%, rgba(107, 122, 61, 0.14) 0px, transparent 45%),
-        #F7F0E4 !important;
+        radial-gradient(at 10% 12%, rgba(247, 212, 117, 0.65) 0px, transparent 42%),
+        radial-gradient(at 92% 6%, rgba(226, 120, 47, 0.38) 0px, transparent 40%),
+        radial-gradient(at 80% 88%, rgba(135, 36, 8, 0.22) 0px, transparent 45%),
+        radial-gradient(at 15% 95%, rgba(107, 122, 61, 0.30) 0px, transparent 42%),
+        radial-gradient(at 50% 50%, rgba(251, 244, 232, 0.85) 0px, transparent 65%),
+        #F5EBD9 !important;
     background-attachment: fixed !important;
 }}
 header[data-testid="stHeader"] {{ background: transparent !important; }}
@@ -169,6 +170,22 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }}
+.side-sync {{
+    position: absolute;
+    bottom: 14px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.72rem;
+    color: {tint(COLOR_JASMINE, 0.45)} !important;
+}}
+.page-title {{
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: {COLOR_SEAL_BROWN};
+    margin: 0;
+}}
 div[data-testid="stPageLink"] a {{
     border-radius: 12px;
     padding: 4px 10px;
@@ -190,14 +207,6 @@ div[data-testid="stPageLink"] a[aria-current="page"] span {{
     color: #FFF8EE !important;
 }}
 
-/* animasi transisi halus setiap pindah halaman / interaksi */
-.block-container {{
-    animation: pagein 0.45s ease;
-}}
-@keyframes pagein {{
-    from {{ opacity: 0; transform: translateY(10px); }}
-    to   {{ opacity: 1; transform: none; }}
-}}
 
 /* input & multiselect */
 div[data-baseweb="select"] > div {{
@@ -254,12 +263,12 @@ div[data-testid="stMarkdownContainer"] .dash-header p {{
 .kpi-card {{
     flex: 1;
     min-width: 150px;
-    background: #FFFDF6;
-    border: 2px solid {tint(COLOR_COCOA, 0.72)};
+    background: #FFFFFF;
+    border: 1px solid rgba(226, 120, 47, 0.16);
     border-radius: 14px;
     padding: 14px 12px 11px 12px;
     text-align: center;
-    box-shadow: 0 1px 5px rgba(74, 35, 14, 0.05);
+    box-shadow: 0 4px 12px rgba(74, 35, 14, 0.07);
 }}
 .kpi-card.kpi-hl {{
     border: 2px solid transparent;
@@ -291,8 +300,8 @@ div[data-testid="stMarkdownContainer"] .dash-header p {{
 .kpi-card.kpi-hl .kpi-sub {{ color: {tint(COLOR_COCOA, 0.35)}; }}
 
 div[data-testid="stMetric"] {{
-    background-color: {COLOR_BG_CARD};
-    border: 1px solid {tint(COLOR_COCOA, 0.65)};
+    background-color: #FFFFFF;
+    border: 1px solid rgba(226, 120, 47, 0.16);
     border-radius: 12px;
     padding: 10px 14px 8px 14px;
 }}
@@ -336,10 +345,10 @@ div[data-testid="stMetricValue"] {{
 
 /* ===== kartu bento: putih, rounded besar, shadow lembut ===== */
 div[data-testid="stVerticalBlockBorderWrapper"] {{
-    border-radius: 16px !important;
-    border: 1px solid {tint(COLOR_COCOA, 0.8)} !important;
-    background-color: {CARD_BG} !important;
-    box-shadow: 0 2px 10px rgba(74, 35, 14, 0.06);
+    border-radius: 18px !important;
+    border: 1px solid rgba(226, 120, 47, 0.14) !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 6px 18px rgba(74, 35, 14, 0.09);
 }}
 div[data-testid="stExpander"] {{
     background-color: {CARD_BG} !important;
@@ -778,34 +787,42 @@ FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) i
 FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist()) if "jenis_penempatan" in talent_request.columns else []
 
 
-def filter_bar(key: str, with_prodi: bool = True, with_ref_date: bool = False):
-    col_btn, col_info = st.columns([1, 5])
-    with col_btn:
-        with st.popover(":material/tune: Filter"):
-            tahun = st.multiselect("Tahun", FILTER_TAHUN, default=FILTER_TAHUN, key=f"f_tahun_{key}")
-            prodi = []
-            if with_prodi:
-                prodi = st.multiselect("Program Studi", FILTER_PRODI, default=[],
-                                       placeholder="Semua program studi", key=f"f_prodi_{key}")
-            jenis = st.multiselect("Jenis Penempatan", FILTER_JENIS, default=[],
-                                   placeholder="Semua jenis", key=f"f_jenis_{key}")
-            ref_date = None
-            if with_ref_date:
-                ref_raw = st.date_input(
-                    "Tanggal Acuan Ghosting",
-                    value=DEFAULT_REF_DATE.date() if hasattr(DEFAULT_REF_DATE, "date") else DEFAULT_REF_DATE,
-                    key=f"f_ref_{key}",
-                    help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ BT-05).",
-                )
-                ref_date = pd.Timestamp(ref_raw)
-    with col_info:
-        tahun_txt = ", ".join(str(t) for t in tahun) if tahun and len(tahun) < len(FILTER_TAHUN) else "semua tahun"
-        prodi_txt = f"{len(prodi)} prodi" if prodi else "semua prodi"
-        jenis_txt = ", ".join(jenis) if jenis else "semua jenis"
-        extra = f" | acuan ghosting: {ref_date.strftime('%d %b %Y')}" if with_ref_date and ref_date is not None else ""
-        st.caption(f"Menampilkan: {tahun_txt} | {prodi_txt} | {jenis_txt}{extra}")
-    if not with_ref_date:
-        ref_date = None
+def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False):
+    """Baris judul halaman: judul di kiri, tombol Filter (popover) di ujung
+    kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
+    halaman — nama yang berubah membuat animasi restart setiap pindah halaman."""
+    slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
+    st.markdown(
+        f"<style>"
+        f"@keyframes pagein_{slug} {{ from {{ opacity: 0; transform: translateY(14px); }} "
+        f"to {{ opacity: 1; transform: none; }} }} "
+        f".block-container {{ animation: pagein_{slug} 0.5s ease; }}"
+        f"</style>",
+        unsafe_allow_html=True,
+    )
+
+    col_t, col_f = st.columns([5, 1], vertical_alignment="center")
+    with col_t:
+        st.markdown(f'<div class="page-title">{title}</div>', unsafe_allow_html=True)
+
+    tahun, prodi, jenis, ref_date = [], [], [], None
+    if key is not None:
+        with col_f:
+            with st.popover(":material/tune: Filter"):
+                tahun = st.multiselect("Tahun", FILTER_TAHUN, default=FILTER_TAHUN, key=f"f_tahun_{key}")
+                if with_prodi:
+                    prodi = st.multiselect("Program Studi", FILTER_PRODI, default=[],
+                                           placeholder="Semua program studi", key=f"f_prodi_{key}")
+                jenis = st.multiselect("Jenis Penempatan", FILTER_JENIS, default=[],
+                                       placeholder="Semua jenis", key=f"f_jenis_{key}")
+                if with_ref_date:
+                    ref_raw = st.date_input(
+                        "Tanggal Acuan Ghosting",
+                        value=DEFAULT_REF_DATE.date() if hasattr(DEFAULT_REF_DATE, "date") else DEFAULT_REF_DATE,
+                        key=f"f_ref_{key}",
+                        help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ).",
+                    )
+                    ref_date = pd.Timestamp(ref_raw)
     return tahun, prodi, jenis, ref_date
 
 
@@ -830,16 +847,10 @@ def scope_tc(tahun, jenis) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # HEADER
 # ---------------------------------------------------------------------------
-last_sync_txt = ""
+# info sinkronisasi ditampilkan di bagian paling bawah sidebar
+LAST_SYNC_TXT = ""
 if "sync_date" in status_student.columns and status_student["sync_date"].notna().any():
-    last_sync_txt = f" &nbsp;|&nbsp; Data sync terakhir: {status_student['sync_date'].max().strftime('%d %B %Y')}"
-
-st.markdown(f"""
-<div class="dash-header">
-    <h1>Career Development Center — SSF UNS</h1>
-    <p>Dashboard monitoring penempatan mahasiswa: dari permintaan perusahaan sampai placement.{last_sync_txt}</p>
-</div>
-""", unsafe_allow_html=True)
+    LAST_SYNC_TXT = f"Data sync terakhir: {status_student['sync_date'].max().strftime('%d %B %Y')}"
 
 
 
@@ -847,7 +858,7 @@ st.markdown(f"""
 # TAB 1 — OVERVIEW
 # ---------------------------------------------------------------------------
 def page_overview():
-    tahun_f, prodi_f, jenis_f, _ = filter_bar("overview")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Overview", key="overview")
     m = scope_master(tahun_f, prodi_f, jenis_f)
     tc_scope = scope_tc(tahun_f, jenis_f)
 
@@ -870,12 +881,12 @@ def page_overview():
          "sub": f"{success_rate:.1f}% dari kandidat dikirim", "highlight": True,
          "help": "Placement dan success rate memang satu keluarga: success rate = placement dibagi kandidat dikirim, jadi keduanya digabung di satu kartu."},
         {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
-         "help": "Jumlah dikirim vs diminta (BT-03). Di atas 100% berarti CDC mengirim lebih banyak kandidat dari kuota — wajar untuk shortlist."},
+         "help": "Jumlah dikirim vs diminta. Di atas 100% berarti CDC mengirim lebih banyak kandidat dari kuota — wajar untuk shortlist."},
         {"value": f"{lama_proses:.0f} hari" if lama_proses is not None else "-", "label": "Rata-rata Lama Proses",
          "help": "Dari batch dikirim (send_date) sampai keputusan terakhir."},
         {"value": f"{n_request_belum:,}", "label": "Request Belum Terpenuhi",
          "sub": "data master, di luar filter",
-         "help": "Talent request yang jumlah kirimnya masih di bawah headcount (BT-03)."},
+         "help": "Talent request yang jumlah kirimnya masih di bawah headcount."},
     ])
 
     col_kiri, col_kanan = st.columns([2, 1])
@@ -966,7 +977,7 @@ def page_overview():
 # TAB 2 — FUNNEL & GHOSTING
 # ---------------------------------------------------------------------------
 def page_funnel():
-    tahun_f, prodi_f, jenis_f, tanggal_acuan = filter_bar("funnel", with_ref_date=True)
+    tahun_f, prodi_f, jenis_f, tanggal_acuan = page_header("Funnel & Ghosting", key="funnel", with_ref_date=True)
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     tc_status = scope_tc(tahun_f, jenis_f)
@@ -988,7 +999,7 @@ def page_funnel():
         {"value": f"{int(followup_counts.get('FU 3', 0)):,}", "label": "Butuh FU 3"},
         {"value": f"{n_ghosting:,}", "label": "Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
          "highlight": True,
-         "help": "Aturan FAQ BT-05: >28 hari sejak send_date tanpa respons perusahaan."},
+         "help": "Aturan FAQ: >28 hari sejak send_date tanpa respons perusahaan."},
     ])
 
     col_kiri, col_kanan = st.columns(2)
@@ -1006,7 +1017,7 @@ def page_funnel():
 
     with col_kanan:
         with st.container(border=True):
-            section("Rejection Breakdown per Tahap", "Di tahap mana kandidat paling banyak gagal (BT-04).")
+            section("Rejection Breakdown per Tahap", "Di tahap mana kandidat paling banyak gagal.")
             rej = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts().reindex(REJECTION_STAGES).fillna(0).reset_index()
             rej.columns = ["tahap_rejection", "jumlah"]
             fig_rej = px.bar(rej, x="jumlah", y="tahap_rejection", orientation="h",
@@ -1081,7 +1092,7 @@ def page_funnel():
 # TAB 3 — MITRA
 # ---------------------------------------------------------------------------
 def page_mitra():
-    tahun_f, prodi_f, jenis_f, _ = filter_bar("mitra")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Mitra Perusahaan", key="mitra")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     kpi_row([
@@ -1137,7 +1148,7 @@ def page_mitra():
             show_chart(fig_tipe, height=290)
 
     prioritas = tr_fulfill[tr_fulfill["belum_terpenuhi"] > 0].sort_values("request_date")
-    with st.expander(f"Prioritas {len(prioritas):,} talent request belum terpenuhi (BT-03)", icon=":material/priority_high:"):
+    with st.expander(f"Prioritas {len(prioritas):,} talent request belum terpenuhi", icon=":material/priority_high:"):
         st.caption("Diurutkan dari request paling lama. Data master, di luar filter.")
         st.dataframe(
             prioritas[["id_talent_req", "company_name", "nama_posisi", "headcount",
@@ -1153,6 +1164,7 @@ def page_mitra():
 # TAB 4 — KESIAPAN (data master terkini — tanpa filter)
 # ---------------------------------------------------------------------------
 def page_kesiapan():
+    page_header("Kesiapan Mahasiswa")
     st.caption("Tab ini memakai data master terkini (snapshot status mahasiswa), sehingga tidak memakai filter.")
 
     ss = status_student
@@ -1176,7 +1188,7 @@ def page_kesiapan():
         {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini",
          "help": "Status aktif + tersedia + CV ada + portofolio ada. Sesuai FAQ, 'eligible' = kolom 'ketersediaan'."},
         {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim", "highlight": True,
-         "sub": "supply belum tersalurkan (BT-06)",
+         "sub": "supply belum tersalurkan",
          "help": "Prioritas untuk dicarikan penempatan."},
         {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV"},
         {"value": f"{(porto_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya Portofolio"},
@@ -1185,14 +1197,20 @@ def page_kesiapan():
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Demand vs Supply per Bulan",
-                    "Area halus: garis oranye = headcount diminta per bulan; area zaitun = stok kumulatif "
-                    "mahasiswa terdaftar (dari bulan masuk). Rentang data: supply 2019-2023, demand 2023-2025.")
-            prodi_pilih = st.selectbox(
+            section("Demand vs Supply dari Waktu ke Waktu",
+                    "Satuan sama, sumbu sama: mahasiswa masuk vs headcount diminta per periode. "
+                    "Catatan rentang data: mahasiswa masuk 2019-2023, permintaan perusahaan 2023-2025.")
+            col_prodi, col_gran = st.columns([3, 2])
+            prodi_pilih = col_prodi.selectbox(
                 "Fokus jurusan / bidang studi",
                 ["Semua bidang"] + FILTER_PRODI,
                 key="ks_prodi_ts",
             )
+            granularitas = col_gran.radio(
+                "Granularitas", ["Bulanan", "Kuartalan", "Tahunan"],
+                horizontal=True, index=1, key="ks_gran",
+            )
+            freq = {"Bulanan": "M", "Kuartalan": "Q", "Tahunan": "Y"}[granularitas]
 
             dm_view = DATA["demand_monthly"]
             sup_view = student_all[student_all["masuk_dt"].notna()]
@@ -1201,39 +1219,31 @@ def page_kesiapan():
                 dm_view = dm_view[dm_view["bidang_norm"] == p_norm]
                 sup_view = sup_view[norm_text(sup_view["program_studi"]) == p_norm]
 
-            d_series = dm_view.groupby("bulan")["headcount"].sum()
-            s_entry = sup_view.groupby(sup_view["masuk_dt"].dt.to_period("M").dt.to_timestamp()).size()
+            d_series = dm_view.groupby(dm_view["bulan"].dt.to_period(freq))["headcount"].sum()
+            s_series = sup_view.groupby(sup_view["masuk_dt"].dt.to_period(freq)).size()
 
-            if len(d_series) == 0 and len(s_entry) == 0:
+            if len(d_series) == 0 and len(s_series) == 0:
                 insight("Tidak ada data demand maupun supply untuk bidang ini.", kind="error")
             else:
-                tanggal_semua = list(d_series.index) + list(s_entry.index)
-                idx = pd.date_range(min(tanggal_semua), max(tanggal_semua), freq="MS")
+                periode_semua = list(d_series.index) + list(s_series.index)
+                idx = pd.period_range(min(periode_semua), max(periode_semua), freq=freq)
+                x = idx.to_timestamp()
                 d_full = d_series.reindex(idx, fill_value=0)
-                s_cum = s_entry.reindex(idx, fill_value=0).cumsum()
+                s_full = s_series.reindex(idx, fill_value=0)
 
-                fig_ts = make_subplots(specs=[[{"secondary_y": True}]])
+                fig_ts = go.Figure()
                 fig_ts.add_trace(go.Scatter(
-                    x=idx, y=s_cum, name="Stok Mahasiswa (kumulatif)",
+                    x=x, y=s_full, name="Mahasiswa Masuk",
                     mode="lines", line=dict(color=COLOR_OLIVE, width=2, shape="spline"),
-                    fill="tozeroy", fillcolor="rgba(107, 122, 61, 0.28)",
-                ), secondary_y=True)
+                    fill="tozeroy", fillcolor="rgba(107, 122, 61, 0.30)",
+                ))
                 fig_ts.add_trace(go.Scatter(
-                    x=idx, y=d_full, name="Headcount Diminta / bulan",
+                    x=x, y=d_full, name="Headcount Diminta",
                     mode="lines", line=dict(color=COLOR_COCOA, width=2.5, shape="spline"),
                     fill="tozeroy", fillcolor="rgba(226, 120, 47, 0.35)",
-                ), secondary_y=False)
-                # dua sumbu diberi warna sesuai kurvanya supaya tidak salah baca:
-                # kiri (cocoa) = demand bulanan, kanan (olive) = stok kumulatif
-                fig_ts.update_yaxes(
-                    title_text="Diminta / bln", secondary_y=False, rangemode="tozero",
-                    color=COLOR_COCOA, title_font=dict(size=10),
-                )
-                fig_ts.update_yaxes(
-                    title_text="Stok mahasiswa", secondary_y=True, rangemode="tozero",
-                    showgrid=False, color=COLOR_OLIVE, title_font=dict(size=10),
-                )
-                show_chart(fig_ts, height=300)
+                ))
+                fig_ts.update_yaxes(rangemode="tozero")
+                show_chart(fig_ts, height=280)
     with col2:
         with st.container(border=True):
             section("Eligibility Mahasiswa", "Sesuai FAQ: kolom 'eligible' = kolom 'ketersediaan'.")
@@ -1281,6 +1291,7 @@ def page_kesiapan():
 # TAB 5 — MATCHING TALENT (data master terkini — tanpa filter)
 # ---------------------------------------------------------------------------
 def page_matching():
+    page_header("Matching Talent")
     st.caption("Tab ini memakai data master terkini, sehingga tidak memakai filter.")
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
@@ -1461,11 +1472,11 @@ def page_matching():
 # TAB 6 — LAPORAN & QUALITY CHECK
 # ---------------------------------------------------------------------------
 def page_laporan():
-    tahun_f, prodi_f, jenis_f, _ = filter_bar("laporan")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Laporan", key="laporan")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     with st.container(border=True):
-        section("Rekapitulasi Placement", "Laporan periodik untuk evaluasi institusi (BT-07).")
+        section("Rekapitulasi Placement", "Laporan periodik untuk evaluasi institusi.")
         dim_options = {
             "Program Studi": "program_studi",
             "Perusahaan": COMPANY_NAME_COL,
@@ -1519,7 +1530,7 @@ def page_laporan():
                 st.download_button("Unduh Rekap CSV", recap.to_csv(index=False).encode("utf-8"),
                                    "rekap_placement.csv", "text/csv", icon=":material/download:")
 
-    with st.expander("Kualitas data & sinkronisasi (BT-08)", icon=":material/rule:"):
+    with st.expander("Kualitas data & sinkronisasi", icon=":material/rule:"):
         st.caption("Konsistensi STUDENT ALL vs STATUS STUDENT. Data master, di luar filter.")
         merged_check = student_all.merge(status_student[["nim", "sync_date"]], on="nim", how="left", indicator=True)
         belum_sync = merged_check[merged_check["_merge"] == "left_only"]
@@ -1570,11 +1581,13 @@ with st.sidebar:
     st.markdown(
         '<div class="side-brand">'
         '<div class="brand-name">CDC</div>'
-        '<div class="brand-sub">SSF UNS</div>'
+        '<div class="brand-sub">Career Development Center</div>'
         "</div>",
         unsafe_allow_html=True,
     )
     for p in PAGES:
         st.page_link(p)
+    if LAST_SYNC_TXT:
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}</div>', unsafe_allow_html=True)
 
 nav.run()
