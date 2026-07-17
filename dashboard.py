@@ -1,4 +1,5 @@
 import os
+import base64
 
 import streamlit as st
 import pandas as pd
@@ -135,12 +136,12 @@ html, body, [class*="css"] {{
    ditumpuk di atas warna dasar krem */
 .stApp {{
     background:
-        radial-gradient(at 10% 12%, rgba(247, 212, 117, 0.65) 0px, transparent 42%),
-        radial-gradient(at 92% 6%, rgba(226, 120, 47, 0.38) 0px, transparent 40%),
-        radial-gradient(at 80% 88%, rgba(135, 36, 8, 0.22) 0px, transparent 45%),
-        radial-gradient(at 15% 95%, rgba(107, 122, 61, 0.30) 0px, transparent 42%),
-        radial-gradient(at 50% 50%, rgba(251, 244, 232, 0.85) 0px, transparent 65%),
-        #F5EBD9 !important;
+        radial-gradient(at 8% 10%, rgba(247, 212, 117, 0.60) 0px, transparent 40%),
+        radial-gradient(at 92% 5%, rgba(255, 154, 74, 0.42) 0px, transparent 42%),
+        radial-gradient(at 88% 90%, rgba(214, 106, 60, 0.26) 0px, transparent 45%),
+        radial-gradient(at 10% 94%, rgba(164, 176, 94, 0.34) 0px, transparent 42%),
+        radial-gradient(at 45% 45%, rgba(255, 250, 240, 0.90) 0px, transparent 62%),
+        #FCF3E1 !important;
     background-attachment: fixed !important;
 }}
 header[data-testid="stHeader"] {{ background: transparent !important; }}
@@ -149,8 +150,14 @@ div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font
 
 /* ===== SIDEBAR navigasi: panel gelap membulat gaya bento ===== */
 section[data-testid="stSidebar"] {{
-    background: linear-gradient(180deg, {COLOR_SEAL_BROWN} 0%, #2A1305 100%) !important;
+    background: linear-gradient(180deg, #6B3416 0%, {COLOR_SEAL_BROWN} 55%, #33170A 100%) !important;
     border-radius: 0 22px 22px 0;
+}}
+/* sidebar tidak bisa ditutup */
+div[data-testid="stSidebarCollapseButton"],
+button[data-testid="stExpandSidebarButton"],
+div[data-testid="collapsedControl"] {{
+    display: none !important;
 }}
 section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
 .side-brand {{
@@ -171,13 +178,34 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
     text-transform: uppercase;
 }}
 .side-sync {{
-    position: absolute;
-    bottom: 14px;
-    left: 0;
-    right: 0;
+    margin-top: 7vh;
     text-align: center;
     font-size: 0.72rem;
     color: {tint(COLOR_JASMINE, 0.45)} !important;
+}}
+div[data-testid="stPopover"] {{
+    display: flex;
+    justify-content: flex-end;
+}}
+/* logo + daun autumn di belakangnya */
+.side-logo {{
+    position: relative;
+    text-align: center;
+    margin: 10px 0 2px 0;
+}}
+.side-leaves {{
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 210px;
+    max-width: 92%;
+    opacity: 0.6;
+}}
+.side-logo-img {{
+    position: relative;
+    width: 150px;
+    max-width: 72%;
 }}
 .page-title {{
     font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
@@ -199,12 +227,13 @@ div[data-testid="stPageLink"] a:hover {{
     background: rgba(226, 120, 47, 0.22) !important;
 }}
 div[data-testid="stPageLink"] a[aria-current="page"] {{
-    background: {COLOR_COCOA} !important;
-    box-shadow: 0 2px 8px rgba(226, 120, 47, 0.4);
+    background: #FFF6E6 !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
 }}
 div[data-testid="stPageLink"] a[aria-current="page"] p,
 div[data-testid="stPageLink"] a[aria-current="page"] span {{
-    color: #FFF8EE !important;
+    color: {COLOR_SEAL_BROWN} !important;
+    font-weight: 700;
 }}
 
 
@@ -418,13 +447,27 @@ def style_fig(fig, height=300):
     has_title = bool(fig.layout.title.text)
     has_legend = len(fig.data) > 1 or any(tr.type == "pie" for tr in fig.data)
     top_margin = 38 if has_title else (34 if has_legend else 14)
+
+    # legend dengan banyak kategori dipindah ke BAWAH chart supaya tidak
+    # bertabrakan dengan judul (mis. rekap 18 program studi)
+    n_legend = sum(1 for tr in fig.data if getattr(tr, "showlegend", True) is not False)
+    legend_below = n_legend > 5
+    if legend_below:
+        legend_cfg = dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10), orientation="h",
+                          yanchor="top", y=-0.18, xanchor="left", x=0)
+        bottom_margin = 8
+        height += 80
+    else:
+        legend_cfg = dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10), orientation="h",
+                          yanchor="bottom", y=1.0, xanchor="right", x=1.0)
+        bottom_margin = 8
+
     fig.update_layout(
         font=dict(family="Inter, sans-serif", color=COLOR_DRAB_DARK, size=11),
         plot_bgcolor="rgba(0,0,0,0)",
         paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(l=8, r=8, t=top_margin, b=8),
-        legend=dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10), orientation="h",
-                    yanchor="bottom", y=1.0, xanchor="right", x=1.0),
+        margin=dict(l=8, r=8, t=top_margin, b=bottom_margin),
+        legend=legend_cfg,
         hoverlabel=dict(bgcolor="white", font_size=11),
         height=height,
     )
@@ -524,7 +567,8 @@ def load_all() -> dict:
 
     for col, df in [("jumlah_dikirimkan", tracking_company), ("jumlah_permintaan", tracking_company),
                     ("headcount", talent_request), ("minimum_semester", talent_request),
-                    ("ipk", status_student), ("semester", student_all)]:
+                    ("ipk", status_student), ("semester", student_all),
+                    ("internship_semester", tracking_student)]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
@@ -584,6 +628,19 @@ def load_all() -> dict:
         student_all["masuk_dt"] = student_all["bulan_masuk"].map(parse_bulan_masuk)
     else:
         student_all["masuk_dt"] = pd.NaT
+
+    # SUPPLY = estimasi kapan mahasiswa SIAP MAGANG (bukan saat masuk kuliah):
+    # bulan masuk + (semester magang - 1) x 6 bulan. Semester magang diambil
+    # dari histori magang tiap mahasiswa; kalau belum pernah magang, pakai
+    # median seluruh data (5).
+    med_sem_global = tracking_student["internship_semester"].median()
+    if pd.isna(med_sem_global):
+        med_sem_global = 5
+    sem_per_student = tracking_student.groupby("nim")["internship_semester"].median()
+    sem_est = student_all["nim"].map(sem_per_student).fillna(med_sem_global).clip(1, 14)
+    offset_bulan = ((sem_est - 1) * 6).round().astype(int)
+    masuk_period = pd.PeriodIndex(student_all["masuk_dt"], freq="M")
+    student_all["siap_dt"] = (masuk_period + offset_bulan.to_numpy()).to_timestamp()
 
     dm = talent_request.loc[
         talent_request["request_date"].notna(),
@@ -1198,8 +1255,9 @@ def page_kesiapan():
     with col1:
         with st.container(border=True):
             section("Demand vs Supply dari Waktu ke Waktu",
-                    "Satuan sama, sumbu sama: mahasiswa masuk vs headcount diminta per periode. "
-                    "Catatan rentang data: mahasiswa masuk 2019-2023, permintaan perusahaan 2023-2025.")
+                    "Supply = estimasi mahasiswa SIAP MAGANG per periode (bulan masuk + (semester magang - 1) x 6 bulan, "
+                    "semester magang dari histori tiap mahasiswa). Tampilan awal difokuskan ke periode permintaan; "
+                    "zoom out untuk melihat semuanya.")
             col_prodi, col_gran = st.columns([3, 2])
             prodi_pilih = col_prodi.selectbox(
                 "Fokus jurusan / bidang studi",
@@ -1213,14 +1271,14 @@ def page_kesiapan():
             freq = {"Bulanan": "M", "Kuartalan": "Q", "Tahunan": "Y"}[granularitas]
 
             dm_view = DATA["demand_monthly"]
-            sup_view = student_all[student_all["masuk_dt"].notna()]
+            sup_view = student_all[student_all["siap_dt"].notna()]
             if prodi_pilih != "Semua bidang":
                 p_norm = prodi_pilih.strip().lower()
                 dm_view = dm_view[dm_view["bidang_norm"] == p_norm]
                 sup_view = sup_view[norm_text(sup_view["program_studi"]) == p_norm]
 
             d_series = dm_view.groupby(dm_view["bulan"].dt.to_period(freq))["headcount"].sum()
-            s_series = sup_view.groupby(sup_view["masuk_dt"].dt.to_period(freq)).size()
+            s_series = sup_view.groupby(sup_view["siap_dt"].dt.to_period(freq)).size()
 
             if len(d_series) == 0 and len(s_series) == 0:
                 insight("Tidak ada data demand maupun supply untuk bidang ini.", kind="error")
@@ -1233,7 +1291,7 @@ def page_kesiapan():
 
                 fig_ts = go.Figure()
                 fig_ts.add_trace(go.Scatter(
-                    x=x, y=s_full, name="Mahasiswa Masuk",
+                    x=x, y=s_full, name="Mahasiswa Siap Magang (est.)",
                     mode="lines", line=dict(color=COLOR_OLIVE, width=2, shape="spline"),
                     fill="tozeroy", fillcolor="rgba(107, 122, 61, 0.30)",
                 ))
@@ -1243,6 +1301,11 @@ def page_kesiapan():
                     fill="tozeroy", fillcolor="rgba(226, 120, 47, 0.35)",
                 ))
                 fig_ts.update_yaxes(rangemode="tozero")
+                # fokuskan tampilan awal ke periode permintaan (zoom out tetap bisa)
+                if len(d_series) > 0:
+                    x_awal = d_series.index.min().to_timestamp() - pd.Timedelta(days=45)
+                    x_akhir = pd.Timestamp(x[-1]) + pd.Timedelta(days=45)
+                    fig_ts.update_xaxes(range=[x_awal, x_akhir])
                 show_chart(fig_ts, height=280)
     with col2:
         with st.container(border=True):
@@ -1482,10 +1545,9 @@ def page_laporan():
             "Perusahaan": COMPANY_NAME_COL,
             "Jenis Penempatan": "jenis_penempatan",
         }
-        col_dim, col_anim = st.columns([3, 1])
-        dims_pilihan = col_dim.multiselect("Kelompokkan berdasarkan", list(dim_options.keys()), default=["Program Studi"])
-        mode_animasi = col_anim.toggle("Mode animasi", value=False,
-                                       help="Putar perubahan komposisi placement antar kuartal (tombol play di bawah chart).")
+        dims_pilihan = st.multiselect("Kelompokkan berdasarkan", list(dim_options.keys()), default=["Program Studi"])
+        mode_animasi = st.toggle("Mode animasi", value=False,
+                                 help="Putar perubahan komposisi placement antar kuartal (tombol play di bawah chart).")
 
         placement_only = m[m["rejection"] == "Placement"].copy()
         placement_only["periode"] = placement_only["last_update"].dt.to_period("Q").astype(str)
@@ -1574,10 +1636,20 @@ PAGES = [
 ]
 nav = st.navigation(PAGES, position="hidden")
 
+def _img_b64(path: str) -> str:
+    with open(path, "rb") as f:
+        return base64.b64encode(f.read()).decode()
+
+
 with st.sidebar:
+    leaves_html = ""
+    logo_html = ""
+    if os.path.exists("static/leaves.png"):
+        leaves_html = f'<img class="side-leaves" src="data:image/png;base64,{_img_b64("static/leaves.png")}">'
     if os.path.exists("static/logo.png"):
-        col_logo = st.columns([1, 2, 1])[1]
-        col_logo.image("static/logo.png", width="stretch")
+        logo_html = f'<img class="side-logo-img" src="data:image/png;base64,{_img_b64("static/logo.png")}">'
+    if leaves_html or logo_html:
+        st.markdown(f'<div class="side-logo">{leaves_html}{logo_html}</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="side-brand">'
         '<div class="brand-name">CDC</div>'
