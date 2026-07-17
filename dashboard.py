@@ -198,9 +198,8 @@ div[data-testid="stPopover"] > div, .stPopover > div {{
 div[data-testid="stPopover"] button, .stPopover button {{
     margin-left: auto !important;
 }}
-div[data-testid="stColumn"]:has(div[data-testid="stPopover"]) > div {{
-    display: flex;
-    justify-content: flex-end;
+div[data-testid="stColumn"]:has(div[data-testid="stPopover"]) div[data-testid="stVerticalBlock"] {{
+    align-items: flex-end !important;
 }}
 /* izinkan pill menu aktif menembus tepi kanan sidebar (efek tab menyatu);
    konten sidebar pendek sehingga scroll tidak dibutuhkan */
@@ -1660,23 +1659,25 @@ nav = st.navigation(PAGES, position="hidden")
 # Efek "tab menyatu": pill terang menempel ke tepi kanan sidebar dan
 # menyambung ke area konten, dengan lekukan cekung di atas & bawah
 # (pseudo-element lingkaran transparan + box-shadow berwarna latar konten).
-_current_href = "/" + (nav.url_path or "")
+# href yang dirender Streamlit: "" untuk halaman default, "page_xxx"
+# (tanpa garis miring) untuk lainnya — hasil inspeksi DOM langsung.
+_current_href = nav.url_path or ""
 _ACTIVE_BG = "#FBF2E0"  # samakan dengan warna dasar latar konten
 st.markdown(
     f"""<style>
-    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] {{
+    section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] {{
         position: relative;
         background: {_ACTIVE_BG} !important;
         border-radius: 999px 0 0 999px !important;
         margin-right: -1.6rem !important;
         padding-right: 1.4rem !important;
     }}
-    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] p,
-    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}'] span {{
+    section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] p,
+    section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] span {{
         color: {COLOR_SEAL_BROWN} !important;
         font-weight: 700;
     }}
-    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}']::before {{
+    section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}']::before {{
         content: "";
         position: absolute;
         right: 0;
@@ -1687,7 +1688,7 @@ st.markdown(
         background: transparent;
         box-shadow: 11px 11px 0 {_ACTIVE_BG};
     }}
-    section[data-testid='stSidebar'] div[data-testid='stPageLink'] a[href='{_current_href}']::after {{
+    section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}']::after {{
         content: "";
         position: absolute;
         right: 0;
@@ -1726,6 +1727,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v7</div>', unsafe_allow_html=True)
 
 nav.run()
