@@ -159,11 +159,18 @@ section[data-testid="stSidebar"] {{
         linear-gradient(180deg, #A64B1A 0%, #7C3413 45%, {COLOR_SEAL_BROWN} 100%) !important;
     border-radius: 0 22px 22px 0;
 }}
-/* sidebar tidak bisa ditutup */
+/* sidebar tidak bisa ditutup ataupun digeser lebarnya */
 div[data-testid="stSidebarCollapseButton"],
 button[data-testid="stExpandSidebarButton"],
-div[data-testid="collapsedControl"] {{
+div[data-testid="collapsedControl"],
+div[data-testid="stSidebarResizeHandle"],
+button[data-testid="stSidebarResizeHandle"] {{
     display: none !important;
+}}
+section[data-testid="stSidebar"] {{
+    width: 300px !important;
+    min-width: 300px !important;
+    max-width: 300px !important;
 }}
 section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
 .side-brand {{
@@ -284,7 +291,7 @@ div[data-testid="stDateInput"] input {{
     padding-top: 0.8rem !important;
     padding-bottom: 0.7rem !important;
 }}
-div[data-testid="stVerticalBlock"] {{ gap: 0.55rem; }}
+div[data-testid="stVerticalBlock"] {{ gap: 0.7rem; }}
 
 .dash-header {{
     padding: 12px 22px 13px 22px;
@@ -389,7 +396,8 @@ div[data-testid="stMetricValue"] {{
 .section-caption {{
     color: {tint(COLOR_DRAB_DARK, 0.35)};
     font-size: 0.8rem;
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    line-height: 1.4;
 }}
 
 .insight-box {{
@@ -486,7 +494,14 @@ def style_fig(fig, height=300):
 
     # legend dengan banyak kategori dipindah ke BAWAH chart supaya tidak
     # bertabrakan dengan judul (mis. rekap 18 program studi)
-    n_legend = sum(1 for tr in fig.data if getattr(tr, "showlegend", True) is not False)
+    n_legend = 0
+    for tr in fig.data:
+        if getattr(tr, "showlegend", True) is False:
+            continue
+        if tr.type == "pie":
+            n_legend += len(set(tr.labels)) if tr.labels is not None else 1
+        else:
+            n_legend += 1
     legend_below = n_legend > 5
     if legend_below:
         legend_cfg = dict(bgcolor="rgba(0,0,0,0)", font=dict(size=10), orientation="h",
@@ -1135,7 +1150,7 @@ def page_overview():
 
     with col_kanan:
         with st.container(border=True):
-            section("Status Akhir Kandidat")
+            section("Status Akhir Kandidat", "Komposisi hasil akhir seluruh proses seleksi.")
             status_map = m["rejection"].map(
                 lambda r: "Placement" if r == "Placement"
                 else ("Ditolak" if r in REJECTION_STAGES
@@ -1325,7 +1340,7 @@ def page_mitra():
             show_chart(fig_acc, height=310)
     with col2:
         with st.container(border=True):
-            section("Top 10 Volume Talent Request")
+            section("Top 10 Volume Talent Request", "Perusahaan dengan volume permintaan terbanyak.")
             tr_named = talent_request.merge(company[["id_company", "company_name"]], on="id_company", how="left")
             volume = tr_named["company_name"].value_counts().head(10).reset_index()
             volume.columns = ["perusahaan", "jumlah_request"]
@@ -1463,7 +1478,7 @@ def page_kesiapan():
             fig_elig = px.bar(elig_ct, x="ketersediaan", y="jumlah", color="status",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
             fig_elig.update_layout(xaxis_title=None, yaxis_title=None, legend_title=None)
-            show_chart(fig_elig, height=330)
+            show_chart(fig_elig, height=352)
 
     with st.expander("Gap total per bidang, distribusi IPK & semester", icon=":material/bar_chart:"):
         demand = talent_request["bidang_studi_dibutuhkan"].dropna().str.split(",").explode().str.strip().value_counts().reset_index()
@@ -1799,7 +1814,7 @@ st.markdown(
         position: relative;
         background: {_ACTIVE_BG} !important;
         border-radius: 999px 0 0 999px !important;
-        margin-right: -1.6rem !important;
+        width: calc(100% + 20px);
         padding-right: 1.4rem !important;
         padding-top: 0.7rem !important;
         padding-bottom: 0.7rem !important;
@@ -1859,6 +1874,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v10</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v11</div>', unsafe_allow_html=True)
 
 nav.run()
