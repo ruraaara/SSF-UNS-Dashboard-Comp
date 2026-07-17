@@ -137,6 +137,7 @@ html, body, [class*="css"] {{
    ditumpuk di atas warna dasar krem */
 .stApp {{
     background:
+        linear-gradient(90deg, #FBF2E0 0px, #FBF2E0 400px, rgba(251, 242, 224, 0) 540px),
         radial-gradient(at 38% 6%, rgba(247, 212, 117, 0.55) 0px, transparent 38%),
         radial-gradient(at 92% 5%, rgba(255, 154, 74, 0.42) 0px, transparent 42%),
         radial-gradient(at 88% 90%, rgba(214, 106, 60, 0.26) 0px, transparent 45%),
@@ -281,7 +282,7 @@ div[data-testid="stDateInput"] input {{
 /* layout rapat: target muat satu layar tanpa scroll */
 .block-container {{
     padding-top: 0.8rem !important;
-    padding-bottom: 0.6rem !important;
+    padding-bottom: 0.7rem !important;
 }}
 div[data-testid="stVerticalBlock"] {{ gap: 0.55rem; }}
 
@@ -879,7 +880,7 @@ FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) i
 FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist()) if "jenis_penempatan" in talent_request.columns else []
 
 
-def run_gsap_animations():
+def run_gsap_animations(slug: str):
     """Animasi interaktif via GSAP (dimuat dari CDN). Streamlit menyaring tag
     <script> di markdown, jadi JS dijalankan lewat components.html — iframe
     same-origin yang boleh memanipulasi DOM halaman induk. Kalau CDN gagal
@@ -887,16 +888,47 @@ def run_gsap_animations():
     # st.iframe menggantikan components.html (dihapus Streamlit per Jun 2026);
     # fallback ke components.html untuk versi lama.
     _html_embed = getattr(st, "iframe", components.html)
+    try:
+        _current = nav.url_path or ""
+    except NameError:
+        _current = ""
     _html_embed(
-        """
+        _GSAP_HTML.replace("__SLUG__", slug).replace("__HREF__", _current),
+        height=1,
+    )
+
+
+_GSAP_HTML = """
         <script>
+        // page-marker: __SLUG__  (membuat konten iframe unik per halaman ->
+        // komponen di-mount ulang -> animasi jalan lagi setiap pindah menu)
         (function () {
+            const SLUG = "__SLUG__";
+            const HREF = "__HREF__";
             const P = window.parent;
             const doc = P.document;
 
+            // lidah tab aktif dibuat flush PERSIS ke tepi sidebar dengan
+            // mengukur geometri asli di browser (bukan menebak padding)
+            function fitActiveTab() {
+                const sb = doc.querySelector("section[data-testid='stSidebar']");
+                const a = doc.querySelector(
+                    "section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='" + HREF + "']");
+                if (!sb || !a) return false;
+                // margin negatif tidak melebarkan anchor (lebarnya dikunci
+                // parent) -> set lebar eksplisit = lebar asli + jarak ke tepi
+                a.style.marginRight = "0px";
+                a.style.width = "";
+                const r = a.getBoundingClientRect();
+                const gap = sb.getBoundingClientRect().right - r.right;
+                if (gap > 0.5) a.style.width = (r.width + gap) + "px";
+                return true;
+            }
+
             function animate() {
+                if (!fitActiveTab()) return false;
                 const gsap = P.gsap;
-                if (!gsap) return;
+                if (!gsap) return true;
                 const cards = Array.from(doc.querySelectorAll(".kpi-card"));
                 const tiles = Array.from(doc.querySelectorAll("div[data-testid='stVerticalBlockBorderWrapper']"));
                 if (cards.length + tiles.length === 0) return false;
@@ -910,7 +942,7 @@ def run_gsap_animations():
 
                 // count-up angka KPI: "41,600", "152.3%", "51 hari"
                 doc.querySelectorAll(".kpi-value").forEach(function (el) {
-                    if (el.dataset.counted === "1") return;
+                    if (el.dataset.counted === SLUG) return;
                     const txt = el.textContent.trim();
                     const m = txt.match(/^([\\d.,]+)(.*)$/);
                     if (!m) return;
@@ -918,7 +950,7 @@ def run_gsap_animations():
                     if (isNaN(target)) return;
                     const suffix = m[2] || "";
                     const decimal = m[1].includes(".");
-                    el.dataset.counted = "1";
+                    el.dataset.counted = SLUG;
                     const obj = { v: 0 };
                     gsap.to(obj, {
                         v: target, duration: 1.1, ease: "power2.out",
@@ -937,6 +969,13 @@ def run_gsap_animations():
                 if (attempt < 12) setTimeout(function () { tryAnimate(attempt + 1); }, 300);
             }
 
+            P.addEventListener("resize", fitActiveTab);
+
+            // fit lidah tab jalan mandiri — tidak menunggu / tergantung GSAP
+            (function retryFit(i) {
+                if (!fitActiveTab() && i < 15) setTimeout(function () { retryFit(i + 1); }, 300);
+            })(0);
+
             if (P.gsap) {
                 tryAnimate(0);
             } else if (!P._gsapLoading) {
@@ -950,9 +989,7 @@ def run_gsap_animations():
             }
         })();
         </script>
-        """,
-        height=1,
-    )
+"""
 
 
 def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False):
@@ -991,7 +1028,7 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
                         help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ).",
                     )
                     ref_date = pd.Timestamp(ref_raw)
-    run_gsap_animations()
+    run_gsap_animations(slug)
     return tahun, prodi, jenis, ref_date
 
 
@@ -1764,8 +1801,8 @@ st.markdown(
         border-radius: 999px 0 0 999px !important;
         margin-right: -1.6rem !important;
         padding-right: 1.4rem !important;
-        padding-top: 0.6rem !important;
-        padding-bottom: 0.6rem !important;
+        padding-top: 0.7rem !important;
+        padding-bottom: 0.7rem !important;
     }}
     section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] p,
     section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] span {{
@@ -1822,6 +1859,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v8</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v10</div>', unsafe_allow_html=True)
 
 nav.run()
