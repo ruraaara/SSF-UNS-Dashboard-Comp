@@ -2,6 +2,7 @@ import os
 import base64
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -136,12 +137,12 @@ html, body, [class*="css"] {{
    ditumpuk di atas warna dasar krem */
 .stApp {{
     background:
-        radial-gradient(at 8% 10%, rgba(247, 212, 117, 0.60) 0px, transparent 40%),
+        radial-gradient(at 38% 6%, rgba(247, 212, 117, 0.55) 0px, transparent 38%),
         radial-gradient(at 92% 5%, rgba(255, 154, 74, 0.42) 0px, transparent 42%),
         radial-gradient(at 88% 90%, rgba(214, 106, 60, 0.26) 0px, transparent 45%),
-        radial-gradient(at 10% 94%, rgba(164, 176, 94, 0.34) 0px, transparent 42%),
-        radial-gradient(at 45% 45%, rgba(255, 250, 240, 0.90) 0px, transparent 62%),
-        #FCF3E1 !important;
+        radial-gradient(at 45% 96%, rgba(164, 176, 94, 0.30) 0px, transparent 40%),
+        radial-gradient(at 55% 45%, rgba(255, 250, 240, 0.85) 0px, transparent 60%),
+        #FBF2E0 !important;
     background-attachment: fixed !important;
 }}
 header[data-testid="stHeader"] {{ background: transparent !important; }}
@@ -217,14 +218,20 @@ section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
     top: -16px;
     left: 50%;
     transform: translateX(-50%);
-    width: 210px;
-    max-width: 92%;
+    width: 240px;
+    max-width: 96%;
     opacity: 0.6;
+    transform-origin: center;
+    animation: leafSway 6s ease-in-out infinite;
 }}
 .side-logo-img {{
     position: relative;
-    width: 150px;
-    max-width: 72%;
+    width: 185px;
+    max-width: 85%;
+}}
+@keyframes leafSway {{
+    0%, 100% {{ transform: translateX(-50%) rotate(-4deg); }}
+    50% {{ transform: translateX(-50%) rotate(5deg) translateY(5px); }}
 }}
 .page-title {{
     font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
@@ -317,6 +324,11 @@ div[data-testid="stMarkdownContainer"] .dash-header p {{
     padding: 14px 12px 11px 12px;
     text-align: center;
     box-shadow: 0 4px 12px rgba(74, 35, 14, 0.07);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}}
+.kpi-card:hover {{
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(74, 35, 14, 0.16);
 }}
 .kpi-card.kpi-hl {{
     border: 2px solid transparent;
@@ -397,6 +409,10 @@ div[data-testid="stVerticalBlockBorderWrapper"] {{
     border: 1px solid rgba(226, 120, 47, 0.14) !important;
     background-color: #FFFFFF !important;
     box-shadow: 0 6px 18px rgba(74, 35, 14, 0.09);
+    transition: box-shadow 0.25s ease;
+}}
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {{
+    box-shadow: 0 12px 28px rgba(74, 35, 14, 0.14);
 }}
 div[data-testid="stExpander"] {{
     background-color: {CARD_BG} !important;
@@ -863,6 +879,82 @@ FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) i
 FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist()) if "jenis_penempatan" in talent_request.columns else []
 
 
+def run_gsap_animations():
+    """Animasi interaktif via GSAP (dimuat dari CDN). Streamlit menyaring tag
+    <script> di markdown, jadi JS dijalankan lewat components.html — iframe
+    same-origin yang boleh memanipulasi DOM halaman induk. Kalau CDN gagal
+    dimuat, halaman tetap tampil normal tanpa animasi (graceful fallback)."""
+    # st.iframe menggantikan components.html (dihapus Streamlit per Jun 2026);
+    # fallback ke components.html untuk versi lama.
+    _html_embed = getattr(st, "iframe", components.html)
+    _html_embed(
+        """
+        <script>
+        (function () {
+            const P = window.parent;
+            const doc = P.document;
+
+            function animate() {
+                const gsap = P.gsap;
+                if (!gsap) return;
+                const cards = Array.from(doc.querySelectorAll(".kpi-card"));
+                const tiles = Array.from(doc.querySelectorAll("div[data-testid='stVerticalBlockBorderWrapper']"));
+                if (cards.length + tiles.length === 0) return false;
+
+                gsap.fromTo(cards,
+                    { opacity: 0, y: 26, scale: 0.96 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.08, ease: "power2.out", overwrite: "auto" });
+                gsap.fromTo(tiles,
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, delay: 0.15, ease: "power2.out", overwrite: "auto" });
+
+                // count-up angka KPI: "41,600", "152.3%", "51 hari"
+                doc.querySelectorAll(".kpi-value").forEach(function (el) {
+                    if (el.dataset.counted === "1") return;
+                    const txt = el.textContent.trim();
+                    const m = txt.match(/^([\\d.,]+)(.*)$/);
+                    if (!m) return;
+                    const target = parseFloat(m[1].replace(/,/g, ""));
+                    if (isNaN(target)) return;
+                    const suffix = m[2] || "";
+                    const decimal = m[1].includes(".");
+                    el.dataset.counted = "1";
+                    const obj = { v: 0 };
+                    gsap.to(obj, {
+                        v: target, duration: 1.1, ease: "power2.out",
+                        onUpdate: function () {
+                            el.textContent = (decimal
+                                ? obj.v.toFixed(1)
+                                : Math.round(obj.v).toLocaleString("en-US")) + suffix;
+                        },
+                    });
+                });
+                return true;
+            }
+
+            function tryAnimate(attempt) {
+                if (animate() !== false) return;
+                if (attempt < 12) setTimeout(function () { tryAnimate(attempt + 1); }, 300);
+            }
+
+            if (P.gsap) {
+                tryAnimate(0);
+            } else if (!P._gsapLoading) {
+                P._gsapLoading = true;
+                const s = doc.createElement("script");
+                s.src = "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js";
+                s.onload = function () { tryAnimate(0); };
+                doc.head.appendChild(s);
+            } else {
+                setTimeout(function () { tryAnimate(0); }, 600);
+            }
+        })();
+        </script>
+        """,
+        height=1,
+    )
+
+
 def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False):
     """Baris judul halaman: judul di kiri, tombol Filter (popover) di ujung
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
@@ -899,6 +991,7 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
                         help="Ghosting dihitung dari send_date sampai tanggal ini (aturan FAQ).",
                     )
                     ref_date = pd.Timestamp(ref_raw)
+    run_gsap_animations()
     return tahun, prodi, jenis, ref_date
 
 
@@ -1671,6 +1764,8 @@ st.markdown(
         border-radius: 999px 0 0 999px !important;
         margin-right: -1.6rem !important;
         padding-right: 1.4rem !important;
+        padding-top: 0.6rem !important;
+        padding-bottom: 0.6rem !important;
     }}
     section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] p,
     section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}'] span {{
@@ -1681,23 +1776,23 @@ st.markdown(
         content: "";
         position: absolute;
         right: 0;
-        top: -22px;
-        width: 22px;
-        height: 22px;
+        top: -30px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         background: transparent;
-        box-shadow: 11px 11px 0 {_ACTIVE_BG};
+        box-shadow: 15px 15px 0 {_ACTIVE_BG};
     }}
     section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='{_current_href}']::after {{
         content: "";
         position: absolute;
         right: 0;
-        bottom: -22px;
-        width: 22px;
-        height: 22px;
+        bottom: -30px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         background: transparent;
-        box-shadow: 11px -11px 0 {_ACTIVE_BG};
+        box-shadow: 15px -15px 0 {_ACTIVE_BG};
     }}
     </style>""",
     unsafe_allow_html=True,
@@ -1727,6 +1822,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v7</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v8</div>', unsafe_allow_html=True)
 
 nav.run()
