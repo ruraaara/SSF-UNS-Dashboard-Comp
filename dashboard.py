@@ -810,74 +810,6 @@ def compute_match_summary() -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# ---------------------------------------------------------------------------
-# METODE MATCHING: AHP-TOPSIS (menggantikan RandomForest)
-# RandomForest dibuang karena data placement kompetisi ini sintetis (AUC 0.5,
-# tak ada sinyal). AHP-TOPSIS adalah metode Multi-Criteria Decision Making
-# baku untuk seleksi talenta: TIDAK butuh data latih, transparan, dan bisa
-# dipertanggungjawabkan (AHP diuji konsistensinya lewat Consistency Ratio).
-#   - AHP  : menurunkan bobot tiap kriteria dari matriks perbandingan
-#            berpasangan (skala Saaty), lalu diuji CR < 0.1.
-#   - TOPSIS: memberi skor 0..1 tiap kandidat = kedekatan ke "kandidat ideal".
-# ---------------------------------------------------------------------------
-AHP_CRITERIA = ["IPK", "Portofolio", "Tools", "Semester", "CV"]
-# matriks perbandingan berpasangan (penilaian domain CDC; resiprokal, skala Saaty):
-# IPK > Portofolio > Tools > Semester > CV
-AHP_MATRIX = np.array([
-    [1,     2,   3,   4,   5],
-    [1/2,   1,   2,   3,   4],
-    [1/3, 1/2,   1,   2,   3],
-    [1/4, 1/3, 1/2,   1,   2],
-    [1/5, 1/4, 1/3, 1/2,   1],
-], float)
-_RI = {1: 0, 2: 0, 3: 0.58, 4: 0.9, 5: 1.12, 6: 1.24, 7: 1.32}
-
-
-@st.cache_resource(show_spinner="Menghitung bobot AHP...")
-def compute_ahp_weights():
-    n = len(AHP_CRITERIA)
-    gm = np.prod(AHP_MATRIX, axis=1) ** (1 / n)   # rata-rata geometris tiap baris
-    w = gm / gm.sum()
-    lam = float((AHP_MATRIX @ w / w).mean())       # lambda_max
-    ci = (lam - n) / (n - 1)
-    cr = ci / _RI[n] if _RI[n] else 0.0
-    return {
-        "weights": dict(zip(AHP_CRITERIA, w)),
-        "w_array": w, "lambda_max": lam, "CI": ci, "CR": cr,
-        "consistent": cr < 0.1,
-    }
-
-
-AHP = compute_ahp_weights()
-
-
-def build_criteria_matrix(cand: pd.DataFrame, semester_col: str) -> np.ndarray:
-    """Susun matriks keputusan kandidat x kriteria (semua benefit: makin besar makin baik)."""
-    return np.column_stack([
-        pd.to_numeric(cand["ipk"], errors="coerce").fillna(0).to_numpy(),
-        norm_text(cand["portofolio"]).isin(VAL_ADA).astype(float).to_numpy(),
-        cand["tools"].fillna("").astype(str).apply(
-            lambda s: len([x for x in s.split(",") if x.strip()])).to_numpy() if "tools" in cand.columns
-        else np.zeros(len(cand)),
-        pd.to_numeric(cand[semester_col], errors="coerce").fillna(0).to_numpy(),
-        norm_text(cand["cv"]).isin(VAL_ADA).astype(float).to_numpy(),
-    ])
-
-
-def topsis_score(cand: pd.DataFrame, semester_col: str) -> np.ndarray:
-    """Skor TOPSIS 0..1 (closeness ke kandidat ideal) memakai bobot AHP."""
-    if len(cand) == 0:
-        return np.array([])
-    X = build_criteria_matrix(cand, semester_col).astype(float)
-    denom = np.sqrt((X ** 2).sum(axis=0))
-    denom[denom == 0] = 1.0                        # hindari bagi nol utk kolom konstan
-    V = (X / denom) * AHP["w_array"]
-    best, worst = V.max(axis=0), V.min(axis=0)
-    d_best = np.sqrt(((V - best) ** 2).sum(axis=1))
-    d_worst = np.sqrt(((V - worst) ** 2).sum(axis=1))
-    total = d_best + d_worst
-    total[total == 0] = 1.0
-    return d_worst / total
 
 # ---------------------------------------------------------------------------
 # FILTER — di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
@@ -1530,7 +1462,6 @@ def page_matching():
     n_siap = int(pool_all["_eligible"].sum())
     total_slot = int(talent_request["headcount"].sum())
     rasio = total_slot / n_siap if n_siap else 0
-    cr_txt = f"CR {AHP['CR']:.3f} " + ("valid" if AHP["consistent"] else "TAK KONSISTEN")
 
     kpi_row([
         {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
@@ -1539,18 +1470,17 @@ def page_matching():
          "help": "Mahasiswa aktif + tersedia — kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
         {"value": f"{rasio:.1f}x", "label": "Slot per Mahasiswa Siap",
          "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap — tekanan agregat, bukan kelangkaan per lowongan."},
-        {"value": "AHP-TOPSIS", "label": "Metode Ranking", "sub": cr_txt,
-         "help": "Bobot kriteria dari AHP (teruji konsisten), ranking dari TOPSIS. Tanpa data latih."},
+        {"value": f"{len(pool_all):,}", "label": "Mahasiswa Punya Data Status"},
     ])
     insight(
-        f"Per satu lowongan kandidatnya tampak banyak, tapi kolam <b>{n_siap:,} mahasiswa siap</b> yang sama "
-        f"diperebutkan <b>{total_slot:,} slot</b>. Jadi tugas CDC bukan mencari, tapi <b>me-ranking & shortlist</b> "
-        "kandidat terbaik tiap lowongan — di situlah AHP-TOPSIS berperan.",
+        f"Kolam <b>{n_siap:,} mahasiswa siap</b> yang sama diperebutkan <b>{total_slot:,} slot</b>. Tugas CDC bukan "
+        "mencari kandidat (jumlahnya banyak), tapi <b>menyaring & mengurutkan</b> yang memenuhi syarat tiap lowongan.",
     )
 
     with st.container(border=True):
-        section("Cari Kandidat Terbaik untuk Talent Request",
-                "Pilih perusahaan lalu posisinya. Kandidat di-ranking dengan AHP-TOPSIS (skor 0-1 = kedekatan ke kandidat ideal).")
+        section("Kandidat Memenuhi Syarat per Talent Request",
+                "Pilih perusahaan lalu posisinya. Tabel menampilkan mahasiswa yang lolos syarat (bidang studi + "
+                "minimum semester + aktif & tersedia). Urutkan dengan kontrol di bawah, atau klik header kolom.")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -1582,78 +1512,68 @@ def page_matching():
         cocok_semester_df = cocok_prodi_df[pd.to_numeric(cocok_prodi_df[semester_col], errors="coerce").fillna(0) >= min_semester]
         candidates = cocok_semester_df[cocok_semester_df["_eligible"]].copy()
 
-        if len(candidates) > 0:
-            candidates["recommendation_score"] = topsis_score(candidates, semester_col)
-            candidates["metode_skor"] = "AHP-TOPSIS"
-            candidates = candidates.sort_values("recommendation_score", ascending=False)
-
-        col_hasil, col_dist = st.columns(2, gap="medium")
-        with col_hasil:
-            st.markdown(f"**{len(candidates):,} kandidat cocok — 50 teratas:**")
-            if len(candidates) == 0:
-                if len(cocok_prodi_df) == 0:
-                    sebab = f"tidak ada mahasiswa dari bidang studi <b>{', '.join(bidang_dibutuhkan) or '(kosong)'}</b>."
-                elif len(cocok_semester_df) == 0:
-                    sebab = f"ada {len(cocok_prodi_df):,} mahasiswa dari bidang yang cocok, tapi semuanya di bawah minimum semester ({int(min_semester)})."
-                else:
-                    sebab = (f"ada {len(cocok_semester_df):,} mahasiswa cocok bidang & semester, "
-                             "tapi belum ada yang berstatus aktif dan tersedia.")
-                insight(f"Tidak ada kandidat yang memenuhi syarat — {sebab}", kind="error")
+        if len(candidates) == 0:
+            if len(cocok_prodi_df) == 0:
+                sebab = f"tidak ada mahasiswa dari bidang studi <b>{', '.join(bidang_dibutuhkan) or '(kosong)'}</b>."
+            elif len(cocok_semester_df) == 0:
+                sebab = f"ada {len(cocok_prodi_df):,} mahasiswa dari bidang yang cocok, tapi semuanya di bawah minimum semester ({int(min_semester)})."
             else:
-                show_cols = [c for c in ["nim", nama_col, prodi_col, semester_col, "ipk", "cv",
-                                         "portofolio", "domisili", "recommendation_score", "metode_skor"]
-                             if c in candidates.columns]
-                st.dataframe(
-                    candidates[show_cols].head(50), width="stretch", hide_index=True, height=380,
-                    column_config={
-                        "recommendation_score": st.column_config.ProgressColumn("Skor", format="%.2f", min_value=0, max_value=1),
-                    },
-                )
-        with col_dist:
-            if len(candidates) > 0:
-                st.markdown("**Distribusi skor kandidat:**")
-                fig_score = px.histogram(candidates, x="recommendation_score", nbins=20,
-                                         color_discrete_sequence=[COLOR_COCOA])
-                fig_score.update_layout(xaxis_title="Skor", yaxis_title=None)
-                show_chart(fig_score, height=380)
+                sebab = (f"ada {len(cocok_semester_df):,} mahasiswa cocok bidang & semester, "
+                         "tapi belum ada yang berstatus aktif dan tersedia.")
+            insight(f"Tidak ada kandidat yang memenuhi syarat — {sebab}", kind="error")
+        else:
+            candidates["jml_tools"] = candidates["tools"].fillna("").astype(str).apply(
+                lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
+            sort_opsi = {
+                "IPK (tertinggi)": ("ipk", False),
+                "Semester (tertinggi)": (semester_col, False),
+                "Jumlah tools (terbanyak)": ("jml_tools", False),
+            }
+            col_sort, col_n = st.columns([2, 1])
+            pilih_sort = col_sort.selectbox("Urutkan berdasarkan", list(sort_opsi.keys()))
+            top_n = col_n.number_input("Tampilkan berapa teratas", min_value=5, max_value=100, value=25, step=5)
+            sort_col, asc = sort_opsi[pilih_sort]
 
-    with st.expander(f"Ringkasan kecocokan semua talent request ({n_zero:,} request tanpa kandidat)", icon=":material/table_view:"):
+            view = candidates.sort_values(sort_col, ascending=asc).head(int(top_n))
+            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** — menampilkan {int(top_n)} teratas menurut {pilih_sort}:")
+            show_cols = [c for c in ["nim", nama_col, prodi_col, semester_col, "ipk",
+                                     "cv", "portofolio", "jml_tools", "domisili"]
+                         if c in view.columns]
+            st.dataframe(
+                view[show_cols], width="stretch", hide_index=True, height=430,
+                column_config={
+                    "ipk": st.column_config.NumberColumn("IPK", format="%.2f"),
+                    "jml_tools": st.column_config.NumberColumn("Jml Tools"),
+                    semester_col: st.column_config.NumberColumn("Semester"),
+                },
+            )
+
+    with st.expander(f"Ringkasan jumlah kandidat memenuhi syarat — semua {len(match_summary):,} talent request", icon=":material/table_view:"):
         st.caption(
-            "Kolom bertahap memperlihatkan di filter mana kandidat berkurang: prodi, lalu semester, lalu status "
-            "aktif+tersedia. Diurutkan dari yang paling kritis."
+            "Kolom bertahap memperlihatkan di tahap mana kandidat menyusut: cocok prodi, lalu + minimum semester, "
+            "lalu + aktif & tersedia (kandidat final)."
         )
         st.dataframe(
             match_summary.sort_values(["kandidat_final", "cocok_prodi"]).reset_index(drop=True),
             width="stretch", hide_index=True, height=320,
             column_config={
-                "id_talent_req": "ID",
-                "nama_posisi": "Posisi",
-                "company_name": "Perusahaan",
-                "bidang_dibutuhkan": "Bidang Dibutuhkan",
-                "min_semester": "Min. Smt",
-                "cocok_prodi": "Cocok Prodi",
-                "cocok_prodi_semester": "+ Semester",
+                "id_talent_req": "ID", "nama_posisi": "Posisi", "company_name": "Perusahaan",
+                "bidang_dibutuhkan": "Bidang Dibutuhkan", "min_semester": "Min. Smt",
+                "cocok_prodi": "Cocok Prodi", "cocok_prodi_semester": "+ Semester",
                 "kandidat_final": "Kandidat Final",
             },
         )
 
-    with st.expander("Tentang metode: AHP-TOPSIS (bobot kriteria & uji konsistensi)", icon=":material/psychology:"):
+    with st.expander("Kenapa tidak ada skor prediksi kandidat?", icon=":material/info:"):
         insight(
-            f"Ranking memakai <b>AHP-TOPSIS</b>, metode pengambilan keputusan multi-kriteria yang baku untuk seleksi "
-            f"talenta. Bobot tiap kriteria diturunkan lewat <b>AHP</b> dari matriks perbandingan berpasangan dan "
-            f"<b>teruji konsisten (Consistency Ratio = {AHP['CR']:.3f} &lt; 0.10)</b>. <b>TOPSIS</b> lalu memberi skor "
-            "0-1 tiap kandidat = kedekatan ke 'kandidat ideal'. Metode ini tidak memerlukan data latih, jadi tidak "
-            "terpengaruh oleh apakah histori placement mengandung pola prediktif atau tidak.",
-            kind="success" if AHP["consistent"] else "error",
+            "Kami menguji apakah profil mahasiswa (IPK, portofolio, CV, semester, jumlah tools) bisa memprediksi "
+            "siapa yang akan <b>placement</b>. Hasilnya: mahasiswa yang placement dan yang ditolak <b>hampir identik</b> "
+            "di semua kriteria (korelasi ~0; IPK rata-rata 3,29 vs 3,30). Artinya pada data ini keputusan placement "
+            "tidak bergantung pada profil terukur, sehingga <b>tidak ada model — ML maupun skor gabungan — yang bisa "
+            "memprediksinya secara jujur</b>. Karena itu tab ini hanya menyaring kandidat yang memenuhi syarat dan "
+            "membiarkan CDC mengurutkan sesuai prioritasnya sendiri, tanpa mengklaim 'ini yang akan diterima'.",
+            kind="warning",
         )
-        wdf = pd.DataFrame({
-            "kriteria": list(AHP["weights"].keys()),
-            "bobot": [round(float(v), 3) for v in AHP["weights"].values()],
-        }).sort_values("bobot")
-        fig_w = px.bar(wdf, x="bobot", y="kriteria", orientation="h",
-                       title="Bobot Kriteria hasil AHP", color_discrete_sequence=[COLOR_SEAL_BROWN])
-        fig_w.update_layout(yaxis_title=None, xaxis_title=None)
-        show_chart(fig_w, height=240)
 
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
@@ -1836,6 +1756,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v16</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v17</div>', unsafe_allow_html=True)
 
 nav.run()
