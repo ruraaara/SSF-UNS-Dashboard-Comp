@@ -12,7 +12,7 @@ from datetime import datetime
 
 
 st.set_page_config(
-    page_title="CDC SSF UNS — Placement Monitoring",
+    page_title="CDC SSF UNS - Placement Monitoring",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -95,7 +95,7 @@ REJECTION_TO_RANK = {
 }
 
 # ---------------------------------------------------------------------------
-# STYLE — CSS Custom, gaya BENTO BOX
+# STYLE - CSS Custom, gaya BENTO BOX
 # - Font judul: Nohemi (Fontshare); body: Inter.
 # - Background halaman: gradasi krem lembut.
 # - Kartu KPI: flat gelap; kartu paling penting diberi OUTLINE GRADASI + glow.
@@ -108,7 +108,7 @@ st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap');
 
-/* Nohemi tidak tersedia di Google Fonts/Fontshare — di-load dari folder
+/* Nohemi tidak tersedia di Google Fonts/Fontshare - di-load dari folder
    static/ repo (butuh [server] enableStaticServing di config.toml).
    Urutan sumber: font ter-install lokal dulu (local), lalu beberapa
    kemungkinan nama file di static/. Kalau semuanya tidak ada, browser
@@ -129,7 +129,7 @@ html, body, [class*="css"] {{
 }}
 
 /* ===== paksa latar & teks dasar (dark-mode proof) =====
-   background: MESH GRADIENT lembut dari palet — beberapa radial-gradient
+   background: MESH GRADIENT lembut dari palet - beberapa radial-gradient
    ditumpuk di atas warna dasar krem */
 .stApp {{
     background:
@@ -526,7 +526,10 @@ def style_fig(fig, height=300):
         hoverlabel=dict(bgcolor="white", font_size=11),
         height=height,
     )
-    # title_font hanya diset bila chart punya judul — plotly.js merender
+    # angka sumbu ditulis penuh dgn pemisah ribuan (mis. 8,000 bukan "8k")
+    fig.update_yaxes(tickformat=",", separatethousands=True)
+    fig.update_xaxes(separatethousands=True)
+    # title_font hanya diset bila chart punya judul - plotly.js merender
     # teks "undefined" kalau properti title diisi tanpa title text.
     if has_title:
         fig.update_layout(title_font=dict(size=13, color=COLOR_SEAL_BROWN))
@@ -651,7 +654,7 @@ def load_all() -> dict:
 
     # Batch dianggap DIRESPON perusahaan jika minimal satu mahasiswanya
     # lolos ke tahap setelah screening, ATAU sudah ada keputusan
-    # (Placement / Rejection apa pun — menolak juga bentuk respons).
+    # (Placement / Rejection apa pun - menolak juga bentuk respons).
     # Kolom progress di tracking_company sengaja TIDAK dipakai sebagai
     # sinyal respons: hasil validasi data menunjukkan nilainya tidak
     # berkorelasi dengan pergerakan kandidat.
@@ -812,7 +815,7 @@ def compute_match_summary() -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# FILTER — di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
+# FILTER - di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
 # ---------------------------------------------------------------------------
 FILTER_TAHUN = sorted(int(t) for t in master["tahun_update"].dropna().unique())
 FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) if "program_studi" in student_all.columns else []
@@ -821,7 +824,7 @@ FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolis
 
 def run_gsap_animations(slug: str):
     """Animasi interaktif via GSAP (dimuat dari CDN). Streamlit menyaring tag
-    <script> di markdown, jadi JS dijalankan lewat components.html — iframe
+    <script> di markdown, jadi JS dijalankan lewat components.html - iframe
     same-origin yang boleh memanipulasi DOM halaman induk. Kalau CDN gagal
     dimuat, halaman tetap tampil normal tanpa animasi (graceful fallback)."""
     # st.iframe menggantikan components.html (dihapus Streamlit per Jun 2026);
@@ -854,7 +857,7 @@ _GSAP_HTML = """
                 const a = doc.querySelector(
                     "section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='" + HREF + "']");
                 if (!sb || !a) return false;
-                // JS memegang PENUH geometri pill dengan inline !important —
+                // JS memegang PENUH geometri pill dengan inline !important -
                 // kebal terhadap perbedaan CSS antar versi/deploy Streamlit
                 a.style.setProperty("margin-left", "0px", "important");
                 a.style.setProperty("margin-right", "0px", "important");
@@ -913,7 +916,7 @@ _GSAP_HTML = """
 
             P.addEventListener("resize", fitActiveTab);
 
-            // fit lidah tab jalan mandiri — tidak menunggu / tergantung GSAP
+            // fit lidah tab jalan mandiri - tidak menunggu / tergantung GSAP
             (function retryFit(i) {
                 if (!fitActiveTab() && i < 15) setTimeout(function () { retryFit(i + 1); }, 300);
             })(0);
@@ -937,7 +940,7 @@ _GSAP_HTML = """
 def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False):
     """Baris judul halaman: judul di kiri, tombol Filter (popover) di ujung
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
-    halaman — nama yang berubah membuat animasi restart setiap pindah halaman."""
+    halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
     st.markdown(
         f"<style>"
@@ -1003,7 +1006,7 @@ if "sync_date" in status_student.columns and status_student["sync_date"].notna()
 
 
 # ---------------------------------------------------------------------------
-# TAB 1 — OVERVIEW
+# TAB 1 - OVERVIEW
 # ---------------------------------------------------------------------------
 def page_overview():
     tahun_f, prodi_f, jenis_f, _ = page_header("Overview", key="overview")
@@ -1119,7 +1122,7 @@ def page_overview():
         show_chart(fig_wf, height=290)
 
 # ---------------------------------------------------------------------------
-# TAB 2 — FUNNEL & GHOSTING
+# TAB 2 - FUNNEL & GHOSTING
 # ---------------------------------------------------------------------------
 def page_funnel():
     tahun_f, prodi_f, jenis_f, tanggal_acuan = page_header("Funnel & Ghosting", key="funnel", with_ref_date=True)
@@ -1175,7 +1178,7 @@ def page_funnel():
     ]
     if konversi:
         tahap_bocor, rate_bocor = min(konversi, key=lambda t: t[1])
-        insight(f"Konversi terendah ada di tahap <b>{tahap_bocor}</b> ({rate_bocor:.0f}% dari tahap sebelumnya) — "
+        insight(f"Konversi terendah ada di tahap <b>{tahap_bocor}</b> ({rate_bocor:.0f}% dari tahap sebelumnya) - "
                 "prioritaskan pendampingan CDC di tahap ini. "
                 f"Ghosting menurut aturan FAQ: <b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).", kind="warning")
 
@@ -1195,7 +1198,7 @@ def page_funnel():
             ghosting_by_stage = ghosted_children["progress_student"].value_counts().head(8).reset_index()
             ghosting_by_stage.columns = ["tahap", "jumlah"]
             fig_gs = px.bar(ghosting_by_stage, x="jumlah", y="tahap", orientation="h",
-                            title="Kandidat pada Batch Ghosting — Tahap Terakhir",
+                            title="Kandidat pada Batch Ghosting - Tahap Terakhir",
                             color_discrete_sequence=[COLOR_SIENNA])
             fig_gs.update_layout(yaxis_title=None, xaxis_title=None)
             show_chart(fig_gs, height=290)
@@ -1220,7 +1223,7 @@ def page_funnel():
 
         n_ghosting_tercatat = int((m["rejection"] == "Ghosting").sum())
         insight(
-            f"Data mencatat {n_ghosting_tercatat:,} kandidat berlabel Ghosting — angka per kandidat itu tidak setara "
+            f"Data mencatat {n_ghosting_tercatat:,} kandidat berlabel Ghosting - angka per kandidat itu tidak setara "
             "dengan aturan FAQ karena satu batch bisa berisi campuran kandidat ghosting dan kandidat yang tetap "
             "diproses. Untuk monitoring follow-up, gunakan angka aturan FAQ karena bisa dihitung ulang kapan pun.",
         )
@@ -1233,7 +1236,7 @@ def page_funnel():
         )
 
 # ---------------------------------------------------------------------------
-# TAB 3 — MITRA
+# TAB 3 - MITRA
 # ---------------------------------------------------------------------------
 def page_mitra():
     tahun_f, prodi_f, jenis_f, _ = page_header("Mitra Perusahaan", key="mitra")
@@ -1242,15 +1245,15 @@ def page_mitra():
     kpi_row([
         {"value": f"{m[COMPANY_NAME_COL].nunique():,}", "label": "Perusahaan Aktif (filter)", "highlight": True,
          "help": "Perusahaan yang punya proses seleksi berjalan pada rentang filter."},
-        {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra (master)"},
-        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request (master)"},
+        {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra"},
+        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request"},
         {"value": f"{m['nama_posisi'].nunique():,}" if "nama_posisi" in m.columns else "-", "label": "Posisi Dibuka (filter)"},
     ])
 
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Top 10 Acceptance Rate", "Minimal 3 kandidat dikirim; nama dari master COMPANY.")
+            section("Top 10 Acceptance Rate")
             perf = m.groupby(COMPANY_NAME_COL).agg(
                 total=("id_tracking_student", "count"),
                 placement=("rejection", lambda x: (x == "Placement").sum()),
@@ -1260,10 +1263,11 @@ def page_mitra():
             fig_acc = px.bar(perf, x="acceptance_rate", y="perusahaan", orientation="h",
                              color_discrete_sequence=[COLOR_COCOA])
             fig_acc.update_layout(yaxis_title=None, xaxis_title="%")
+            fig_acc.update_yaxes(categoryorder="total ascending")
             show_chart(fig_acc, height=310)
     with col2:
         with st.container(border=True):
-            section("Top 10 Volume Talent Request", "Perusahaan dengan volume permintaan terbanyak.")
+            section("Top 10 Volume Talent Request")
             tr_named = talent_request.merge(company[["id_company", "company_name"]], on="id_company", how="left")
             volume = tr_named["company_name"].value_counts().head(10).reset_index()
             volume.columns = ["perusahaan", "jumlah_request"]
@@ -1281,6 +1285,7 @@ def page_mitra():
                                 title="Permintaan per Sektor Industri",
                                 color_discrete_sequence=[COLOR_SEAL_BROWN])
             fig_sektor.update_layout(yaxis_title=None, xaxis_title=None)
+            fig_sektor.update_yaxes(categoryorder="total ascending")
             show_chart(fig_sektor, height=290)
         with col4:
             tipe = company["company_type"].value_counts().reset_index() if "company_type" in company.columns else pd.DataFrame(columns=["a", "b"])
@@ -1293,7 +1298,7 @@ def page_mitra():
 
     prioritas = tr_fulfill[tr_fulfill["belum_terpenuhi"] > 0].sort_values("request_date")
     with st.expander(f"Prioritas {len(prioritas):,} talent request belum terpenuhi", icon=":material/priority_high:"):
-        st.caption("Diurutkan dari request paling lama. Data master, di luar filter.")
+        st.caption("Diurutkan dari request paling lama.")
         st.dataframe(
             prioritas[["id_talent_req", "company_name", "nama_posisi", "headcount",
                        "jumlah_dikirimkan", "belum_terpenuhi", "pemenuhan", "request_date"]],
@@ -1305,7 +1310,7 @@ def page_mitra():
         )
 
 # ---------------------------------------------------------------------------
-# TAB 4 — KESIAPAN (data master terkini — tanpa filter)
+# TAB 4 - KESIAPAN (data master terkini - tanpa filter)
 # ---------------------------------------------------------------------------
 def page_kesiapan():
     page_header("Kesiapan Mahasiswa")
@@ -1447,7 +1452,7 @@ def page_kesiapan():
             st.dataframe(eligible_nganggur[cols_show], width="stretch", hide_index=True, height=320)
 
 # ---------------------------------------------------------------------------
-# TAB 5 — MATCHING TALENT (data master terkini — tanpa filter)
+# TAB 5 - MATCHING TALENT (data master terkini - tanpa filter)
 # ---------------------------------------------------------------------------
 def page_matching():
     page_header("Matching Talent")
@@ -1462,11 +1467,11 @@ def page_matching():
     kpi_row([
         {"value": f"{n_siap:,}", "label": "Mahasiswa Siap & Tersedia", "highlight": True,
          "sub": f"vs {total_slot:,} slot dibuka",
-         "help": "Mahasiswa aktif + tersedia — kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
+         "help": "Mahasiswa aktif + tersedia - kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
         {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
         {"value": f"{rasio:.1f}x", "label": "Slot per Mahasiswa Siap",
          "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap."},
-        {"value": f"{len(pool_all):,}", "label": "Mahasiswa Punya Data Status"},
+        {"value": f"{student_all['nim'].nunique():,}", "label": "Total Mahasiswa Terdaftar"},
     ])
 
     with st.container(border=True):
@@ -1481,7 +1486,7 @@ def page_matching():
         )
         subset_req = match_summary[match_summary["company_name"] == pilih_comp].sort_values("kandidat_final", ascending=False)
         req_labels = {
-            r.id_talent_req: f"{r.nama_posisi} ({r.id_talent_req}) — {r.kandidat_final} kandidat"
+            r.id_talent_req: f"{r.nama_posisi} ({r.id_talent_req}) - {r.kandidat_final} kandidat"
             for r in subset_req.itertuples(index=False)
         }
         selected_id = colp2.selectbox("Posisi / Request", list(req_labels.keys()), format_func=lambda k: req_labels[k])
@@ -1510,44 +1515,61 @@ def page_matching():
             else:
                 sebab = (f"ada {len(cocok_semester_df):,} mahasiswa cocok bidang & semester, "
                          "tapi belum ada yang berstatus aktif dan tersedia.")
-            insight(f"Tidak ada kandidat yang memenuhi syarat — {sebab}", kind="error")
+            insight(f"Tidak ada kandidat yang memenuhi syarat - {sebab}", kind="error")
         else:
             candidates["jml_tools"] = candidates["tools"].fillna("").astype(str).apply(
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
+            sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
 
-            c1, c2, c3, c4 = st.columns([1, 1, 1.4, 1])
-            hanya_cv = c1.checkbox("Punya CV", value=False)
-            hanya_porto = c2.checkbox("Punya portofolio", value=False)
-            sort_opsi = {
-                "IPK (tertinggi)": ("ipk", False),
-                "Semester (tertinggi)": (semester_col, False),
-                "Jumlah tools (terbanyak)": ("jml_tools", False),
+            col_pop, col_n = st.columns([2, 1])
+            with col_pop.popover(":material/tune: Kriteria prioritas", width="stretch"):
+                st.caption("Centang kriteria yang diprioritaskan. Kandidat diurutkan dari yang paling memenuhi kriteria terpilih.")
+                pr_ipk = st.checkbox("IPK tinggi", value=True)
+                pr_porto = st.checkbox("Punya portofolio", value=True)
+                pr_tools = st.checkbox("Tools banyak", value=True)
+                pr_cv = st.checkbox("Punya CV", value=False)
+                pr_sem = st.checkbox("Semester tinggi", value=False)
+            top_n = col_n.number_input("Tampilkan berapa teratas", min_value=5, max_value=100, value=25, step=5)
+
+            def _norm01(s):
+                s = pd.to_numeric(s, errors="coerce").fillna(0).astype(float)
+                rng = s.max() - s.min()
+                return (s - s.min()) / rng if rng > 0 else s * 0
+
+            comps = []
+            if pr_ipk:
+                comps.append(_norm01(candidates["ipk"]))
+            if pr_porto:
+                comps.append(norm_text(candidates["portofolio"]).isin(VAL_ADA).astype(float))
+            if pr_tools:
+                comps.append(_norm01(candidates["jml_tools"]))
+            if pr_cv:
+                comps.append(norm_text(candidates["cv"]).isin(VAL_ADA).astype(float))
+            if pr_sem:
+                comps.append(_norm01(sem_num))
+
+            base_cols = [c for c in ["nim", nama_col, prodi_col, semester_col, "ipk",
+                                     "cv", "portofolio", "jml_tools", "domisili"] if c in candidates.columns]
+            col_cfg = {
+                "ipk": st.column_config.NumberColumn("IPK", format="%.2f"),
+                "jml_tools": st.column_config.NumberColumn("Jml Tools"),
+                semester_col: st.column_config.NumberColumn("Semester"),
             }
-            pilih_sort = c3.selectbox("Urutkan", list(sort_opsi.keys()), label_visibility="collapsed")
-            top_n = c4.number_input("Top", min_value=5, max_value=100, value=25, step=5, label_visibility="collapsed")
+            if comps:
+                candidates["skor_prioritas"] = sum(comps) / len(comps)
+                view = candidates.sort_values("skor_prioritas", ascending=False).head(int(top_n))
+                show_cols = base_cols + ["skor_prioritas"]
+                col_cfg["skor_prioritas"] = st.column_config.ProgressColumn("Skor Prioritas", format="%.2f", min_value=0, max_value=1)
+                ket = "skor prioritas (gabungan kriteria terpilih)"
+            else:
+                view = candidates.head(int(top_n))
+                show_cols = base_cols
+                ket = "urutan default"
 
-            view = candidates
-            if hanya_cv:
-                view = view[norm_text(view["cv"]).isin(VAL_ADA)]
-            if hanya_porto:
-                view = view[norm_text(view["portofolio"]).isin(VAL_ADA)]
-            sort_col, asc = sort_opsi[pilih_sort]
-            view = view.sort_values(sort_col, ascending=asc).head(int(top_n))
+            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** menampilkan {len(view)} teratas menurut {ket}:")
+            st.dataframe(view[show_cols], width="stretch", hide_index=True, height=430, column_config=col_cfg)
 
-            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** — menampilkan {len(view)} teratas menurut {pilih_sort}:")
-            show_cols = [c for c in ["nim", nama_col, prodi_col, semester_col, "ipk",
-                                     "cv", "portofolio", "jml_tools", "domisili"]
-                         if c in view.columns]
-            st.dataframe(
-                view[show_cols], width="stretch", hide_index=True, height=430,
-                column_config={
-                    "ipk": st.column_config.NumberColumn("IPK", format="%.2f"),
-                    "jml_tools": st.column_config.NumberColumn("Jml Tools"),
-                    semester_col: st.column_config.NumberColumn("Semester"),
-                },
-            )
-
-    with st.expander(f"Ringkasan jumlah kandidat memenuhi syarat — semua {len(match_summary):,} talent request", icon=":material/table_view:"):
+    with st.expander(f"Ringkasan jumlah kandidat memenuhi syarat - semua {len(match_summary):,} talent request", icon=":material/table_view:"):
         st.caption(
             "Kolom bertahap memperlihatkan di tahap mana kandidat menyusut: cocok prodi, lalu + minimum semester, "
             "lalu + aktif & tersedia (kandidat final)."
@@ -1563,19 +1585,9 @@ def page_matching():
             },
         )
 
-    with st.expander("Kenapa tidak ada skor prediksi kandidat?", icon=":material/info:"):
-        insight(
-            "Kami menguji apakah profil mahasiswa (IPK, portofolio, CV, semester, jumlah tools) bisa memprediksi "
-            "siapa yang akan <b>placement</b>. Hasilnya: mahasiswa yang placement dan yang ditolak <b>hampir identik</b> "
-            "di semua kriteria (korelasi ~0; IPK rata-rata 3,29 vs 3,30). Artinya pada data ini keputusan placement "
-            "tidak bergantung pada profil terukur, sehingga <b>tidak ada model — ML maupun skor gabungan — yang bisa "
-            "memprediksinya secara jujur</b>. Karena itu tab ini hanya menyaring kandidat yang memenuhi syarat dan "
-            "membiarkan CDC mengurutkan sesuai prioritasnya sendiri, tanpa mengklaim 'ini yang akan diterima'.",
-            kind="warning",
-        )
 
 # ---------------------------------------------------------------------------
-# TAB 6 — LAPORAN & QUALITY CHECK
+# TAB 6 - LAPORAN & QUALITY CHECK
 # ---------------------------------------------------------------------------
 def page_laporan():
     tahun_f, prodi_f, jenis_f, _ = page_header("Laporan", key="laporan")
@@ -1636,17 +1648,12 @@ def page_laporan():
                                    "rekap_placement.csv", "text/csv", icon=":material/download:")
 
     with st.expander("Kualitas data & sinkronisasi", icon=":material/rule:"):
-        st.caption("Konsistensi STUDENT ALL vs STATUS STUDENT. Data master, di luar filter.")
-        merged_check = student_all.merge(status_student[["nim", "sync_date"]], on="nim", how="left", indicator=True)
-        belum_sync = merged_check[merged_check["_merge"] == "left_only"]
-
         ref_quality = status_student["sync_date"].max() if "sync_date" in status_student.columns else pd.Timestamp(datetime.now().date())
         stale_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
         n_stale = int((stale_days > SYNC_STALE_DAYS).sum()) if stale_days.notna().any() else 0
 
         col_q1, col_q2 = st.columns([2, 3])
         with col_q1:
-            st.metric("Mahasiswa Belum Ada Data Status", f"{len(belum_sync):,}")
             st.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
             st.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "-")
         with col_q2:
@@ -1660,12 +1667,8 @@ def page_laporan():
             fig_sync.update_layout(xaxis_title=None, yaxis_title=None)
             show_chart(fig_sync, height=270)
 
-        if len(belum_sync) > 0:
-            st.dataframe(belum_sync[["nim", "nama", "program_studi"]].head(20),
-                         width="stretch", hide_index=True)
-
 # ---------------------------------------------------------------------------
-# NAVIGASI SIDEBAR (menggantikan tabs) — logo di atas, teks CDC di bawah logo,
+# NAVIGASI SIDEBAR (menggantikan tabs) - logo di atas, teks CDC di bawah logo,
 # lalu menu halaman. position="hidden" agar nav bawaan tidak dobel dengan
 # menu custom di bawah.
 # ---------------------------------------------------------------------------
@@ -1684,7 +1687,7 @@ nav = st.navigation(PAGES, position="hidden")
 # menyambung ke area konten, dengan lekukan cekung di atas & bawah
 # (pseudo-element lingkaran transparan + box-shadow berwarna latar konten).
 # href yang dirender Streamlit: "" untuk halaman default, "page_xxx"
-# (tanpa garis miring) untuk lainnya — hasil inspeksi DOM langsung.
+# (tanpa garis miring) untuk lainnya - hasil inspeksi DOM langsung.
 _current_href = nav.url_path or ""
 _ACTIVE_BG = "#FBF2E0"  # samakan dengan warna dasar latar konten
 st.markdown(
@@ -1755,6 +1758,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v18</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v19</div>', unsafe_allow_html=True)
 
 nav.run()
