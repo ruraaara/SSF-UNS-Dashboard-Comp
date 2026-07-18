@@ -944,9 +944,9 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
     st.markdown(
         f"<style>"
-        f"@keyframes pagein_{slug} {{ from {{ opacity: 0; transform: translateY(14px); }} "
-        f"to {{ opacity: 1; transform: none; }} }} "
-        f".block-container {{ animation: pagein_{slug} 0.5s ease; }}"
+        f"@keyframes pagein_{slug} {{ 0% {{ opacity: 0; transform: translateX(38px) scale(0.985); }} "
+        f"100% {{ opacity: 1; transform: none; }} }} "
+        f".block-container {{ animation: pagein_{slug} 0.6s cubic-bezier(0.16, 1, 0.3, 1); }}"
         f"</style>",
         unsafe_allow_html=True,
     )
@@ -1524,15 +1524,15 @@ def page_matching():
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
             sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
 
-            col_pop, col_n, _col_sp = st.columns([1.5, 1.3, 3.2])
-            with col_pop.popover(":material/tune: Kriteria prioritas", width="stretch"):
+            _col_sp, col_pop, col_n = st.columns([4.2, 1.5, 1.3], vertical_alignment="bottom")
+            with col_pop.popover(":material/tune: Filter", width="stretch"):
                 st.caption("Centang kriteria yang diprioritaskan. Kandidat diurutkan dari yang paling memenuhi kriteria terpilih.")
                 pr_ipk = st.checkbox("IPK tinggi", value=True)
                 pr_porto = st.checkbox("Punya portofolio", value=True)
                 pr_tools = st.checkbox("Tools banyak", value=True)
                 pr_cv = st.checkbox("Punya CV", value=False)
                 pr_sem = st.checkbox("Semester tinggi", value=False)
-            top_n = col_n.number_input("Tampilkan berapa teratas", min_value=5, max_value=100, value=25, step=5)
+            top_n = col_n.number_input("Teratas", min_value=5, max_value=100, value=25, step=5)
 
             def _norm01(s):
                 s = pd.to_numeric(s, errors="coerce").fillna(0).astype(float)
@@ -1760,6 +1760,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v20</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v21</div>', unsafe_allow_html=True)
 
 nav.run()
