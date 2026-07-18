@@ -10,10 +10,6 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import datetime
 
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import roc_auc_score
 
 st.set_page_config(
     page_title="CDC SSF UNS — Placement Monitoring",
@@ -815,97 +811,73 @@ def compute_match_summary() -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# ML MODEL — MATCHING TALENT
-# Label negatif = SEMUA nilai "Rejection ..." (di data tidak ada nilai
-# "Rejected" pada kolom rejection). "On Progress" dan "Ghosting" dikeluarkan
-# karena belum/bukan keputusan perusahaan atas kualitas kandidat.
-# Metrik utama: ROC-AUC — lebih jujur daripada akurasi untuk kelas tak
-# seimbang. AUC 0.5 berarti fitur profil tidak mengandung sinyal prediktif
-# (kasus data sintetis kompetisi ini); pipeline yang sama akan belajar pola
-# sebenarnya begitu dipakai pada data operasional riil.
+# METODE MATCHING: AHP-TOPSIS (menggantikan RandomForest)
+# RandomForest dibuang karena data placement kompetisi ini sintetis (AUC 0.5,
+# tak ada sinyal). AHP-TOPSIS adalah metode Multi-Criteria Decision Making
+# baku untuk seleksi talenta: TIDAK butuh data latih, transparan, dan bisa
+# dipertanggungjawabkan (AHP diuji konsistensinya lewat Consistency Ratio).
+#   - AHP  : menurunkan bobot tiap kriteria dari matriks perbandingan
+#            berpasangan (skala Saaty), lalu diuji CR < 0.1.
+#   - TOPSIS: memberi skor 0..1 tiap kandidat = kedekatan ke "kandidat ideal".
 # ---------------------------------------------------------------------------
-ML_FEATURE_BASE = ["program_studi", "semester", "ipk", "cv", "portofolio", "domisili"]
-MIN_TRAIN_ROWS = 15
+AHP_CRITERIA = ["IPK", "Portofolio", "Tools", "Semester", "CV"]
+# matriks perbandingan berpasangan (penilaian domain CDC; resiprokal, skala Saaty):
+# IPK > Portofolio > Tools > Semester > CV
+AHP_MATRIX = np.array([
+    [1,     2,   3,   4,   5],
+    [1/2,   1,   2,   3,   4],
+    [1/3, 1/2,   1,   2,   3],
+    [1/4, 1/3, 1/2,   1,   2],
+    [1/5, 1/4, 1/3, 1/2,   1],
+], float)
+_RI = {1: 0, 2: 0, 3: 0.58, 4: 0.9, 5: 1.12, 6: 1.24, 7: 1.32}
 
 
-@st.cache_resource(show_spinner="Melatih model rekomendasi (hanya sekali)...")
-def train_matching_model():
-    pool = DATA["pool"]
-    base = pool.merge(
-        tracking_student.loc[
-            tracking_student["rejection"].isin(["Placement"] + REJECTION_STAGES),
-            ["nim", "rejection"],
-        ],
-        on="nim", how="inner",
-    )
-    base["target"] = (base["rejection"] == "Placement").astype(int)
-
-    resolved_cols = {}
-    for feat in ML_FEATURE_BASE:
-        col = resolve_col(base, feat)
-        if col is not None:
-            resolved_cols[feat] = col
-
-    feature_cols = list(resolved_cols.values())
-    if len(base) < MIN_TRAIN_ROWS or base["target"].nunique() < 2 or not feature_cols:
-        return None
-
-    X = base[feature_cols].copy()
-    y = base["target"]
-
-    encoders = {}
-    numeric_feats = {"semester", "ipk"}
-    for feat, col in resolved_cols.items():
-        if feat in numeric_feats:
-            X[col] = pd.to_numeric(X[col], errors="coerce")
-            X[col] = X[col].fillna(X[col].median())
-        else:
-            X[col] = X[col].astype(str).fillna("Unknown")
-            le = LabelEncoder()
-            X[col] = le.fit_transform(X[col])
-            encoders[col] = le
-
-    stratify = y if y.value_counts().min() >= 2 else None
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=stratify,
-    )
-    model = RandomForestClassifier(
-        n_estimators=200, max_depth=10, min_samples_leaf=4,
-        random_state=42, class_weight="balanced", n_jobs=-1,
-    )
-    model.fit(X_train, y_train)
-    test_accuracy = model.score(X_test, y_test) if len(X_test) > 0 else np.nan
-    try:
-        test_auc = roc_auc_score(y_test, model.predict_proba(X_test)[:, 1])
-    except ValueError:
-        test_auc = np.nan
-    baseline = float(max(y.mean(), 1 - y.mean()))
-
-    feature_importance = pd.DataFrame({
-        "fitur": list(resolved_cols.keys()),
-        "importance": model.feature_importances_,
-    }).sort_values("importance", ascending=False)
-
+@st.cache_resource(show_spinner="Menghitung bobot AHP...")
+def compute_ahp_weights():
+    n = len(AHP_CRITERIA)
+    gm = np.prod(AHP_MATRIX, axis=1) ** (1 / n)   # rata-rata geometris tiap baris
+    w = gm / gm.sum()
+    lam = float((AHP_MATRIX @ w / w).mean())       # lambda_max
+    ci = (lam - n) / (n - 1)
+    cr = ci / _RI[n] if _RI[n] else 0.0
     return {
-        "model": model, "encoders": encoders, "feature_cols": feature_cols,
-        "resolved_cols": resolved_cols, "numeric_feats": numeric_feats,
-        "feature_importance": feature_importance,
-        "test_accuracy": test_accuracy, "test_auc": test_auc,
-        "baseline": baseline, "n_train": len(base),
+        "weights": dict(zip(AHP_CRITERIA, w)),
+        "w_array": w, "lambda_max": lam, "CI": ci, "CR": cr,
+        "consistent": cr < 0.1,
     }
 
 
-ml_bundle = train_matching_model()
+AHP = compute_ahp_weights()
 
-# Bobot ML adaptif: w = (AUC - 0.5) x 2, dibatasi 0..1.
-# AUC 0.5 (tidak ada sinyal, kasus data sintetis) -> ranking dipegang AHP;
-# AUC 1.0 (sinyal sempurna) -> ranking sepenuhnya dari model.
-# Dengan begitu skor rekomendasi selalu masuk akal, dan otomatis bergeser
-# ke ML begitu pipeline dipakai pada data operasional riil.
-if ml_bundle is not None and not np.isnan(ml_bundle["test_auc"]):
-    ML_WEIGHT = float(min(1.0, max(0.0, (ml_bundle["test_auc"] - 0.5) * 2)))
-else:
-    ML_WEIGHT = 0.0
+
+def build_criteria_matrix(cand: pd.DataFrame, semester_col: str) -> np.ndarray:
+    """Susun matriks keputusan kandidat x kriteria (semua benefit: makin besar makin baik)."""
+    return np.column_stack([
+        pd.to_numeric(cand["ipk"], errors="coerce").fillna(0).to_numpy(),
+        norm_text(cand["portofolio"]).isin(VAL_ADA).astype(float).to_numpy(),
+        cand["tools"].fillna("").astype(str).apply(
+            lambda s: len([x for x in s.split(",") if x.strip()])).to_numpy() if "tools" in cand.columns
+        else np.zeros(len(cand)),
+        pd.to_numeric(cand[semester_col], errors="coerce").fillna(0).to_numpy(),
+        norm_text(cand["cv"]).isin(VAL_ADA).astype(float).to_numpy(),
+    ])
+
+
+def topsis_score(cand: pd.DataFrame, semester_col: str) -> np.ndarray:
+    """Skor TOPSIS 0..1 (closeness ke kandidat ideal) memakai bobot AHP."""
+    if len(cand) == 0:
+        return np.array([])
+    X = build_criteria_matrix(cand, semester_col).astype(float)
+    denom = np.sqrt((X ** 2).sum(axis=0))
+    denom[denom == 0] = 1.0                        # hindari bagi nol utk kolom konstan
+    V = (X / denom) * AHP["w_array"]
+    best, worst = V.max(axis=0), V.min(axis=0)
+    d_best = np.sqrt(((V - best) ** 2).sum(axis=1))
+    d_worst = np.sqrt(((V - worst) ** 2).sum(axis=1))
+    total = d_best + d_worst
+    total[total == 0] = 1.0
+    return d_worst / total
 
 # ---------------------------------------------------------------------------
 # FILTER — di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
@@ -1554,28 +1526,31 @@ def page_matching():
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
-    if ml_bundle is not None:
-        model_label = "Hybrid"
-        model_sub = f"ML {ML_WEIGHT*100:.0f}% + AHP {(1-ML_WEIGHT)*100:.0f}% (adaptif)"
-        model_help = (f"Skor = gabungan probabilitas RandomForest ({ml_bundle['n_train']:,} histori keputusan) "
-                      "dan skor AHP berbasis kriteria. Bobot ML mengikuti kualitas prediksi model (AUC) — "
-                      "detail di expander 'Tentang model' di bawah.")
-    else:
-        model_label = "AHP"
-        model_sub = f"histori < {MIN_TRAIN_ROWS} baris"
-        model_help = "Histori keputusan belum cukup untuk melatih model — skor memakai AHP."
+    pool_all = DATA["pool"]
+    n_siap = int(pool_all["_eligible"].sum())
+    total_slot = int(talent_request["headcount"].sum())
+    rasio = total_slot / n_siap if n_siap else 0
+    cr_txt = f"CR {AHP['CR']:.3f} " + ("valid" if AHP["consistent"] else "TAK KONSISTEN")
 
     kpi_row([
         {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
-        {"value": f"{n_zero:,}", "label": "Request Tanpa Kandidat Cocok", "highlight": True,
-         "help": "Paling kritis: tidak ada satu pun mahasiswa yang memenuhi syarat prodi + semester + eligible."},
-        {"value": f"{ml_bundle['n_train']:,}" if ml_bundle else "0", "label": "Histori Keputusan (data latih)"},
-        {"value": model_label, "label": "Metode Skoring", "sub": model_sub, "help": model_help},
+        {"value": f"{n_siap:,}", "label": "Mahasiswa Siap & Tersedia", "highlight": True,
+         "sub": f"vs {total_slot:,} slot dibuka",
+         "help": "Mahasiswa aktif + tersedia — kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
+        {"value": f"{rasio:.1f}x", "label": "Slot per Mahasiswa Siap",
+         "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap — tekanan agregat, bukan kelangkaan per lowongan."},
+        {"value": "AHP-TOPSIS", "label": "Metode Ranking", "sub": cr_txt,
+         "help": "Bobot kriteria dari AHP (teruji konsisten), ranking dari TOPSIS. Tanpa data latih."},
     ])
+    insight(
+        f"Per satu lowongan kandidatnya tampak banyak, tapi kolam <b>{n_siap:,} mahasiswa siap</b> yang sama "
+        f"diperebutkan <b>{total_slot:,} slot</b>. Jadi tugas CDC bukan mencari, tapi <b>me-ranking & shortlist</b> "
+        "kandidat terbaik tiap lowongan — di situlah AHP-TOPSIS berperan.",
+    )
 
     with st.container(border=True):
         section("Cari Kandidat Terbaik untuk Talent Request",
-                "Pilih perusahaan lalu posisinya. Skor = hybrid adaptif ML + AHP (bobot mengikuti kualitas model).")
+                "Pilih perusahaan lalu posisinya. Kandidat di-ranking dengan AHP-TOPSIS (skor 0-1 = kedekatan ke kandidat ideal).")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -1608,55 +1583,8 @@ def page_matching():
         candidates = cocok_semester_df[cocok_semester_df["_eligible"]].copy()
 
         if len(candidates) > 0:
-            # skor AHP selalu dihitung (kriteria transparan: IPK, portofolio,
-            # semester, CV; bobot prodi 0.40 selalu penuh karena kandidat di
-            # sini sudah lolos filter prodi)
-            sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
-            ipk_max = candidates["ipk"].max()
-            candidates["skor_ahp"] = (
-                0.40 * 1.0
-                + 0.30 * (candidates["ipk"] / ipk_max if ipk_max and ipk_max > 0 else 0)
-                + 0.15 * norm_text(candidates["portofolio"]).isin(VAL_ADA).astype(int)
-                + 0.10 * (sem_num / sem_num.max() if sem_num.max() > 0 else 0)
-                + 0.05 * norm_text(candidates["cv"]).isin(VAL_ADA).astype(int)
-            )
-
-            if ml_bundle is not None:
-                model = ml_bundle["model"]
-                encoders = ml_bundle["encoders"]
-                resolved_cols = ml_bundle["resolved_cols"]
-                numeric_feats = ml_bundle["numeric_feats"]
-                feature_cols = ml_bundle["feature_cols"]
-
-                X_cand = pd.DataFrame(index=candidates.index)
-                for feat, train_col in resolved_cols.items():
-                    cand_col = resolve_col(candidates, feat) or train_col
-                    if cand_col not in candidates.columns:
-                        X_cand[train_col] = 0
-                        continue
-                    if feat in numeric_feats:
-                        vals = pd.to_numeric(candidates[cand_col], errors="coerce")
-                        X_cand[train_col] = vals.fillna(vals.median() if vals.notna().any() else 0)
-                    else:
-                        le = encoders.get(train_col)
-                        vals = candidates[cand_col].astype(str).fillna("Unknown")
-                        if le is not None:
-                            known = set(le.classes_)
-                            vals = vals.map(lambda v: v if v in known else le.classes_[0])
-                            X_cand[train_col] = le.transform(vals)
-                        else:
-                            X_cand[train_col] = 0
-
-                X_cand = X_cand[feature_cols]
-                candidates["skor_ml"] = model.predict_proba(X_cand)[:, 1]
-                candidates["recommendation_score"] = (
-                    ML_WEIGHT * candidates["skor_ml"] + (1 - ML_WEIGHT) * candidates["skor_ahp"]
-                )
-                candidates["metode_skor"] = f"Hybrid (ML {ML_WEIGHT*100:.0f}% + AHP {(1-ML_WEIGHT)*100:.0f}%)"
-            else:
-                candidates["recommendation_score"] = candidates["skor_ahp"]
-                candidates["metode_skor"] = "AHP"
-
+            candidates["recommendation_score"] = topsis_score(candidates, semester_col)
+            candidates["metode_skor"] = "AHP-TOPSIS"
             candidates = candidates.sort_values("recommendation_score", ascending=False)
 
         col_hasil, col_dist = st.columns(2, gap="medium")
@@ -1709,22 +1637,23 @@ def page_matching():
             },
         )
 
-    if ml_bundle is not None:
-        with st.expander("Tentang model: skoring hybrid, feature importance & evaluasi", icon=":material/psychology:"):
-            auc = ml_bundle["test_auc"]
-            insight(
-                f"Skor rekomendasi = <b>{ML_WEIGHT*100:.0f}% ML + {(1-ML_WEIGHT)*100:.0f}% AHP</b>, dengan bobot ML "
-                f"dihitung otomatis dari kualitas prediksi model: w = (AUC − 0.5) × 2. Evaluasi RandomForest pada "
-                f"{ml_bundle['n_train']:,} histori keputusan menghasilkan AUC {auc:.2f} — artinya pada data kompetisi "
-                "(sintetis) ini keputusan placement tidak berkorelasi dengan profil mahasiswa, sehingga ranking "
-                "dipegang AHP yang kriterianya transparan (IPK, portofolio, semester, CV). Begitu pipeline yang sama "
-                "dijalankan pada data operasional riil dan AUC naik, bobot ML ikut naik otomatis tanpa mengubah kode.",
-                kind="info",
-            )
-            fig_fi = px.bar(ml_bundle["feature_importance"], x="importance", y="fitur", orientation="h",
-                            color_discrete_sequence=[COLOR_SEAL_BROWN])
-            fig_fi.update_layout(yaxis_title=None, xaxis_title=None)
-            show_chart(fig_fi, height=250)
+    with st.expander("Tentang metode: AHP-TOPSIS (bobot kriteria & uji konsistensi)", icon=":material/psychology:"):
+        insight(
+            f"Ranking memakai <b>AHP-TOPSIS</b>, metode pengambilan keputusan multi-kriteria yang baku untuk seleksi "
+            f"talenta. Bobot tiap kriteria diturunkan lewat <b>AHP</b> dari matriks perbandingan berpasangan dan "
+            f"<b>teruji konsisten (Consistency Ratio = {AHP['CR']:.3f} &lt; 0.10)</b>. <b>TOPSIS</b> lalu memberi skor "
+            "0-1 tiap kandidat = kedekatan ke 'kandidat ideal'. Metode ini tidak memerlukan data latih, jadi tidak "
+            "terpengaruh oleh apakah histori placement mengandung pola prediktif atau tidak.",
+            kind="success" if AHP["consistent"] else "error",
+        )
+        wdf = pd.DataFrame({
+            "kriteria": list(AHP["weights"].keys()),
+            "bobot": [round(float(v), 3) for v in AHP["weights"].values()],
+        }).sort_values("bobot")
+        fig_w = px.bar(wdf, x="bobot", y="kriteria", orientation="h",
+                       title="Bobot Kriteria hasil AHP", color_discrete_sequence=[COLOR_SEAL_BROWN])
+        fig_w.update_layout(yaxis_title=None, xaxis_title=None)
+        show_chart(fig_w, height=240)
 
 # ---------------------------------------------------------------------------
 # TAB 6 — LAPORAN & QUALITY CHECK
@@ -1907,6 +1836,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v15</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v16</div>', unsafe_allow_html=True)
 
 nav.run()
