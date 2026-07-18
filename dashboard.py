@@ -1170,6 +1170,7 @@ def page_funnel():
             fig_rej = px.bar(rej, x="jumlah", y="tahap_rejection", orientation="h",
                              color_discrete_sequence=[COLOR_SIENNA])
             fig_rej.update_layout(yaxis_title=None, xaxis_title=None)
+            fig_rej.update_yaxes(categoryorder="total ascending")
             show_chart(fig_rej, height=330)
 
     konversi = [
@@ -1192,6 +1193,7 @@ def page_funnel():
                             title="Top Perusahaan Kontributor Ghosting",
                             color_discrete_sequence=[COLOR_SEAL_BROWN])
             fig_gc.update_layout(yaxis_title=None, xaxis_title=None)
+            fig_gc.update_yaxes(categoryorder="total ascending")
             show_chart(fig_gc, height=290)
         with col2:
             ghosted_children = tracking_student[tracking_student["id_tracking_company"].isin(ghosted["id_tracking_company"])]
@@ -1201,6 +1203,7 @@ def page_funnel():
                             title="Kandidat pada Batch Ghosting - Tahap Terakhir",
                             color_discrete_sequence=[COLOR_SIENNA])
             fig_gs.update_layout(yaxis_title=None, xaxis_title=None)
+            fig_gs.update_yaxes(categoryorder="total ascending")
             show_chart(fig_gs, height=290)
 
         tren_fu = tc_status.copy()
@@ -1521,7 +1524,7 @@ def page_matching():
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
             sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
 
-            col_pop, col_n = st.columns([2, 1])
+            col_pop, col_n, _col_sp = st.columns([1.5, 1.3, 3.2])
             with col_pop.popover(":material/tune: Kriteria prioritas", width="stretch"):
                 st.caption("Centang kriteria yang diprioritaskan. Kandidat diurutkan dari yang paling memenuhi kriteria terpilih.")
                 pr_ipk = st.checkbox("IPK tinggi", value=True)
@@ -1652,20 +1655,19 @@ def page_laporan():
         stale_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
         n_stale = int((stale_days > SYNC_STALE_DAYS).sum()) if stale_days.notna().any() else 0
 
-        col_q1, col_q2 = st.columns([2, 3])
-        with col_q1:
-            st.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
-            st.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "-")
-        with col_q2:
-            sync_bulan = status_student.copy()
-            sync_bulan["bulan_sync"] = sync_bulan["sync_date"].dt.to_period("M").astype(str)
-            sync_ct = sync_bulan["bulan_sync"].value_counts().sort_index().reset_index()
-            sync_ct.columns = ["bulan", "jumlah"]
-            fig_sync = px.bar(sync_ct, x="bulan", y="jumlah",
-                              title="Sebaran Waktu Sinkronisasi Data Mahasiswa",
-                              color_discrete_sequence=[COLOR_COCOA])
-            fig_sync.update_layout(xaxis_title=None, yaxis_title=None)
-            show_chart(fig_sync, height=270)
+        mcol1, mcol2 = st.columns(2)
+        mcol1.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
+        mcol2.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "-")
+
+        sync_bulan = status_student.copy()
+        sync_bulan["bulan_sync"] = sync_bulan["sync_date"].dt.to_period("M").astype(str)
+        sync_ct = sync_bulan["bulan_sync"].value_counts().sort_index().reset_index()
+        sync_ct.columns = ["bulan", "jumlah"]
+        fig_sync = px.bar(sync_ct, x="bulan", y="jumlah",
+                          title="Sebaran Waktu Sinkronisasi Data Mahasiswa",
+                          color_discrete_sequence=[COLOR_COCOA])
+        fig_sync.update_layout(xaxis_title=None, yaxis_title=None)
+        show_chart(fig_sync, height=280)
 
 # ---------------------------------------------------------------------------
 # NAVIGASI SIDEBAR (menggantikan tabs) - logo di atas, teks CDC di bawah logo,
@@ -1758,6 +1760,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v19</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v20</div>', unsafe_allow_html=True)
 
 nav.run()
