@@ -879,11 +879,11 @@ _GSAP_HTML = """
                 if (cards.length + tiles.length === 0) return false;
 
                 gsap.fromTo(cards,
-                    { opacity: 0, y: 26, scale: 0.96 },
-                    { opacity: 1, y: 0, scale: 1, duration: 0.55, stagger: 0.08, ease: "power2.out", overwrite: "auto" });
+                    { opacity: 0, y: 22, scale: 0.97 },
+                    { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, delay: 0.1, ease: "power2.out", overwrite: "auto" });
                 gsap.fromTo(tiles,
-                    { opacity: 0, y: 30 },
-                    { opacity: 1, y: 0, duration: 0.6, stagger: 0.1, delay: 0.15, ease: "power2.out", overwrite: "auto" });
+                    { opacity: 0, y: 26 },
+                    { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, delay: 0.2, ease: "power2.out", overwrite: "auto" });
 
                 // count-up angka KPI: "41,600", "152.3%", "51 hari"
                 doc.querySelectorAll(".kpi-value").forEach(function (el) {
@@ -942,12 +942,19 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
+
+    # ANIMASI PINDAH TAB via CSS murni (bukan GSAP/CDN yang bisa diblokir):
+    # keyframe unik per halaman -> aturan animasi berubah tiap ganti tab ->
+    # browser memutar ulang transisi. Target beberapa selektor kontainer utama
+    # agar cocok di berbagai versi Streamlit.
     st.markdown(
-        f"<style>"
-        f"@keyframes pagein_{slug} {{ 0% {{ opacity: 0; transform: translateX(38px) scale(0.985); }} "
+        "<style>"
+        f"@keyframes pagein_{slug} {{ 0% {{ opacity: 0; transform: translateX(55px); }} "
         f"100% {{ opacity: 1; transform: none; }} }} "
-        f".block-container {{ animation: pagein_{slug} 0.6s cubic-bezier(0.16, 1, 0.3, 1); }}"
-        f"</style>",
+        f"section[data-testid='stMain'] .block-container, "
+        f"[data-testid='stMainBlockContainer'] {{ "
+        f"animation: pagein_{slug} 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }}"
+        "</style>",
         unsafe_allow_html=True,
     )
 
@@ -1524,8 +1531,8 @@ def page_matching():
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
             sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
 
-            _col_sp, col_pop, col_n = st.columns([4.2, 1.5, 1.3], vertical_alignment="bottom")
-            with col_pop.popover(":material/tune: Filter", width="stretch"):
+            _col_sp, col_pop, col_n = st.columns([3, 1.5, 1.5], vertical_alignment="bottom")
+            with col_pop.popover(":material/tune: Pilih Kriteria", width="stretch"):
                 st.caption("Centang kriteria yang diprioritaskan. Kandidat diurutkan dari yang paling memenuhi kriteria terpilih.")
                 pr_ipk = st.checkbox("IPK tinggi", value=True)
                 pr_porto = st.checkbox("Punya portofolio", value=True)
@@ -1760,6 +1767,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v21</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v23</div>', unsafe_allow_html=True)
 
 nav.run()
