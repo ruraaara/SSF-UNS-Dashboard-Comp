@@ -291,7 +291,7 @@ div[data-testid="stDateInput"] input {{
     padding-top: 0.8rem !important;
     padding-bottom: 0.7rem !important;
 }}
-div[data-testid="stVerticalBlock"] {{ gap: 0.7rem; }}
+div[data-testid="stVerticalBlock"] {{ gap: 0.85rem; }}
 
 .dash-header {{
     padding: 12px 22px 13px 22px;
@@ -317,8 +317,8 @@ div[data-testid="stMarkdownContainer"] .dash-header p {{
 /* ===== KPI cards: FLAT; kartu terpenting diberi outline gradasi + glow ===== */
 .kpi-row {{
     display: flex;
-    gap: 12px;
-    margin: 2px 0 8px 0;
+    gap: 14px;
+    margin: 6px 0 18px 0;
     flex-wrap: wrap;
 }}
 /* kartu biasa: krem terang; kartu highlight: gelap + outline gradasi + glow
@@ -930,13 +930,16 @@ _GSAP_HTML = """
                 const a = doc.querySelector(
                     "section[data-testid='stSidebar'] a[data-testid='stPageLink-NavLink'][href='" + HREF + "']");
                 if (!sb || !a) return false;
-                // margin negatif tidak melebarkan anchor (lebarnya dikunci
-                // parent) -> set lebar eksplisit = lebar asli + jarak ke tepi
-                a.style.marginRight = "0px";
-                a.style.width = "";
+                // JS memegang PENUH geometri pill dengan inline !important —
+                // kebal terhadap perbedaan CSS antar versi/deploy Streamlit
+                a.style.setProperty("margin-left", "10px", "important");
+                a.style.setProperty("margin-right", "0px", "important");
+                a.style.setProperty("border-radius", "999px 0 0 999px", "important");
+                a.style.setProperty("box-sizing", "border-box", "important");
+                a.style.removeProperty("width");
                 const r = a.getBoundingClientRect();
                 const gap = sb.getBoundingClientRect().right - r.right;
-                if (gap > 0.5) a.style.width = (r.width + gap) + "px";
+                if (Math.abs(gap) > 0.5) a.style.setProperty("width", (r.width + gap) + "px", "important");
                 return true;
             }
 
@@ -1628,7 +1631,7 @@ def page_matching():
 
             candidates = candidates.sort_values("recommendation_score", ascending=False)
 
-        col_hasil, col_dist = st.columns([3, 2])
+        col_hasil, col_dist = st.columns(2, gap="medium")
         with col_hasil:
             st.markdown(f"**{len(candidates):,} kandidat cocok — 50 teratas:**")
             if len(candidates) == 0:
@@ -1645,18 +1648,18 @@ def page_matching():
                                          "portofolio", "domisili", "recommendation_score", "metode_skor"]
                              if c in candidates.columns]
                 st.dataframe(
-                    candidates[show_cols].head(50), width="stretch", hide_index=True, height=320,
+                    candidates[show_cols].head(50), width="stretch", hide_index=True, height=380,
                     column_config={
                         "recommendation_score": st.column_config.ProgressColumn("Skor", format="%.2f", min_value=0, max_value=1),
                     },
                 )
         with col_dist:
             if len(candidates) > 0:
+                st.markdown("**Distribusi skor kandidat:**")
                 fig_score = px.histogram(candidates, x="recommendation_score", nbins=20,
-                                         title="Distribusi Skor Kandidat",
                                          color_discrete_sequence=[COLOR_COCOA])
                 fig_score.update_layout(xaxis_title="Skor", yaxis_title=None)
-                show_chart(fig_score, height=320)
+                show_chart(fig_score, height=380)
 
     with st.expander(f"Ringkasan kecocokan semua talent request ({n_zero:,} request tanpa kandidat)", icon=":material/table_view:"):
         st.caption(
@@ -1815,6 +1818,9 @@ st.markdown(
         background: {_ACTIVE_BG} !important;
         border-radius: 999px 0 0 999px !important;
         width: calc(100% + 20px);
+        box-sizing: border-box !important;
+        margin-left: 10px !important;
+        padding-left: 1.0rem !important;
         padding-right: 1.4rem !important;
         padding-top: 0.7rem !important;
         padding-bottom: 0.7rem !important;
@@ -1874,6 +1880,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v11</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v12</div>', unsafe_allow_html=True)
 
 nav.run()
