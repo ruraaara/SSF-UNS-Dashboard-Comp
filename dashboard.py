@@ -705,12 +705,18 @@ def load_all() -> dict:
         talent_request["request_date"].notna(),
         ["request_date", "headcount", "bidang_studi_dibutuhkan"],
     ].copy()
+    # satu request bisa minta >1 bidang; headcount DIBAGI RATA ke jumlah bidang
+    # supaya total tidak menggelembung (mis. request 2 bidang tidak dihitung 2x)
+    dm["_nb"] = dm["bidang_studi_dibutuhkan"].astype(str).apply(
+        lambda s: max(1, len([x for x in s.split(",") if x.strip()])))
+    dm["_hc"] = dm["headcount"] / dm["_nb"]
     dm["bidang_norm"] = dm["bidang_studi_dibutuhkan"].astype(str).str.split(",")
     dm = dm.explode("bidang_norm")
     dm["bidang_norm"] = dm["bidang_norm"].str.strip().str.lower()
     dm = dm[dm["bidang_norm"] != ""]
     dm["bulan"] = dm["request_date"].dt.to_period("M").dt.to_timestamp()
-    demand_monthly = dm.groupby(["bulan", "bidang_norm"])["headcount"].sum().reset_index()
+    demand_monthly = dm.groupby(["bulan", "bidang_norm"])["_hc"].sum().reset_index()
+    demand_monthly = demand_monthly.rename(columns={"_hc": "headcount"})
 
     # pemenuhan talent request (dipakai Overview & Mitra)
     tr_fulfill = talent_request.merge(
@@ -940,7 +946,7 @@ _GSAP_HTML = """
                 if (!sb || !a) return false;
                 // JS memegang PENUH geometri pill dengan inline !important —
                 // kebal terhadap perbedaan CSS antar versi/deploy Streamlit
-                a.style.setProperty("margin-left", "10px", "important");
+                a.style.setProperty("margin-left", "0px", "important");
                 a.style.setProperty("margin-right", "0px", "important");
                 a.style.setProperty("border-radius", "999px 0 0 999px", "important");
                 a.style.setProperty("box-sizing", "border-box", "important");
@@ -1397,7 +1403,6 @@ def page_mitra():
 # ---------------------------------------------------------------------------
 def page_kesiapan():
     page_header("Kesiapan Mahasiswa")
-    st.caption("Tab ini memakai data master terkini (snapshot status mahasiswa), sehingga tidak memakai filter.")
 
     ss = status_student
     status_norm = norm_text(ss["status"])
@@ -1416,12 +1421,12 @@ def page_kesiapan():
     eligible_nganggur = eligible[~eligible["nim"].isin(pernah_dikirim)]
 
     kpi_row([
-        {"value": f"{student_all['nim'].nunique():,}", "label": "Mahasiswa Terdaftar"},
-        {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini",
-         "help": "Status aktif + tersedia + CV ada + portofolio ada. Sesuai FAQ, 'eligible' = kolom 'ketersediaan'."},
         {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim", "highlight": True,
          "sub": "supply belum tersalurkan",
          "help": "Prioritas untuk dicarikan penempatan."},
+        {"value": f"{student_all['nim'].nunique():,}", "label": "Mahasiswa Terdaftar"},
+        {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini",
+         "help": "Status aktif + tersedia + CV ada + portofolio ada."},
         {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV"},
         {"value": f"{(porto_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya Portofolio"},
     ])
@@ -1429,10 +1434,7 @@ def page_kesiapan():
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Demand vs Supply dari Waktu ke Waktu",
-                    "Supply = estimasi mahasiswa SIAP MAGANG per periode (bulan masuk + (semester magang - 1) x 6 bulan, "
-                    "semester magang dari histori tiap mahasiswa). Tampilan awal difokuskan ke periode permintaan; "
-                    "zoom out untuk melihat semuanya.")
+            section("Demand vs Supply dari Waktu ke Waktu")
             col_prodi, col_gran = st.columns([3, 2])
             prodi_pilih = col_prodi.selectbox(
                 "Fokus jurusan / bidang studi",
@@ -1484,7 +1486,7 @@ def page_kesiapan():
                 show_chart(fig_ts, height=280)
     with col2:
         with st.container(border=True):
-            section("Eligibility Mahasiswa", "Sesuai FAQ: kolom 'eligible' = kolom 'ketersediaan'.")
+            section("Eligibility Mahasiswa")
             elig_ct = ss.groupby(["ketersediaan", "status"]).size().reset_index(name="jumlah")
             fig_elig = px.bar(elig_ct, x="ketersediaan", y="jumlah", color="status",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
@@ -1495,10 +1497,13 @@ def page_kesiapan():
         # satuan disamakan dgn chart per waktu = ORANG. Demand = total headcount
         # diminta (bukan jumlah request); Supply = jumlah mahasiswa terdaftar.
         dm_tot = talent_request[["bidang_studi_dibutuhkan", "headcount"]].dropna(subset=["bidang_studi_dibutuhkan"]).copy()
+        dm_tot["_nb"] = dm_tot["bidang_studi_dibutuhkan"].astype(str).apply(
+            lambda s: max(1, len([x for x in s.split(",") if x.strip()])))
+        dm_tot["_hc"] = dm_tot["headcount"] / dm_tot["_nb"]
         dm_tot["bidang_studi"] = dm_tot["bidang_studi_dibutuhkan"].str.split(",")
         dm_tot = dm_tot.explode("bidang_studi")
         dm_tot["bidang_studi"] = dm_tot["bidang_studi"].str.strip()
-        demand = dm_tot.groupby("bidang_studi")["headcount"].sum().reset_index()
+        demand = dm_tot.groupby("bidang_studi")["_hc"].sum().round().astype(int).reset_index()
         demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand (headcount)"
         supply = student_all["program_studi"].dropna().value_counts().reset_index()
         supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply (mahasiswa)"
@@ -1536,7 +1541,6 @@ def page_kesiapan():
 # ---------------------------------------------------------------------------
 def page_matching():
     page_header("Matching Talent")
-    st.caption("Tab ini memakai data master terkini, sehingga tidak memakai filter.")
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
@@ -1833,8 +1837,7 @@ st.markdown(
         border-radius: 999px 0 0 999px !important;
         width: calc(100% + 20px);
         box-sizing: border-box !important;
-        margin-left: 10px !important;
-        padding-left: 1.0rem !important;
+        margin-left: 0 !important;
         padding-right: 1.4rem !important;
         padding-top: 0.7rem !important;
         padding-bottom: 0.7rem !important;
@@ -1894,6 +1897,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v13</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v14</div>', unsafe_allow_html=True)
 
 nav.run()
