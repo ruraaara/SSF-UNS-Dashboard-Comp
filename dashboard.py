@@ -1023,25 +1023,23 @@ def page_overview():
     n_request_belum = int((tr_fulfill["belum_terpenuhi"] > 0).sum())
 
     kpi_row([
-        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim",
-         "help": "Jumlah proses seleksi kandidat (baris tracking_student) pada rentang filter."},
         {"value": f"{total_placement:,}", "label": "Placement Berhasil",
          "sub": f"{success_rate:.1f}% dari kandidat dikirim", "highlight": True,
-         "help": "Placement dan success rate memang satu keluarga: success rate = placement dibagi kandidat dikirim, jadi keduanya digabung di satu kartu."},
+         "help": "Success rate = placement dibagi kandidat dikirim."},
+        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim",
+         "help": "Jumlah proses seleksi kandidat pada rentang filter."},
         {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
-         "help": "Jumlah dikirim vs diminta. Di atas 100% berarti CDC mengirim lebih banyak kandidat dari kuota — wajar untuk shortlist."},
+         "help": "Jumlah dikirim vs diminta. Di atas 100% berarti kandidat dikirim melebihi kuota (wajar untuk shortlist)."},
         {"value": f"{lama_proses:.0f} hari" if lama_proses is not None else "-", "label": "Rata-rata Lama Proses",
-         "help": "Dari batch dikirim (send_date) sampai keputusan terakhir."},
+         "help": "Dari batch dikirim sampai keputusan terakhir."},
         {"value": f"{n_request_belum:,}", "label": "Request Belum Terpenuhi",
-         "sub": "data master, di luar filter",
-         "help": "Talent request yang jumlah kirimnya masih di bawah headcount."},
+         "sub": "data master, di luar filter"},
     ])
 
     col_kiri, col_kanan = st.columns([2, 1])
     with col_kiri:
         with st.container(border=True):
-            section("Placement & Success Rate per Bulan",
-                    "Batang = jumlah placement; garis = success rate. Gunakan tombol rentang untuk zoom.")
+            section("Placement & Success Rate per Bulan")
             dec = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)].copy()
             dec["bulan"] = dec["last_update"].dt.to_period("M")
             per_bulan = dec.groupby("bulan").agg(
@@ -1097,8 +1095,7 @@ def page_overview():
             show_chart(fig_donut, height=310)
 
     with st.container(border=True):
-        section("Perjalanan Kandidat: dari Dikirim sampai Placement",
-                "Waterfall: berapa kandidat hilang di tiap penyebab, dan berapa yang berakhir placement.")
+        section("Perjalanan Kandidat: dari Dikirim sampai Placement")
         wf_vals = {
             "Rej. Screening CV": -int((m["rejection"] == "Rejection Screening CV").sum()),
             "Rej. Study Case": -int((m["rejection"] == "Rejection Study Case").sum()),
@@ -1141,20 +1138,19 @@ def page_funnel():
     ghosting_rate = (n_ghosting / total_tc * 100) if total_tc > 0 else 0
 
     kpi_row([
+        {"value": f"{n_ghosting:,}", "label": "Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
+         "highlight": True,
+         "help": "Aturan FAQ: >28 hari sejak send_date tanpa respons perusahaan."},
         {"value": f"{total_tc:,}", "label": "Batch Terkirim"},
         {"value": f"{int(followup_counts.get('FU 1', 0)):,}", "label": "Butuh FU 1"},
         {"value": f"{int(followup_counts.get('FU 2', 0)):,}", "label": "Butuh FU 2"},
         {"value": f"{int(followup_counts.get('FU 3', 0)):,}", "label": "Butuh FU 3"},
-        {"value": f"{n_ghosting:,}", "label": "Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
-         "highlight": True,
-         "help": "Aturan FAQ: >28 hari sejak send_date tanpa respons perusahaan."},
     ])
 
     col_kiri, col_kanan = st.columns(2)
     with col_kiri:
         with st.container(border=True):
-            section("Funnel Seleksi Kandidat",
-                    "Kandidat yang MENCAPAI tiap tahap; persentase = konversi dari tahap sebelumnya.")
+            section("Funnel Seleksi Kandidat")
             funnel_counts = [int((m["stage_reached"] >= i).sum()) for i in range(len(FUNNEL_STAGES))]
             fig_funnel = go.Figure(go.Funnel(
                 y=FUNNEL_STAGES, x=funnel_counts,
@@ -1244,10 +1240,10 @@ def page_mitra():
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     kpi_row([
-        {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra (master)"},
-        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request (master)"},
         {"value": f"{m[COMPANY_NAME_COL].nunique():,}", "label": "Perusahaan Aktif (filter)", "highlight": True,
          "help": "Perusahaan yang punya proses seleksi berjalan pada rentang filter."},
+        {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra (master)"},
+        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request (master)"},
         {"value": f"{m['nama_posisi'].nunique():,}" if "nama_posisi" in m.columns else "-", "label": "Posisi Dibuka (filter)"},
     ])
 
@@ -1464,23 +1460,17 @@ def page_matching():
     rasio = total_slot / n_siap if n_siap else 0
 
     kpi_row([
-        {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
         {"value": f"{n_siap:,}", "label": "Mahasiswa Siap & Tersedia", "highlight": True,
          "sub": f"vs {total_slot:,} slot dibuka",
          "help": "Mahasiswa aktif + tersedia — kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
+        {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
         {"value": f"{rasio:.1f}x", "label": "Slot per Mahasiswa Siap",
-         "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap — tekanan agregat, bukan kelangkaan per lowongan."},
+         "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap."},
         {"value": f"{len(pool_all):,}", "label": "Mahasiswa Punya Data Status"},
     ])
-    insight(
-        f"Kolam <b>{n_siap:,} mahasiswa siap</b> yang sama diperebutkan <b>{total_slot:,} slot</b>. Tugas CDC bukan "
-        "mencari kandidat (jumlahnya banyak), tapi <b>menyaring & mengurutkan</b> yang memenuhi syarat tiap lowongan.",
-    )
 
     with st.container(border=True):
-        section("Kandidat Memenuhi Syarat per Talent Request",
-                "Pilih perusahaan lalu posisinya. Tabel menampilkan mahasiswa yang lolos syarat (bidang studi + "
-                "minimum semester + aktif & tersedia). Urutkan dengan kontrol di bawah, atau klik header kolom.")
+        section("Kandidat Memenuhi Syarat per Talent Request")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -1524,18 +1514,27 @@ def page_matching():
         else:
             candidates["jml_tools"] = candidates["tools"].fillna("").astype(str).apply(
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
+
+            c1, c2, c3, c4 = st.columns([1, 1, 1.4, 1])
+            hanya_cv = c1.checkbox("Punya CV", value=False)
+            hanya_porto = c2.checkbox("Punya portofolio", value=False)
             sort_opsi = {
                 "IPK (tertinggi)": ("ipk", False),
                 "Semester (tertinggi)": (semester_col, False),
                 "Jumlah tools (terbanyak)": ("jml_tools", False),
             }
-            col_sort, col_n = st.columns([2, 1])
-            pilih_sort = col_sort.selectbox("Urutkan berdasarkan", list(sort_opsi.keys()))
-            top_n = col_n.number_input("Tampilkan berapa teratas", min_value=5, max_value=100, value=25, step=5)
-            sort_col, asc = sort_opsi[pilih_sort]
+            pilih_sort = c3.selectbox("Urutkan", list(sort_opsi.keys()), label_visibility="collapsed")
+            top_n = c4.number_input("Top", min_value=5, max_value=100, value=25, step=5, label_visibility="collapsed")
 
-            view = candidates.sort_values(sort_col, ascending=asc).head(int(top_n))
-            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** — menampilkan {int(top_n)} teratas menurut {pilih_sort}:")
+            view = candidates
+            if hanya_cv:
+                view = view[norm_text(view["cv"]).isin(VAL_ADA)]
+            if hanya_porto:
+                view = view[norm_text(view["portofolio"]).isin(VAL_ADA)]
+            sort_col, asc = sort_opsi[pilih_sort]
+            view = view.sort_values(sort_col, ascending=asc).head(int(top_n))
+
+            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** — menampilkan {len(view)} teratas menurut {pilih_sort}:")
             show_cols = [c for c in ["nim", nama_col, prodi_col, semester_col, "ipk",
                                      "cv", "portofolio", "jml_tools", "domisili"]
                          if c in view.columns]
@@ -1756,6 +1755,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v17</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v18</div>', unsafe_allow_html=True)
 
 nav.run()
