@@ -705,18 +705,23 @@ def load_all() -> dict:
         talent_request["request_date"].notna(),
         ["request_date", "headcount", "bidang_studi_dibutuhkan"],
     ].copy()
-    # satu request bisa minta >1 bidang; headcount DIBAGI RATA ke jumlah bidang
-    # supaya total tidak menggelembung (mis. request 2 bidang tidak dihitung 2x)
-    dm["_nb"] = dm["bidang_studi_dibutuhkan"].astype(str).apply(
-        lambda s: max(1, len([x for x in s.split(",") if x.strip()])))
-    dm["_hc"] = dm["headcount"] / dm["_nb"]
-    dm["bidang_norm"] = dm["bidang_studi_dibutuhkan"].astype(str).str.split(",")
-    dm = dm.explode("bidang_norm")
-    dm["bidang_norm"] = dm["bidang_norm"].str.strip().str.lower()
-    dm = dm[dm["bidang_norm"] != ""]
     dm["bulan"] = dm["request_date"].dt.to_period("M").dt.to_timestamp()
-    demand_monthly = dm.groupby(["bulan", "bidang_norm"])["_hc"].sum().reset_index()
-    demand_monthly = demand_monthly.rename(columns={"_hc": "headcount"})
+
+    # TOTAL demand per bulan: tiap posisi dihitung SEKALI (headcount apa adanya).
+    # Dipakai saat filter "Semua bidang" -> total jujur, tidak menggelembung.
+    demand_monthly_total = dm.groupby("bulan")["headcount"].sum().reset_index()
+
+    # demand PER BIDANG: headcount PENUH tiap posisi yang menerima bidang itu.
+    # Dunia nyata: 1 posisi (mis. butuh 3, terima "Informatika, Elektro") bisa
+    # diisi mahasiswa dari bidang mana pun yang diterima -> tiap bidang terekspos
+    # ke seluruh slot posisi itu. Konsekuensinya angka antar-bidang TIDAK
+    # dijumlahkan (satu posisi muncul penuh di >1 bidang).
+    dmb = dm.copy()
+    dmb["bidang_norm"] = dmb["bidang_studi_dibutuhkan"].astype(str).str.split(",")
+    dmb = dmb.explode("bidang_norm")
+    dmb["bidang_norm"] = dmb["bidang_norm"].str.strip().str.lower()
+    dmb = dmb[dmb["bidang_norm"] != ""]
+    demand_monthly = dmb.groupby(["bulan", "bidang_norm"])["headcount"].sum().reset_index()
 
     # pemenuhan talent request (dipakai Overview & Mitra)
     tr_fulfill = talent_request.merge(
@@ -742,6 +747,7 @@ def load_all() -> dict:
         "pool_semester_col": semester_col,
         "tr_fulfill": tr_fulfill,
         "demand_monthly": demand_monthly,
+        "demand_monthly_total": demand_monthly_total,
         "default_ref_date": default_ref,
     }
 
@@ -1447,12 +1453,16 @@ def page_kesiapan():
             )
             freq = {"Bulanan": "M", "Kuartalan": "Q", "Tahunan": "Y"}[granularitas]
 
-            dm_view = DATA["demand_monthly"]
             sup_view = student_all[student_all["siap_dt"].notna()]
             if prodi_pilih != "Semua bidang":
+                # per bidang: headcount penuh tiap posisi yang menerima bidang ini
                 p_norm = prodi_pilih.strip().lower()
+                dm_view = DATA["demand_monthly"]
                 dm_view = dm_view[dm_view["bidang_norm"] == p_norm]
                 sup_view = sup_view[norm_text(sup_view["program_studi"]) == p_norm]
+            else:
+                # semua bidang: total posisi (tiap posisi dihitung sekali)
+                dm_view = DATA["demand_monthly_total"]
 
             d_series = dm_view.groupby(dm_view["bulan"].dt.to_period(freq))["headcount"].sum()
             s_series = sup_view.groupby(sup_view["siap_dt"].dt.to_period(freq)).size()
@@ -1494,16 +1504,16 @@ def page_kesiapan():
             show_chart(fig_elig, height=352)
 
     with st.expander("Gap total per bidang, distribusi IPK & semester", icon=":material/bar_chart:"):
-        # satuan disamakan dgn chart per waktu = ORANG. Demand = total headcount
-        # diminta (bukan jumlah request); Supply = jumlah mahasiswa terdaftar.
+        st.caption("Demand = total slot (headcount) posisi yang menerima bidang ini. Satu posisi bisa menerima "
+                   "beberapa bidang, jadi angka demand antar-bidang tidak untuk dijumlahkan. Supply = mahasiswa terdaftar.")
+        # Demand per bidang = headcount PENUH tiap posisi yang menerima bidang itu
+        # (posisi minta segitu ya segitu; slot bisa diisi mahasiswa bidang mana pun
+        # yang diterima). Supply = jumlah mahasiswa terdaftar.
         dm_tot = talent_request[["bidang_studi_dibutuhkan", "headcount"]].dropna(subset=["bidang_studi_dibutuhkan"]).copy()
-        dm_tot["_nb"] = dm_tot["bidang_studi_dibutuhkan"].astype(str).apply(
-            lambda s: max(1, len([x for x in s.split(",") if x.strip()])))
-        dm_tot["_hc"] = dm_tot["headcount"] / dm_tot["_nb"]
         dm_tot["bidang_studi"] = dm_tot["bidang_studi_dibutuhkan"].str.split(",")
         dm_tot = dm_tot.explode("bidang_studi")
         dm_tot["bidang_studi"] = dm_tot["bidang_studi"].str.strip()
-        demand = dm_tot.groupby("bidang_studi")["_hc"].sum().round().astype(int).reset_index()
+        demand = dm_tot.groupby("bidang_studi")["headcount"].sum().astype(int).reset_index()
         demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand (headcount)"
         supply = student_all["program_studi"].dropna().value_counts().reset_index()
         supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply (mahasiswa)"
@@ -1897,6 +1907,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v14</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v15</div>', unsafe_allow_html=True)
 
 nav.run()
