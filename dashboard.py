@@ -151,6 +151,8 @@ div[data-testid="stMarkdownContainer"] p {{ color: {COLOR_DRAB_DARK} !important;
 div[data-testid="stWidgetLabel"] p {{ color: {COLOR_SEAL_BROWN} !important; font-weight: 600; }}
 
 /* ===== SIDEBAR navigasi: panel gelap membulat gaya bento ===== */
+div[data-testid="stSidebarUserContent"] {{ padding-top: 0.6rem !important; }}
+div[data-testid="stSidebarHeader"] {{ padding: 0 !important; height: 0 !important; }}
 section[data-testid="stSidebar"] {{
     background:
         radial-gradient(at 88% 10%, rgba(247, 212, 117, 0.28) 0px, transparent 40%),
@@ -168,9 +170,9 @@ button[data-testid="stSidebarResizeHandle"] {{
     display: none !important;
 }}
 section[data-testid="stSidebar"] {{
-    width: 300px !important;
-    min-width: 300px !important;
-    max-width: 300px !important;
+    width: 255px !important;
+    min-width: 255px !important;
+    max-width: 255px !important;
 }}
 section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
 .side-brand {{
@@ -191,10 +193,14 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
     text-transform: uppercase;
 }}
 .side-sync {{
-    margin-top: 7vh;
+    position: fixed;
+    bottom: 12px;
+    left: 0;
+    width: 255px;
     text-align: center;
     font-size: 0.72rem;
     color: {tint(COLOR_JASMINE, 0.45)} !important;
+    z-index: 50;
 }}
 div[data-testid="stPopover"], .stPopover {{
     width: 100%;
@@ -219,14 +225,14 @@ section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
 .side-logo {{
     position: relative;
     text-align: center;
-    margin: 10px 0 2px 0;
+    margin: 0 0 2px 0;
 }}
 .side-leaves {{
     position: absolute;
     top: -16px;
     left: 50%;
     transform: translateX(-50%);
-    width: 240px;
+    width: 205px;
     max-width: 96%;
     opacity: 0.6;
     transform-origin: center;
@@ -234,8 +240,8 @@ section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
 }}
 .side-logo-img {{
     position: relative;
-    width: 185px;
-    max-width: 85%;
+    width: 158px;
+    max-width: 82%;
 }}
 @keyframes leafSway {{
     0%, 100% {{ transform: translateX(-50%) rotate(-4deg); }}
@@ -290,6 +296,8 @@ div[data-testid="stDateInput"] input {{
 .block-container {{
     padding-top: 0.8rem !important;
     padding-bottom: 0.7rem !important;
+    padding-left: 2rem !important;
+    padding-right: 2.2rem !important;
 }}
 div[data-testid="stVerticalBlock"] {{ gap: 0.85rem; }}
 
@@ -1484,16 +1492,22 @@ def page_kesiapan():
             show_chart(fig_elig, height=352)
 
     with st.expander("Gap total per bidang, distribusi IPK & semester", icon=":material/bar_chart:"):
-        demand = talent_request["bidang_studi_dibutuhkan"].dropna().str.split(",").explode().str.strip().value_counts().reset_index()
-        demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand"
+        # satuan disamakan dgn chart per waktu = ORANG. Demand = total headcount
+        # diminta (bukan jumlah request); Supply = jumlah mahasiswa terdaftar.
+        dm_tot = talent_request[["bidang_studi_dibutuhkan", "headcount"]].dropna(subset=["bidang_studi_dibutuhkan"]).copy()
+        dm_tot["bidang_studi"] = dm_tot["bidang_studi_dibutuhkan"].str.split(",")
+        dm_tot = dm_tot.explode("bidang_studi")
+        dm_tot["bidang_studi"] = dm_tot["bidang_studi"].str.strip()
+        demand = dm_tot.groupby("bidang_studi")["headcount"].sum().reset_index()
+        demand.columns = ["bidang_studi", "jumlah"]; demand["tipe"] = "Demand (headcount)"
         supply = student_all["program_studi"].dropna().value_counts().reset_index()
-        supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply"
+        supply.columns = ["bidang_studi", "jumlah"]; supply["tipe"] = "Supply (mahasiswa)"
         gap_melt = pd.concat([demand, supply], ignore_index=True)
         top_bidang = gap_melt.groupby("bidang_studi")["jumlah"].sum().sort_values(ascending=False).head(10).index
         gap_melt = gap_melt[gap_melt["bidang_studi"].isin(top_bidang)]
         fig_gap = px.bar(gap_melt, x="jumlah", y="bidang_studi", color="tipe", orientation="h", barmode="group",
-                         title="Matching Gap Total: Demand vs Supply per Bidang Studi",
-                         color_discrete_map={"Demand": COLOR_COCOA, "Supply": COLOR_JASMINE})
+                         title="Matching Gap Total: Demand vs Supply per Bidang Studi (satuan: orang)",
+                         color_discrete_map={"Demand (headcount)": COLOR_COCOA, "Supply (mahasiswa)": COLOR_JASMINE})
         fig_gap.update_layout(yaxis_title=None, xaxis_title=None, legend_title=None)
         show_chart(fig_gap, height=320)
 
@@ -1880,6 +1894,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v12</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v13</div>', unsafe_allow_html=True)
 
 nav.run()
