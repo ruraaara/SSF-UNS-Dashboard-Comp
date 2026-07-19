@@ -1907,7 +1907,8 @@ def page_kesiapan():
     with col_s:
         with st.container(border=True):
             section("Tools: Dikuasai Mahasiswa vs Diminta Perusahaan",
-                    "Dikuasai = jumlah mahasiswa yang menguasai tools itu. Diminta = perkiraan dari teks kebutuhan perusahaan.")
+                    "Dikuasai = jumlah mahasiswa yang menguasai tools. Diminta = berapa kali nama tools disebut "
+                    "di teks kebutuhan perusahaan; nilai 0 berarti tidak ditulis eksplisit (belum tentu tidak dibutuhkan).")
             gap = compute_skill_gap()
             gap["total"] = gap["dikuasai"] + gap["diminta"]
             # gabungkan top berdasarkan yang DIKUASAI dan yang DIMINTA supaya tools
@@ -2220,19 +2221,29 @@ def page_laporan():
                 st.download_button("Unduh Rekap CSV", recap.to_csv(index=False).encode("utf-8"),
                                    "rekap_placement.csv", "text/csv", icon=":material/download:")
 
+    FRESH_DAYS = 180  # ambang "masih segar" = 6 bulan terakhir relatif sync terbaru
     with st.container(border=True):
-        section("Kesehatan dan Kesegaran Data Mahasiswa", "Memastikan data status mahasiswa selalu mutakhir.")
         ref_quality = status_student["sync_date"].max() if "sync_date" in status_student.columns else pd.Timestamp(datetime.now().date())
-        stale_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
-        n_stale = int((stale_days > SYNC_STALE_DAYS).sum()) if stale_days.notna().any() else 0
-        # mahasiswa di STUDENT ALL yang belum punya record STATUS STUDENT
+        sync_min = status_student["sync_date"].min() if "sync_date" in status_student.columns else ref_quality
+        ref_txt = ref_quality.strftime("%d %b %Y") if pd.notna(ref_quality) else "-"
+        rentang_txt = (f"{sync_min.strftime('%b %Y')} - {ref_quality.strftime('%b %Y')}"
+                       if pd.notna(sync_min) and pd.notna(ref_quality) else "-")
+        section("Kesehatan dan Kesegaran Data Mahasiswa",
+                f"Acuan waktu = sinkronisasi terbaru ({ref_txt}); dashboard menganalisis data historis sampai "
+                f"tanggal itu, bukan tanggal hari ini. Data terkumpul bertahap ({rentang_txt}).")
+        age_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
+        n_fresh = int((age_days <= FRESH_DAYS).sum()) if age_days.notna().any() else 0
+        pct_fresh = (n_fresh / len(status_student) * 100) if len(status_student) else 0
+        median_age = int(age_days.median()) if age_days.notna().any() else 0
+        # mahasiswa terdaftar yang belum punya data status kesiapan sama sekali
         nim_all = set(student_all["nim"].dropna().unique())
         nim_status = set(status_student["nim"].dropna().unique())
         n_belum_sync = len(nim_all - nim_status)
 
         mcol1, mcol2, mcol3 = st.columns(3)
-        mcol1.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
-        mcol2.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "-")
+        mcol1.metric("Sinkronisasi Terbaru", ref_txt)
+        mcol2.metric("Disinkron 6 Bulan Terakhir", f"{n_fresh:,}",
+                     help=f"{pct_fresh:.0f}% dari total, relatif terhadap sync terbaru. Median umur sync {median_age} hari.")
         mcol3.metric("Belum Punya Data Status", f"{n_belum_sync:,}")
 
         sync_bulan = status_student.copy()
@@ -2246,11 +2257,13 @@ def page_laporan():
         show_chart(fig_sync, height=280)
 
     catatan_analis([
-        f"<b>{n_stale:,}</b> data status sudah usang (&gt;{SYNC_STALE_DAYS} hari sejak sync terakhir) - "
-        "perlu disegarkan agar keputusan matching tidak salah.",
+        f"Acuan waktu dashboard = sinkronisasi terbaru <b>{ref_txt}</b>; ini analisis data historis sampai "
+        "tanggal itu, bukan real-time hari ini.",
+        f"Data status terkumpul bertahap ({rentang_txt}) dengan median umur sync sekitar <b>{median_age} hari</b>, "
+        f"jadi wajar hanya <b>{n_fresh:,}</b> ({pct_fresh:.0f}%) yang tersinkron dalam 6 bulan terakhir - "
+        "penyegaran berkala tetap perlu.",
         f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data status kesiapan sama sekali.",
         "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
-        "Kesegaran data adalah fondasi: semua analisis lain hanya seakurat data sync terakhir.",
     ])
 
 # ---------------------------------------------------------------------------
