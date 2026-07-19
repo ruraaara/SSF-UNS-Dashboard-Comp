@@ -443,34 +443,14 @@ div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
     color: {COLOR_DRAB_DARK} !important;
 }}
 
-#MainMenu, footer {{visibility: hidden;}}
-
-/* ===== ANIMASI PINDAH TAB (CSS murni) =====
-   Tiap pindah tab, elemen konten (kartu KPI, kontainer chart, tabel, expander)
-   DIBUAT ULANG oleh Streamlit -> animasi CSS ini otomatis diputar saat elemen
-   mount. Tidak butuh JS/GSAP (yang gagal menyentuh DOM dari iframe). Semua
-   meluncur masuk dari kanan; stagger dibuat via animation-delay per kartu. */
-@keyframes sweepIn {{
-    from {{ opacity: 0; transform: translateX(70px); }}
-    to   {{ opacity: 1; transform: none; }}
-}}
-.kpi-card,
-div[data-testid="stVerticalBlockBorderWrapper"],
-div[data-testid="stExpander"],
-div[data-testid="stDataFrame"],
-div[data-testid="stPlotlyChart"] {{
-    animation: sweepIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
-}}
+/* stagger antar kartu KPI (nama keyframe disuntik per-halaman di page_header) */
 .kpi-card:nth-child(1) {{ animation-delay: 0.00s; }}
 .kpi-card:nth-child(2) {{ animation-delay: 0.06s; }}
 .kpi-card:nth-child(3) {{ animation-delay: 0.12s; }}
 .kpi-card:nth-child(4) {{ animation-delay: 0.18s; }}
 .kpi-card:nth-child(5) {{ animation-delay: 0.24s; }}
-@media (prefers-reduced-motion: reduce) {{
-    .kpi-card, div[data-testid="stVerticalBlockBorderWrapper"],
-    div[data-testid="stExpander"], div[data-testid="stDataFrame"],
-    div[data-testid="stPlotlyChart"] {{ animation: none; }}
-}}
+
+#MainMenu, footer {{visibility: hidden;}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -957,6 +937,22 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
+
+    # ANIMASI PINDAH TAB (CSS, andal): nama keyframe UNIK per halaman. Saat pindah
+    # tab, animation-name pada kartu/kontainer berubah -> browser WAJIB memutar
+    # ulang animasi (baik elemen dibuat ulang maupun dipakai ulang oleh Streamlit).
+    # Tidak butuh JS/GSAP (yang gagal menyentuh DOM dari iframe di Streamlit Cloud).
+    st.markdown(
+        "<style>"
+        f"@keyframes sweep_{slug} {{ from {{ opacity: 0; transform: translateX(80px); }} "
+        f"to {{ opacity: 1; transform: none; }} }} "
+        f".kpi-card, div[data-testid='stVerticalBlockBorderWrapper'], "
+        f"div[data-testid='stExpander'], div[data-testid='stDataFrame'], "
+        f"div[data-testid='stPlotlyChart'] {{ "
+        f"animation: sweep_{slug} 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }}"
+        "</style>",
+        unsafe_allow_html=True,
+    )
 
     col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
@@ -1767,6 +1763,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v28</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>SSDC2026025-Makan Apaya</div>', unsafe_allow_html=True)
 
 nav.run()
