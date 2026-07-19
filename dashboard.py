@@ -444,6 +444,33 @@ div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
 }}
 
 #MainMenu, footer {{visibility: hidden;}}
+
+/* ===== ANIMASI PINDAH TAB (CSS murni) =====
+   Tiap pindah tab, elemen konten (kartu KPI, kontainer chart, tabel, expander)
+   DIBUAT ULANG oleh Streamlit -> animasi CSS ini otomatis diputar saat elemen
+   mount. Tidak butuh JS/GSAP (yang gagal menyentuh DOM dari iframe). Semua
+   meluncur masuk dari kanan; stagger dibuat via animation-delay per kartu. */
+@keyframes sweepIn {{
+    from {{ opacity: 0; transform: translateX(70px); }}
+    to   {{ opacity: 1; transform: none; }}
+}}
+.kpi-card,
+div[data-testid="stVerticalBlockBorderWrapper"],
+div[data-testid="stExpander"],
+div[data-testid="stDataFrame"],
+div[data-testid="stPlotlyChart"] {{
+    animation: sweepIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}}
+.kpi-card:nth-child(1) {{ animation-delay: 0.00s; }}
+.kpi-card:nth-child(2) {{ animation-delay: 0.06s; }}
+.kpi-card:nth-child(3) {{ animation-delay: 0.12s; }}
+.kpi-card:nth-child(4) {{ animation-delay: 0.18s; }}
+.kpi-card:nth-child(5) {{ animation-delay: 0.24s; }}
+@media (prefers-reduced-motion: reduce) {{
+    .kpi-card, div[data-testid="stVerticalBlockBorderWrapper"],
+    div[data-testid="stExpander"], div[data-testid="stDataFrame"],
+    div[data-testid="stPlotlyChart"] {{ animation: none; }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -869,29 +896,9 @@ _GSAP_HTML = """
                 if (!fitActiveTab()) return false;
                 const gsap = P.gsap;
                 if (!gsap) return true;
-                const cards = Array.from(doc.querySelectorAll(".kpi-card"));
-                const tiles = Array.from(doc.querySelectorAll("div[data-testid='stVerticalBlockBorderWrapper']"));
-                if (cards.length + tiles.length === 0) return false;
-
-                // ANIMASI PINDAH TAB: seluruh area konten meluncur masuk dari kanan
-                // sebagai satu kesatuan (pakai GSAP yang sudah terbukti jalan). Dijalankan
-                // sekali per halaman lewat penanda SLUG di dataset kontainer.
-                const main = doc.querySelector("[data-testid='stMainBlockContainer']")
-                          || doc.querySelector("section[data-testid='stMain'] .block-container");
-                if (main && main.dataset.slid !== SLUG) {
-                    main.dataset.slid = SLUG;
-                    gsap.fromTo(main,
-                        { opacity: 0, x: 130 },
-                        { opacity: 1, x: 0, duration: 0.7, ease: "power3.out",
-                          clearProps: "transform,opacity", overwrite: "auto" });
-                }
-
-                gsap.fromTo(cards,
-                    { opacity: 0, y: 22, scale: 0.97 },
-                    { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, delay: 0.25, ease: "power2.out", overwrite: "auto" });
-                gsap.fromTo(tiles,
-                    { opacity: 0, y: 26 },
-                    { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, delay: 0.35, ease: "power2.out", overwrite: "auto" });
+                // Animasi masuk kartu/kontainer ditangani oleh CSS (lihat blok STYLE),
+                // karena GSAP di dalam iframe tidak bisa menyentuh DOM halaman induk
+                // ("GSAP target not found"). GSAP di sini hanya untuk count-up angka.
 
                 // count-up angka KPI: "41,600", "152.3%", "51 hari"
                 doc.querySelectorAll(".kpi-value").forEach(function (el) {
@@ -1760,6 +1767,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v26</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v28</div>', unsafe_allow_html=True)
 
 nav.run()
