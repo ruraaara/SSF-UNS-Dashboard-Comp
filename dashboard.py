@@ -200,17 +200,12 @@ section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
 }}
 div[data-testid="stPopover"], .stPopover {{
     width: 100%;
-    display: flex;
-    justify-content: flex-end;
 }}
 div[data-testid="stPopover"] > div, .stPopover > div {{
-    margin-left: auto !important;
+    width: 100%;
 }}
 div[data-testid="stPopover"] button, .stPopover button {{
-    margin-left: auto !important;
-}}
-div[data-testid="stColumn"]:has(div[data-testid="stPopover"]) div[data-testid="stVerticalBlock"] {{
-    align-items: flex-end !important;
+    width: 100% !important;
 }}
 /* izinkan pill menu aktif menembus tepi kanan sidebar (efek tab menyatu);
    konten sidebar pendek sehingga scroll tidak dibutuhkan */
@@ -916,23 +911,6 @@ _GSAP_HTML = """
 
             P.addEventListener("resize", fitActiveTab);
 
-            // ANIMASI PINDAH TAB via Web Animations API (JS native, TANPA CDN/GSAP,
-            // jadi pasti jalan di Streamlit Cloud). Konten utama meluncur masuk
-            // dari kanan tiap halaman dibuka. Ditandai SLUG agar main sekali per tab.
-            function slidePage(i) {
-                const main = doc.querySelector("[data-testid='stMainBlockContainer'], section[data-testid='stMain'] .block-container");
-                if (!main) { if (i < 20) setTimeout(function () { slidePage(i + 1); }, 150); return; }
-                if (main.dataset.slid === SLUG) return;
-                main.dataset.slid = SLUG;
-                try {
-                    main.animate(
-                        [{ opacity: 0, transform: "translateX(60px)" }, { opacity: 1, transform: "none" }],
-                        { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
-                    );
-                } catch (e) {}
-            }
-            slidePage(0);
-
             // fit lidah tab jalan mandiri - tidak menunggu / tergantung GSAP
             (function retryFit(i) {
                 if (!fitActiveTab() && i < 15) setTimeout(function () { retryFit(i + 1); }, 300);
@@ -959,6 +937,21 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
+
+    # ANIMASI PINDAH TAB (CSS murni, disuntik via st.markdown ke DOM utama -
+    # tidak butuh JS/CDN yang bisa diblokir Streamlit Cloud). Nama keyframe unik
+    # per halaman -> saat pindah tab, animation-name berubah -> browser memutar
+    # ulang transisi. Konten utama meluncur masuk dari kanan + fade.
+    st.markdown(
+        "<style>"
+        f"@keyframes slidein_{slug} {{"
+        f"  0% {{ opacity: 0; transform: translate3d(90px, 0, 0); }}"
+        f"  100% {{ opacity: 1; transform: none; }} }}"
+        f"[data-testid='stMainBlockContainer'] {{"
+        f"  animation: slidein_{slug} 0.65s cubic-bezier(0.16, 1, 0.3, 1) both !important; }}"
+        "</style>",
+        unsafe_allow_html=True,
+    )
 
     col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
@@ -1769,6 +1762,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v24</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v25</div>', unsafe_allow_html=True)
 
 nav.run()
