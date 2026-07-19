@@ -542,6 +542,14 @@ st.markdown(f"""
 }}
 .team-card .team-role {{ color: {COLOR_COCOA}; font-size: 0.78rem; font-weight: 600; margin-top: 2px; }}
 .team-card .team-nim {{ color: {tint(COLOR_DRAB_DARK, 0.4)}; font-size: 0.74rem; margin-top: 4px; }}
+
+/* ===== samakan TINGGI kartu berdampingan =====
+   kolom Streamlit sudah stretch (flex), tapi isi kartu tingginya mengikuti
+   konten. Paksa vertical-block + border-wrapper mengisi tinggi kolom supaya
+   kotak Catatan Analis di sebelah chart tinggi (tidak menyisakan celah). */
+div[data-testid="stHorizontalBlock"] {{ align-items: stretch; }}
+div[data-testid="stColumn"] > div[data-testid="stVerticalBlock"] {{ height: 100%; }}
+div[data-testid="stColumn"] div[data-testid="stVerticalBlockBorderWrapper"] {{ height: 100%; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -1125,7 +1133,7 @@ if "sync_date" in status_student.columns and status_student["sync_date"].notna()
 # TAB 1 - OVERVIEW
 # ---------------------------------------------------------------------------
 def page_overview():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Overview", key="overview", bt="BT-04")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Overview", key="overview")
     m = scope_master(tahun_f, prodi_f, jenis_f)
     tc_scope = scope_tc(tahun_f, jenis_f)
 
@@ -1183,7 +1191,7 @@ def page_overview():
     col_kiri, col_kanan = st.columns([2, 1])
     with col_kiri:
         with st.container(border=True):
-            section("Bagaimana tren placement dari bulan ke bulan?")
+            section("Tren Placement & Success Rate per Bulan", "Batang = jumlah placement. Garis = success rate (%).")
             dec = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)].copy()
             dec["bulan"] = dec["last_update"].dt.to_period("M")
             per_bulan = dec.groupby("bulan").agg(
@@ -1231,7 +1239,7 @@ def page_overview():
     )
     with col_kanan:
         with st.container(border=True):
-            section("Apa hasil akhir para kandidat?", "Komposisi hasil akhir seluruh proses seleksi.")
+            section("Status Akhir Kandidat", "Komposisi hasil akhir seluruh proses seleksi.")
             status_counts = status_map.value_counts().reset_index()
             status_counts.columns = ["status", "jumlah"]
             fig_donut = px.pie(
@@ -1246,7 +1254,7 @@ def page_overview():
             show_chart(fig_donut, height=310)
 
     with st.container(border=True):
-        section("Dari kandidat dikirim, ke mana saja perginya?")
+        section("Perjalanan Kandidat: dari Dikirim sampai Placement", "Berapa kandidat gugur di tiap titik hingga tersisa placement.")
         wf_vals = {
             "Rej. Screening CV": -int((m["rejection"] == "Rejection Screening CV").sum()),
             "Rej. Study Case": -int((m["rejection"] == "Rejection Study Case").sum()),
@@ -1270,72 +1278,69 @@ def page_overview():
         show_chart(fig_wf, height=290)
 
     # ---- SANKEY: alur bidang studi -> jenis penempatan -> hasil akhir ----
-    col_sk, col_note = st.columns([2, 1])
-    with col_sk:
-        with st.container(border=True):
-            section("Bagaimana alur kandidat: bidang studi ke jenis penempatan ke hasil?")
-            sk = m.copy()
-            sk["hasil"] = status_map.values
-            prodi_col_m = "program_studi" if "program_studi" in sk.columns else None
-            jenis_col_m = "jenis_penempatan" if "jenis_penempatan" in sk.columns else None
-            if prodi_col_m and jenis_col_m and len(sk) > 0:
-                top_prodi = sk[prodi_col_m].value_counts().head(6).index.tolist()
-                sk["prodi_grp"] = sk[prodi_col_m].where(sk[prodi_col_m].isin(top_prodi), "Bidang Lain")
-                sk = sk.dropna(subset=[jenis_col_m])
+    with st.container(border=True):
+        section("Alur Kandidat: Bidang Studi \u2192 Jenis Penempatan \u2192 Hasil Akhir")
+        sk = m.copy()
+        sk["hasil"] = status_map.values
+        prodi_col_m = "program_studi" if "program_studi" in sk.columns else None
+        jenis_col_m = "jenis_penempatan" if "jenis_penempatan" in sk.columns else None
+        if prodi_col_m and jenis_col_m and len(sk) > 0:
+            top_prodi = sk[prodi_col_m].value_counts().head(6).index.tolist()
+            sk["prodi_grp"] = sk[prodi_col_m].where(sk[prodi_col_m].isin(top_prodi), "Bidang Lain")
+            sk = sk.dropna(subset=[jenis_col_m])
 
-                prodi_nodes = [p for p in top_prodi if p in sk["prodi_grp"].unique()]
-                if "Bidang Lain" in sk["prodi_grp"].unique():
-                    prodi_nodes.append("Bidang Lain")
-                jenis_nodes = sk[jenis_col_m].dropna().unique().tolist()
-                hasil_order = ["Placement", "On Progress", "Ditolak", "Ghosting"]
-                hasil_nodes = [h for h in hasil_order if h in sk["hasil"].unique()]
+            prodi_nodes = [p for p in top_prodi if p in sk["prodi_grp"].unique()]
+            if "Bidang Lain" in sk["prodi_grp"].unique():
+                prodi_nodes.append("Bidang Lain")
+            jenis_nodes = sk[jenis_col_m].dropna().unique().tolist()
+            hasil_order = ["Placement", "On Progress", "Ditolak", "Ghosting"]
+            hasil_nodes = [h for h in hasil_order if h in sk["hasil"].unique()]
 
-                labels = prodi_nodes + jenis_nodes + hasil_nodes
-                idx = {l: i for i, l in enumerate(labels)}
-                hasil_color = {"Placement": COLOR_OLIVE, "On Progress": COLOR_JASMINE,
-                               "Ditolak": COLOR_SIENNA, "Ghosting": COLOR_SEAL_BROWN}
-                node_colors = ([tint(COLOR_COCOA, 0.15)] * len(prodi_nodes)
-                               + [tint(COLOR_DRAB_DARK, 0.45)] * len(jenis_nodes)
-                               + [hasil_color.get(h, COLOR_COCOA) for h in hasil_nodes])
+            labels = prodi_nodes + jenis_nodes + hasil_nodes
+            idx = {l: i for i, l in enumerate(labels)}
+            hasil_color = {"Placement": COLOR_OLIVE, "On Progress": COLOR_JASMINE,
+                           "Ditolak": COLOR_SIENNA, "Ghosting": COLOR_SEAL_BROWN}
+            node_colors = ([tint(COLOR_COCOA, 0.15)] * len(prodi_nodes)
+                           + [tint(COLOR_DRAB_DARK, 0.45)] * len(jenis_nodes)
+                           + [hasil_color.get(h, COLOR_COCOA) for h in hasil_nodes])
 
-                s1 = sk.groupby(["prodi_grp", jenis_col_m]).size().reset_index(name="n")
-                s2 = sk.groupby([jenis_col_m, "hasil"]).size().reset_index(name="n")
-                src = [idx[r.prodi_grp] for r in s1.itertuples()] + [idx[getattr(r, jenis_col_m)] for r in s2.itertuples()]
-                tgt = [idx[getattr(r, jenis_col_m)] for r in s1.itertuples()] + [idx[r.hasil] for r in s2.itertuples()]
-                val = s1["n"].tolist() + s2["n"].tolist()
-                link_colors = ([tint(COLOR_COCOA, 0.72)] * len(s1)
-                               + [tint(hasil_color.get(r.hasil, COLOR_COCOA), 0.6) for r in s2.itertuples()])
+            s1 = sk.groupby(["prodi_grp", jenis_col_m]).size().reset_index(name="n")
+            s2 = sk.groupby([jenis_col_m, "hasil"]).size().reset_index(name="n")
+            src = [idx[r.prodi_grp] for r in s1.itertuples()] + [idx[getattr(r, jenis_col_m)] for r in s2.itertuples()]
+            tgt = [idx[getattr(r, jenis_col_m)] for r in s1.itertuples()] + [idx[r.hasil] for r in s2.itertuples()]
+            val = s1["n"].tolist() + s2["n"].tolist()
+            link_colors = ([tint(COLOR_COCOA, 0.72)] * len(s1)
+                           + [tint(hasil_color.get(r.hasil, COLOR_COCOA), 0.6) for r in s2.itertuples()])
 
-                fig_sk = go.Figure(go.Sankey(
-                    arrangement="snap",
-                    node=dict(label=labels, color=node_colors, pad=14, thickness=14,
-                              line=dict(color="rgba(0,0,0,0)", width=0)),
-                    link=dict(source=src, target=tgt, value=val, color=link_colors),
-                ))
-                fig_sk.update_layout(font=dict(size=10, color=COLOR_DRAB_DARK))
-                show_chart(fig_sk, height=340)
-            else:
-                insight("Data bidang studi / jenis penempatan tidak lengkap untuk alur ini.", kind="error")
-    with col_note:
-        with st.container(border=True):
-            top_reject = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts()
-            top_reject_name = top_reject.index[0].replace("Rejection ", "") if len(top_reject) else "-"
-            catatan_analis([
-                f"Dari <b>{total_dikirim_individu:,}</b> kandidat dikirim, <b>{total_placement:,}</b> berhasil "
-                f"placement (success rate <b>{success_rate:.1f}%</b>).",
-                f"Success rate {'di atas' if success_rate >= TARGET_SUCCESS else 'masih di bawah'} "
-                f"target internal {TARGET_SUCCESS:.0f}%.",
-                f"Penolakan paling banyak terjadi di tahap <b>{top_reject_name}</b> - jadi fokus pendampingan.",
-                f"Fulfillment <b>{fulfillment_rate:.1f}%</b>: kandidat dikirim melebihi kuota (wajar untuk shortlist), "
-                "tapi tetap ada <b>request belum terpenuhi</b> yang perlu dikejar.",
-            ])
+            fig_sk = go.Figure(go.Sankey(
+                arrangement="snap",
+                node=dict(label=labels, color=node_colors, pad=14, thickness=14,
+                          line=dict(color="rgba(0,0,0,0)", width=0)),
+                link=dict(source=src, target=tgt, value=val, color=link_colors),
+            ))
+            fig_sk.update_layout(font=dict(size=10, color=COLOR_DRAB_DARK))
+            show_chart(fig_sk, height=300)
+        else:
+            insight("Data bidang studi / jenis penempatan tidak lengkap untuk alur ini.", kind="error")
+
+    top_reject = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts()
+    top_reject_name = top_reject.index[0].replace("Rejection ", "") if len(top_reject) else "-"
+    catatan_analis([
+        f"Dari <b>{total_dikirim_individu:,}</b> kandidat dikirim, <b>{total_placement:,}</b> berhasil "
+        f"placement (success rate <b>{success_rate:.1f}%</b>).",
+        f"Success rate {'di atas' if success_rate >= TARGET_SUCCESS else 'masih di bawah'} "
+        f"target internal {TARGET_SUCCESS:.0f}%.",
+        f"Penolakan paling banyak terjadi di tahap <b>{top_reject_name}</b> - jadi fokus pendampingan.",
+        f"Fulfillment <b>{fulfillment_rate:.1f}%</b>: kandidat dikirim melebihi kuota (wajar untuk shortlist), "
+        "tapi tetap ada <b>request belum terpenuhi</b> yang perlu dikejar.",
+    ])
 
 # ---------------------------------------------------------------------------
 # TAB 2 - FUNNEL & GHOSTING
 # ---------------------------------------------------------------------------
 def page_funnel():
     tahun_f, prodi_f, jenis_f, tanggal_acuan = page_header(
-        "Funnel & Ghosting", key="funnel", with_ref_date=True, bt="BT-02 / BT-05")
+        "Funnel & Ghosting", key="funnel", with_ref_date=True)
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     tc_status = scope_tc(tahun_f, jenis_f)
@@ -1363,7 +1368,7 @@ def page_funnel():
     col_kiri, col_kanan = st.columns(2)
     with col_kiri:
         with st.container(border=True):
-            section("Di tahap mana kandidat paling banyak menyusut?")
+            section("Funnel Seleksi Kandidat", "Jumlah & persentase kandidat yang bertahan di tiap tahap.")
             funnel_counts = [int((m["stage_reached"] >= i).sum()) for i in range(len(FUNNEL_STAGES))]
             fig_funnel = go.Figure(go.Funnel(
                 y=FUNNEL_STAGES, x=funnel_counts,
@@ -1374,7 +1379,7 @@ def page_funnel():
 
     with col_kanan:
         with st.container(border=True):
-            section("Kenapa kandidat gagal, di tahap apa?", "Sebaran alasan penolakan per tahap.")
+            section("Sebaran Penolakan per Tahap Seleksi", "Di tahap mana penolakan paling banyak terjadi.")
             rej = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts().reindex(REJECTION_STAGES).fillna(0).reset_index()
             rej.columns = ["tahap_rejection", "jumlah"]
             fig_rej = px.bar(rej, x="jumlah", y="tahap_rejection", orientation="h",
@@ -1393,39 +1398,36 @@ def page_funnel():
                 "prioritaskan pendampingan CDC di tahap ini. "
                 f"Ghosting menurut aturan FAQ: <b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).", kind="warning")
 
-    # ---- HEATMAP: kapan setiap tahap seleksi paling ramai? (monitoring BT-02) ----
-    col_hm, col_note = st.columns([2, 1])
-    with col_hm:
-        with st.container(border=True):
-            section("Kapan tiap tahap seleksi paling ramai?", "Volume aktivitas per bulan di tiap tahap.")
-            hm = m.dropna(subset=["last_update"]).copy()
-            urutan_tahap = FUNNEL_STAGES + ["FU 1", "FU 2", "FU 3", "Ghosting", "Rejected", "Finish"]
-            hm = hm[hm["progress_student"].isin(urutan_tahap)]
-            if len(hm) > 0:
-                hm["bulan"] = hm["last_update"].dt.to_period("M").astype(str)
-                piv = hm.pivot_table(index="progress_student", columns="bulan",
-                                     values="id_tracking_student", aggfunc="count", fill_value=0)
-                piv = piv.reindex([t for t in urutan_tahap if t in piv.index])
-                fig_hm = px.imshow(
-                    piv, aspect="auto", color_continuous_scale=["#FFF6E6", COLOR_JASMINE, COLOR_COCOA, COLOR_SIENNA],
-                    labels=dict(color="Jumlah"),
-                )
-                fig_hm.update_layout(xaxis_title=None, yaxis_title=None, coloraxis_colorbar=dict(title=None))
-                fig_hm.update_xaxes(tickfont=dict(size=9))
-                show_chart(fig_hm, height=330)
-            else:
-                insight("Belum ada data aktivitas tahap pada rentang filter ini.", kind="error")
-    with col_note:
-        with st.container(border=True):
-            tahap_bocor_txt = konversi and min(konversi, key=lambda t: t[1])[0] or "-"
-            catatan_analis([
-                f"Konversi paling bocor di tahap <b>{tahap_bocor_txt}</b> - dampingi kandidat lebih intensif di sini.",
-                f"Ghosting (aturan FAQ, &gt;{GHOSTING_DAYS} hari sejak dikirim tanpa respons): "
-                f"<b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).",
-                f"Ada <b>{int(followup_counts.get('FU 1', 0)) + int(followup_counts.get('FU 2', 0)) + int(followup_counts.get('FU 3', 0)):,}</b> "
-                "batch yang butuh follow-up bertahap sebelum jatuh ke ghosting.",
-                "Heatmap menandai bulan-bulan puncak aktivitas: berguna untuk mengatur beban kerja tim CDC.",
-            ])
+    # ---- HEATMAP: kapan setiap tahap seleksi paling ramai? ----
+    with st.container(border=True):
+        section("Volume Aktivitas Seleksi per Bulan dan Tahap", "Makin gelap = makin banyak aktivitas di bulan dan tahap itu.")
+        hm = m.dropna(subset=["last_update"]).copy()
+        urutan_tahap = FUNNEL_STAGES + ["FU 1", "FU 2", "FU 3", "Ghosting", "Rejected", "Finish"]
+        hm = hm[hm["progress_student"].isin(urutan_tahap)]
+        if len(hm) > 0:
+            hm["bulan"] = hm["last_update"].dt.to_period("M").astype(str)
+            piv = hm.pivot_table(index="progress_student", columns="bulan",
+                                 values="id_tracking_student", aggfunc="count", fill_value=0)
+            piv = piv.reindex([t for t in urutan_tahap if t in piv.index])
+            fig_hm = px.imshow(
+                piv, aspect="auto", color_continuous_scale=["#FFF6E6", COLOR_JASMINE, COLOR_COCOA, COLOR_SIENNA],
+                labels=dict(color="Jumlah"),
+            )
+            fig_hm.update_layout(xaxis_title=None, yaxis_title=None, coloraxis_colorbar=dict(title=None))
+            fig_hm.update_xaxes(tickfont=dict(size=9))
+            show_chart(fig_hm, height=300)
+        else:
+            insight("Belum ada data aktivitas tahap pada rentang filter ini.", kind="error")
+
+    tahap_bocor_txt = konversi and min(konversi, key=lambda t: t[1])[0] or "-"
+    catatan_analis([
+        f"Konversi paling bocor di tahap <b>{tahap_bocor_txt}</b> - dampingi kandidat lebih intensif di sini.",
+        f"Ghosting (aturan FAQ, &gt;{GHOSTING_DAYS} hari sejak dikirim tanpa respons): "
+        f"<b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).",
+        f"Ada <b>{int(followup_counts.get('FU 1', 0)) + int(followup_counts.get('FU 2', 0)) + int(followup_counts.get('FU 3', 0)):,}</b> "
+        "batch yang butuh follow-up bertahap sebelum jatuh ke ghosting.",
+        "Heatmap menandai bulan-bulan puncak aktivitas: berguna untuk mengatur beban kerja tim CDC.",
+    ])
 
     ghosted = tc_status[tc_status["status_followup"] == "Ghosting"]
     with st.expander("Analisis ghosting lanjutan (per perusahaan, per tahap, tren bulanan)", icon=":material/query_stats:"):
@@ -1486,7 +1488,7 @@ def page_funnel():
 # TAB 3 - MITRA
 # ---------------------------------------------------------------------------
 def page_mitra():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Mitra Perusahaan", key="mitra", bt="BT-03")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Mitra Perusahaan", key="mitra")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     kpi_row([
@@ -1500,7 +1502,7 @@ def page_mitra():
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Perusahaan mana yang paling banyak menerima kandidat?")
+            section("Top 10 Acceptance Rate Perusahaan", "Persentase kandidat yang diterima (min. 3 kandidat).")
             perf = m.groupby(COMPANY_NAME_COL).agg(
                 total=("id_tracking_student", "count"),
                 placement=("rejection", lambda x: (x == "Placement").sum()),
@@ -1514,7 +1516,7 @@ def page_mitra():
             show_chart(fig_acc, height=310)
     with col2:
         with st.container(border=True):
-            section("Siapa mitra dengan permintaan talent terbanyak?")
+            section("Top 10 Perusahaan berdasarkan Jumlah Talent Request")
             tr_named = talent_request.merge(company[["id_company", "company_name"]], on="id_company", how="left")
             volume = tr_named["company_name"].value_counts().head(10).reset_index()
             volume.columns = ["perusahaan", "jumlah_request"]
@@ -1530,7 +1532,7 @@ def page_mitra():
         f"<b>{talent_request['id_talent_req'].nunique():,}</b> talent request total.",
         f"Sektor industri paling banyak meminta talent: <b>{top_sektor}</b>.",
         f"<b>{n_belum:,}</b> talent request belum terpenuhi - lihat daftar prioritas di bawah, "
-        "urut dari yang paling lama menunggu (BT-03).",
+        "urut dari yang paling lama menunggu.",
         "Acceptance rate per perusahaan (kiri) memakai minimal 3 kandidat agar tidak bias oleh sampel kecil.",
     ])
 
@@ -1634,7 +1636,7 @@ def compute_mitra_segments() -> pd.DataFrame:
 
 
 def page_segmentasi():
-    page_header("Segmentasi Mitra", bt="BT-03 / BT-04")
+    page_header("Segmentasi Mitra")
     seg = compute_mitra_segments()
 
     counts = seg["segmen"].value_counts()
@@ -1656,7 +1658,7 @@ def page_segmentasi():
     col1, col2 = st.columns([2, 1])
     with col1:
         with st.container(border=True):
-            section("Bagaimana peta mitra: seberapa sering vs seberapa baru mereka minta talent?",
+            section("Peta Mitra: Frekuensi vs Recency Permintaan Talent",
                     "Sumbu Y dibalik: makin ke atas = permintaan makin baru. Ukuran titik = total headcount diminta.")
             plot = seg.copy()
             fig_seg = px.scatter(
@@ -1671,7 +1673,7 @@ def page_segmentasi():
             show_chart(fig_seg, height=360)
     with col2:
         with st.container(border=True):
-            section("Berapa banyak mitra di tiap segmen?")
+            section("Jumlah Mitra per Segmen")
             seg_ct = counts.reindex(list(SEG_COLORS.keys())).fillna(0).reset_index()
             seg_ct.columns = ["segmen", "jumlah"]
             fig_bar = px.bar(seg_ct, x="jumlah", y="segmen", orientation="h", color="segmen",
@@ -1771,7 +1773,7 @@ def compute_skill_gap() -> pd.DataFrame:
 
 
 def page_kesiapan():
-    page_header("Kesiapan Mahasiswa", bt="BT-06 / BT-01")
+    page_header("Kesiapan Mahasiswa")
 
     ss = status_student
     status_norm = norm_text(ss["status"])
@@ -1803,7 +1805,7 @@ def page_kesiapan():
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Kapan pasokan mahasiswa siap bertemu permintaan perusahaan?")
+            section("Demand vs Supply dari Waktu ke Waktu", "Demand = jumlah kebutuhan (headcount) perusahaan. Supply = perkiraan mahasiswa yang siap magang.")
             col_prodi, col_gran = st.columns([3, 2])
             prodi_pilih = col_prodi.selectbox(
                 "Fokus jurusan / bidang studi",
@@ -1859,7 +1861,7 @@ def page_kesiapan():
                 show_chart(fig_ts, height=280)
     with col2:
         with st.container(border=True):
-            section("Berapa mahasiswa yang benar-benar siap dikirim?")
+            section("Ketersediaan & Status Keaktifan Mahasiswa", "Sebaran mahasiswa menurut ketersediaan dan status keaktifan.")
             elig_ct = ss.groupby(["ketersediaan", "status"]).size().reset_index(name="jumlah")
             fig_elig = px.bar(elig_ct, x="ketersediaan", y="jumlah", color="status",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
@@ -1870,7 +1872,7 @@ def page_kesiapan():
     col_r, col_s = st.columns(2)
     with col_r:
         with st.container(border=True):
-            section("Bagaimana profil tiap program studi dibandingkan?",
+            section("Profil Program Studi (5 Dimensi)",
                     "Lima dimensi dinormalisasi 0-1 antar prodi. Pilih prodi untuk dibandingkan.")
             prof = compute_prodi_profile()
             dims = ["demand", "supply", "success", "ipk", "kesiapan"]
@@ -1902,8 +1904,8 @@ def page_kesiapan():
                 insight("Pilih minimal satu program studi untuk menampilkan radar.", kind="info")
     with col_s:
         with st.container(border=True):
-            section("Tools apa yang dikuasai mahasiswa vs diminta perusahaan?",
-                    "Dikuasai = dari data tools mahasiswa (solid). Diminta = disebut di teks deskripsi requirement (perkiraan).")
+            section("Tools: Dikuasai Mahasiswa vs Diminta Perusahaan",
+                    "Dikuasai = jumlah mahasiswa yang menguasai tools itu. Diminta = perkiraan dari teks kebutuhan perusahaan.")
             gap = compute_skill_gap()
             top_gap = gap.sort_values("dikuasai", ascending=False).head(12)
             melt = top_gap.melt(id_vars="tool", value_vars=["dikuasai", "diminta"],
@@ -1976,7 +1978,7 @@ def page_kesiapan():
 # TAB 5 - MATCHING TALENT (data master terkini - tanpa filter)
 # ---------------------------------------------------------------------------
 def page_matching():
-    page_header("Matching Talent", bt="BT-01")
+    page_header("Matching Talent")
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
@@ -1997,9 +1999,9 @@ def page_matching():
 
     # ---- Kecocokan lokasi (BT-01: domisili vs kota untuk WFO/Hybrid) ----
     with st.container(border=True):
-        section("Di kota mana pasokan mahasiswa bertemu lokasi kerja WFO/Hybrid?",
-                "Posisi WFO/Hybrid butuh mahasiswa yang berdomisili dekat. Bandingkan mahasiswa siap per kota "
-                "dengan slot WFO/Hybrid per kota perusahaan.")
+        section("Kecocokan Lokasi: Mahasiswa Siap vs Slot WFO/Hybrid per Kota",
+                "Mahasiswa Siap = mahasiswa aktif dan tersedia per kota domisili. "
+                "Slot WFO/Hybrid = kebutuhan posisi WFO/Hybrid per kota perusahaan.")
         ss_loc = status_student.copy()
         ready_mask = (norm_text(ss_loc["status"]).isin(VAL_STATUS_AKTIF)
                       & norm_text(ss_loc["ketersediaan"]).isin(VAL_TERSEDIA))
@@ -2034,11 +2036,11 @@ def page_matching():
             (f"Kota dengan pasokan mahasiswa berlebih: <b>{surplus_kota[0]}</b> - cocok jadi sumber kandidat." if surplus_kota else "Belum ada kota dengan surplus pasokan yang jelas."),
             (f"Kota dengan slot WFO/Hybrid melebihi pasokan lokal: <b>{defisit_kota[0]}</b> - "
              "pertimbangkan kandidat bersedia relokasi atau posisi WFH." if defisit_kota else "Slot WFO/Hybrid relatif terpenuhi pasokan lokal."),
-            "Lokasi melengkapi kriteria prodi/semester/IPK/tools di bawah untuk matching yang realistis (BT-01).",
+            "Lokasi melengkapi kriteria prodi, semester, IPK, dan tools di bawah untuk matching yang realistis.",
         ])
 
     with st.container(border=True):
-        section("Siapa kandidat paling sesuai untuk tiap permintaan talent?")
+        section("Kandidat Memenuhi Syarat per Talent Request")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -2153,12 +2155,11 @@ def page_matching():
 # TAB 6 - LAPORAN & QUALITY CHECK
 # ---------------------------------------------------------------------------
 def page_laporan():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Laporan", key="laporan", bt="BT-07 / BT-08")
+    tahun_f, prodi_f, jenis_f, _ = page_header("Laporan", key="laporan")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     with st.container(border=True):
-        section("Rekapitulasi placement per periode: bagaimana rinciannya?",
-                "Laporan periodik untuk evaluasi institusi (BT-07).")
+        section("Rekapitulasi Placement per Periode", "Dikelompokkan per program studi, perusahaan, atau jenis penempatan.")
         dim_options = {
             "Program Studi": "program_studi",
             "Perusahaan": COMPANY_NAME_COL,
@@ -2212,8 +2213,7 @@ def page_laporan():
                                    "rekap_placement.csv", "text/csv", icon=":material/download:")
 
     with st.container(border=True):
-        section("Apakah data mahasiswa sudah sinkron dan mutakhir?",
-                "Kesehatan sinkronisasi STUDENT ALL vs STATUS STUDENT (BT-08).")
+        section("Kesehatan dan Kesegaran Data Mahasiswa", "Memastikan data status mahasiswa selalu mutakhir.")
         ref_quality = status_student["sync_date"].max() if "sync_date" in status_student.columns else pd.Timestamp(datetime.now().date())
         stale_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
         n_stale = int((stale_days > SYNC_STALE_DAYS).sum()) if stale_days.notna().any() else 0
@@ -2225,7 +2225,7 @@ def page_laporan():
         mcol1, mcol2, mcol3 = st.columns(3)
         mcol1.metric(f"Data Status Usang (> {SYNC_STALE_DAYS} hari)", f"{n_stale:,}")
         mcol2.metric("Rata-rata Umur Sync", f"{stale_days.mean():.0f} hari" if stale_days.notna().any() else "-")
-        mcol3.metric("Belum Punya Record Status", f"{n_belum_sync:,}")
+        mcol3.metric("Belum Punya Data Status", f"{n_belum_sync:,}")
 
         sync_bulan = status_student.copy()
         sync_bulan["bulan_sync"] = sync_bulan["sync_date"].dt.to_period("M").astype(str)
@@ -2240,49 +2240,10 @@ def page_laporan():
         catatan_analis([
             f"<b>{n_stale:,}</b> record status sudah usang (&gt;{SYNC_STALE_DAYS} hari sejak sync terakhir) - "
             "perlu disegarkan agar keputusan matching tidak salah.",
-            f"<b>{n_belum_sync:,}</b> mahasiswa di STUDENT ALL belum punya record STATUS STUDENT sama sekali.",
-            "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV (BT-07).",
-            "Kesegaran data adalah fondasi: semua analisis lain hanya seakurat data sync terakhir (BT-08).",
+            f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data status kesiapan sama sekali.",
+            "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
+            "Kesegaran data adalah fondasi: semua analisis lain hanya seakurat data sync terakhir.",
         ])
-
-# ---------------------------------------------------------------------------
-# HALAMAN TIM
-# ---------------------------------------------------------------------------
-TIM_ANGGOTA = [
-    {"nama": "Anggota 1", "peran": "Ketua Tim", "nim": "NIM -"},
-    {"nama": "Anggota 2", "peran": "Data & Analisis", "nim": "NIM -"},
-    {"nama": "Anggota 3", "peran": "Desain & Dashboard", "nim": "NIM -"},
-]
-
-
-def page_tim():
-    page_header("Tim Penyusun")
-    with st.container(border=True):
-        section("Tim di balik CDC Placement Monitoring Dashboard")
-        cols = st.columns(len(TIM_ANGGOTA))
-        for col, a in zip(cols, TIM_ANGGOTA):
-            inisial = "".join(w[0] for w in a["nama"].split()[:2]).upper() or "?"
-            col.markdown(
-                f'<div class="team-card"><div class="team-avatar">{inisial}</div>'
-                f'<div class="team-name">{a["nama"]}</div>'
-                f'<div class="team-role">{a["peran"]}</div>'
-                f'<div class="team-nim">{a["nim"]}</div></div>',
-                unsafe_allow_html=True,
-            )
-        st.caption("Ganti nama, peran, dan NIM anggota pada daftar TIM_ANGGOTA di dashboard.py.")
-
-    with st.container(border=True):
-        section("Tentang karya ini")
-        st.markdown(
-            "**CDC Placement Monitoring Dashboard** dibangun untuk Sebelas Maret Statistic Dashboard "
-            "Competition (SSDC) 2026. Dashboard menyatukan 6 tabel data Student Placement System "
-            "menjadi satu sumber pemantauan: corong seleksi, deteksi ghosting sesuai aturan FAQ, "
-            "keseimbangan demand-supply, segmentasi mitra, dan prioritas kandidat yang transparan. "
-            "Setiap halaman menjawab Business Task tertentu (lihat badge di judul halaman)."
-        )
-        st.markdown(
-            "Dibuat dengan Python, Streamlit, Plotly, dan pandas. Kode dan data tersedia di repositori tim."
-        )
 
 # ---------------------------------------------------------------------------
 # NAVIGASI SIDEBAR (menggantikan tabs) - logo di atas, teks CDC di bawah logo,
@@ -2297,7 +2258,6 @@ PAGES = [
     st.Page(page_kesiapan, title="Kesiapan", icon=":material/school:"),
     st.Page(page_matching, title="Matching Talent", icon=":material/person_search:"),
     st.Page(page_laporan, title="Laporan", icon=":material/description:"),
-    st.Page(page_tim, title="Tim", icon=":material/groups:"),
 ]
 nav = st.navigation(PAGES, position="hidden")
 
@@ -2377,6 +2337,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v30</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>SSDC2026025 - Makan Apaya</div>', unsafe_allow_html=True)
 
 nav.run()
