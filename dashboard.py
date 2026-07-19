@@ -873,12 +873,25 @@ _GSAP_HTML = """
                 const tiles = Array.from(doc.querySelectorAll("div[data-testid='stVerticalBlockBorderWrapper']"));
                 if (cards.length + tiles.length === 0) return false;
 
+                // ANIMASI PINDAH TAB: seluruh area konten meluncur masuk dari kanan
+                // sebagai satu kesatuan (pakai GSAP yang sudah terbukti jalan). Dijalankan
+                // sekali per halaman lewat penanda SLUG di dataset kontainer.
+                const main = doc.querySelector("[data-testid='stMainBlockContainer']")
+                          || doc.querySelector("section[data-testid='stMain'] .block-container");
+                if (main && main.dataset.slid !== SLUG) {
+                    main.dataset.slid = SLUG;
+                    gsap.fromTo(main,
+                        { opacity: 0, x: 130 },
+                        { opacity: 1, x: 0, duration: 0.7, ease: "power3.out",
+                          clearProps: "transform,opacity", overwrite: "auto" });
+                }
+
                 gsap.fromTo(cards,
                     { opacity: 0, y: 22, scale: 0.97 },
-                    { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, delay: 0.1, ease: "power2.out", overwrite: "auto" });
+                    { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.07, delay: 0.25, ease: "power2.out", overwrite: "auto" });
                 gsap.fromTo(tiles,
                     { opacity: 0, y: 26 },
-                    { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, delay: 0.2, ease: "power2.out", overwrite: "auto" });
+                    { opacity: 1, y: 0, duration: 0.55, stagger: 0.09, delay: 0.35, ease: "power2.out", overwrite: "auto" });
 
                 // count-up angka KPI: "41,600", "152.3%", "51 hari"
                 doc.querySelectorAll(".kpi-value").forEach(function (el) {
@@ -937,21 +950,6 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
-
-    # ANIMASI PINDAH TAB (CSS murni, disuntik via st.markdown ke DOM utama -
-    # tidak butuh JS/CDN yang bisa diblokir Streamlit Cloud). Nama keyframe unik
-    # per halaman -> saat pindah tab, animation-name berubah -> browser memutar
-    # ulang transisi. Konten utama meluncur masuk dari kanan + fade.
-    st.markdown(
-        "<style>"
-        f"@keyframes slidein_{slug} {{"
-        f"  0% {{ opacity: 0; transform: translate3d(90px, 0, 0); }}"
-        f"  100% {{ opacity: 1; transform: none; }} }}"
-        f"[data-testid='stMainBlockContainer'] {{"
-        f"  animation: slidein_{slug} 0.65s cubic-bezier(0.16, 1, 0.3, 1) both !important; }}"
-        "</style>",
-        unsafe_allow_html=True,
-    )
 
     col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
@@ -1762,6 +1760,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v25</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v26</div>', unsafe_allow_html=True)
 
 nav.run()
