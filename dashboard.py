@@ -1374,7 +1374,8 @@ def page_funnel():
             fig_funnel = go.Figure(go.Funnel(
                 y=FUNNEL_STAGES, x=funnel_counts,
                 marker={"color": PALETTE_SEQUENTIAL},
-                textinfo="value+percent previous",
+                # angka penuh dengan pemisah ribuan (bukan singkatan "41.6k")
+                texttemplate="%{value:,.0f}<br>%{percentPrevious:.0%}",
             ))
             show_chart(fig_funnel, height=330)
 
@@ -1900,7 +1901,7 @@ def page_kesiapan():
                         fillcolor="rgba(0,0,0,0)",
                     ))
                 fig_radar.update_layout(polar=dict(radialaxis=dict(visible=True, range=[0, 1], showticklabels=False)))
-                show_chart(fig_radar, height=330)
+                show_chart(fig_radar, height=360)
             else:
                 insight("Pilih minimal satu program studi untuk menampilkan radar.", kind="info")
     with col_s:
@@ -1908,14 +1909,20 @@ def page_kesiapan():
             section("Tools: Dikuasai Mahasiswa vs Diminta Perusahaan",
                     "Dikuasai = jumlah mahasiswa yang menguasai tools itu. Diminta = perkiraan dari teks kebutuhan perusahaan.")
             gap = compute_skill_gap()
-            top_gap = gap.sort_values("dikuasai", ascending=False).head(12)
-            melt = top_gap.melt(id_vars="tool", value_vars=["dikuasai", "diminta"],
-                                var_name="sisi", value_name="jumlah")
+            gap["total"] = gap["dikuasai"] + gap["diminta"]
+            # gabungkan top berdasarkan yang DIKUASAI dan yang DIMINTA supaya tools
+            # yang banyak diminta (mis. R) tetap tampil walau supply-nya sedikit
+            top_sup = set(gap.sort_values("dikuasai", ascending=False).head(12)["tool"])
+            top_dem = set(gap.sort_values("diminta", ascending=False).head(12)["tool"])
+            sel = gap[gap["tool"].isin(top_sup | top_dem)].sort_values("total", ascending=False).head(16)
+            melt = sel.melt(id_vars="tool", value_vars=["dikuasai", "diminta"],
+                            var_name="sisi", value_name="jumlah")
+            melt["sisi"] = melt["sisi"].map({"dikuasai": "Dikuasai", "diminta": "Diminta"})
             fig_skill = px.bar(melt, x="jumlah", y="tool", color="sisi", orientation="h", barmode="group",
-                               color_discrete_map={"dikuasai": COLOR_JASMINE, "diminta": COLOR_COCOA})
+                               color_discrete_map={"Dikuasai": COLOR_JASMINE, "Diminta": COLOR_COCOA})
             fig_skill.update_layout(yaxis_title=None, xaxis_title=None, legend_title=None)
             fig_skill.update_yaxes(categoryorder="total ascending")
-            show_chart(fig_skill, height=330)
+            show_chart(fig_skill, height=390)
 
     _pool_ready = int(((norm_text(ss["status"]).isin(VAL_STATUS_AKTIF))
                        & (norm_text(ss["ketersediaan"]).isin(VAL_TERSEDIA))).sum())
