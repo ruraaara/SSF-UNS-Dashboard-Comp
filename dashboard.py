@@ -286,11 +286,11 @@ div[data-testid="stDateInput"] input {{
 /* layout rapat: target muat satu layar tanpa scroll */
 .block-container {{
     padding-top: 0.8rem !important;
-    padding-bottom: 0.7rem !important;
+    padding-bottom: 3rem !important;
     padding-left: 2rem !important;
     padding-right: 2.2rem !important;
 }}
-div[data-testid="stVerticalBlock"] {{ gap: 0.85rem; }}
+div[data-testid="stVerticalBlock"] {{ gap: 1rem; }}
 
 .dash-header {{
     padding: 12px 22px 13px 22px;
@@ -475,9 +475,9 @@ st.markdown(f"""
 .analis-box {{
     background: linear-gradient(160deg, {tint(COLOR_SEAL_BROWN, 0.02)} 0%, {COLOR_SIENNA} 120%);
     border-radius: 14px;
-    padding: 13px 16px 11px 16px;
+    padding: 18px 22px 20px 22px;
     box-shadow: 0 5px 14px rgba(74, 35, 14, 0.18);
-    height: 100%;
+    margin: 6px 0 6px 0;
 }}
 .analis-box .analis-title {{
     font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
@@ -494,11 +494,12 @@ st.markdown(f"""
 .analis-box .analis-item {{
     color: #FDF6EA !important;
     font-size: 0.82rem;
-    line-height: 1.5;
-    margin: 0 0 5px 0;
+    line-height: 1.55;
+    margin: 0 0 9px 0;
     padding-left: 14px;
     position: relative;
 }}
+.analis-box .analis-item:last-child {{ margin-bottom: 0; }}
 .analis-box .analis-item::before {{
     content: "";
     position: absolute;
@@ -2029,15 +2030,15 @@ def page_matching():
         fig_loc.update_yaxes(categoryorder="total ascending")
         show_chart(fig_loc, height=300)
 
-        surplus_kota = loc.loc[loc["Mahasiswa Siap"] - loc["Slot WFO/Hybrid"] > 0, "kota"].head(1).tolist()
-        defisit_kota = loc.loc[loc["Slot WFO/Hybrid"] - loc["Mahasiswa Siap"] > 0, "kota"].head(1).tolist()
-        catatan_analis([
-            "Posisi WFO/Hybrid paling lancar diisi kalau ada mahasiswa siap di kota yang sama.",
-            (f"Kota dengan pasokan mahasiswa berlebih: <b>{surplus_kota[0]}</b> - cocok jadi sumber kandidat." if surplus_kota else "Belum ada kota dengan surplus pasokan yang jelas."),
-            (f"Kota dengan slot WFO/Hybrid melebihi pasokan lokal: <b>{defisit_kota[0]}</b> - "
-             "pertimbangkan kandidat bersedia relokasi atau posisi WFH." if defisit_kota else "Slot WFO/Hybrid relatif terpenuhi pasokan lokal."),
-            "Lokasi melengkapi kriteria prodi, semester, IPK, dan tools di bawah untuk matching yang realistis.",
-        ])
+    surplus_kota = loc.loc[loc["Mahasiswa Siap"] - loc["Slot WFO/Hybrid"] > 0, "kota"].head(1).tolist()
+    defisit_kota = loc.loc[loc["Slot WFO/Hybrid"] - loc["Mahasiswa Siap"] > 0, "kota"].head(1).tolist()
+    catatan_analis([
+        "Posisi WFO/Hybrid paling lancar diisi kalau ada mahasiswa siap di kota yang sama.",
+        (f"Kota dengan pasokan mahasiswa berlebih: <b>{surplus_kota[0]}</b> - cocok jadi sumber kandidat." if surplus_kota else "Belum ada kota dengan surplus pasokan yang jelas."),
+        (f"Kota dengan slot WFO/Hybrid melebihi pasokan lokal: <b>{defisit_kota[0]}</b> - "
+         "pertimbangkan kandidat bersedia relokasi atau posisi WFH." if defisit_kota else "Slot WFO/Hybrid relatif terpenuhi pasokan lokal."),
+        "Lokasi melengkapi kriteria prodi, semester, IPK, dan tools di bawah untuk matching yang realistis.",
+    ])
 
     with st.container(border=True):
         section("Kandidat Memenuhi Syarat per Talent Request")
@@ -2237,13 +2238,13 @@ def page_laporan():
         fig_sync.update_layout(xaxis_title=None, yaxis_title=None)
         show_chart(fig_sync, height=280)
 
-        catatan_analis([
-            f"<b>{n_stale:,}</b> record status sudah usang (&gt;{SYNC_STALE_DAYS} hari sejak sync terakhir) - "
-            "perlu disegarkan agar keputusan matching tidak salah.",
-            f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data status kesiapan sama sekali.",
-            "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
-            "Kesegaran data adalah fondasi: semua analisis lain hanya seakurat data sync terakhir.",
-        ])
+    catatan_analis([
+        f"<b>{n_stale:,}</b> data status sudah usang (&gt;{SYNC_STALE_DAYS} hari sejak sync terakhir) - "
+        "perlu disegarkan agar keputusan matching tidak salah.",
+        f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data status kesiapan sama sekali.",
+        "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
+        "Kesegaran data adalah fondasi: semua analisis lain hanya seakurat data sync terakhir.",
+    ])
 
 # ---------------------------------------------------------------------------
 # NAVIGASI SIDEBAR (menggantikan tabs) - logo di atas, teks CDC di bawah logo,
