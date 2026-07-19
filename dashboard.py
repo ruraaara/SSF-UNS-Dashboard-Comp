@@ -916,6 +916,23 @@ _GSAP_HTML = """
 
             P.addEventListener("resize", fitActiveTab);
 
+            // ANIMASI PINDAH TAB via Web Animations API (JS native, TANPA CDN/GSAP,
+            // jadi pasti jalan di Streamlit Cloud). Konten utama meluncur masuk
+            // dari kanan tiap halaman dibuka. Ditandai SLUG agar main sekali per tab.
+            function slidePage(i) {
+                const main = doc.querySelector("[data-testid='stMainBlockContainer'], section[data-testid='stMain'] .block-container");
+                if (!main) { if (i < 20) setTimeout(function () { slidePage(i + 1); }, 150); return; }
+                if (main.dataset.slid === SLUG) return;
+                main.dataset.slid = SLUG;
+                try {
+                    main.animate(
+                        [{ opacity: 0, transform: "translateX(60px)" }, { opacity: 1, transform: "none" }],
+                        { duration: 620, easing: "cubic-bezier(0.16, 1, 0.3, 1)" }
+                    );
+                } catch (e) {}
+            }
+            slidePage(0);
+
             // fit lidah tab jalan mandiri - tidak menunggu / tergantung GSAP
             (function retryFit(i) {
                 if (!fitActiveTab() && i < 15) setTimeout(function () { retryFit(i + 1); }, 300);
@@ -942,21 +959,6 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
-
-    # ANIMASI PINDAH TAB via CSS murni (bukan GSAP/CDN yang bisa diblokir):
-    # keyframe unik per halaman -> aturan animasi berubah tiap ganti tab ->
-    # browser memutar ulang transisi. Target beberapa selektor kontainer utama
-    # agar cocok di berbagai versi Streamlit.
-    st.markdown(
-        "<style>"
-        f"@keyframes pagein_{slug} {{ 0% {{ opacity: 0; transform: translateX(55px); }} "
-        f"100% {{ opacity: 1; transform: none; }} }} "
-        f"section[data-testid='stMain'] .block-container, "
-        f"[data-testid='stMainBlockContainer'] {{ "
-        f"animation: pagein_{slug} 0.6s cubic-bezier(0.16, 1, 0.3, 1) both; }}"
-        "</style>",
-        unsafe_allow_html=True,
-    )
 
     col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
@@ -1531,7 +1533,7 @@ def page_matching():
                 lambda s: len([x for x in s.split(",") if x.strip()])) if "tools" in candidates.columns else 0
             sem_num = pd.to_numeric(candidates[semester_col], errors="coerce").fillna(0)
 
-            _col_sp, col_pop, col_n = st.columns([3, 1.5, 1.5], vertical_alignment="bottom")
+            col_pop, col_n = st.columns(2, vertical_alignment="bottom")
             with col_pop.popover(":material/tune: Pilih Kriteria", width="stretch"):
                 st.caption("Centang kriteria yang diprioritaskan. Kandidat diurutkan dari yang paling memenuhi kriteria terpilih.")
                 pr_ipk = st.checkbox("IPK tinggi", value=True)
@@ -1767,6 +1769,6 @@ with st.sidebar:
     for p in PAGES:
         st.page_link(p)
     if LAST_SYNC_TXT:
-        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v23</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="side-sync">{LAST_SYNC_TXT}<br>build v24</div>', unsafe_allow_html=True)
 
 nav.run()
