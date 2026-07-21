@@ -207,6 +207,16 @@ div[data-testid="stPopover"] > div, .stPopover > div {{
 div[data-testid="stPopover"] button, .stPopover button {{
     width: 100% !important;
 }}
+/* KECUALI tombol Filter di header: kompak & MOJOK ke tepi kanan.
+   Di-scope ke container ber-key 'hdr_filter' agar popover lain
+   (mis. "Pilih Kriteria" yang sengaja full-width) tidak ikut terpengaruh. */
+div[data-testid="stVerticalBlock"].st-key-hdr_filter {{ align-items: flex-end !important; }}
+.st-key-hdr_filter div[data-testid="stPopover"],
+.st-key-hdr_filter div[data-testid="stPopover"] > div {{ width: auto !important; }}
+.st-key-hdr_filter div[data-testid="stPopover"] button {{
+    width: auto !important;
+    white-space: nowrap;
+}}
 /* izinkan pill menu aktif menembus tepi kanan sidebar (efek tab menyatu);
    konten sidebar pendek sehingga scroll tidak dibutuhkan */
 section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
@@ -1191,7 +1201,7 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     tahun, prodi, jenis, ref_date = [], [], [], None
     if key is not None:
         with col_f:
-            with st.popover(":material/tune: Filter"):
+            with st.container(key="hdr_filter"), st.popover(":material/tune: Filter"):
                 tahun = st.multiselect("Tahun", FILTER_TAHUN, default=FILTER_TAHUN, key=f"f_tahun_{key}")
                 if with_prodi:
                     prodi = st.multiselect("Program Studi", FILTER_PRODI, default=[],
@@ -1503,15 +1513,32 @@ def page_funnel():
     total_tc = len(tc_status)
     n_ghosting = int(followup_counts.get("Ghosting", 0))
     ghosting_rate = (n_ghosting / total_tc * 100) if total_tc > 0 else 0
+    fu1 = int(followup_counts.get("FU 1", 0))
+    fu2 = int(followup_counts.get("FU 2", 0))
+    fu3 = int(followup_counts.get("FU 3", 0))
+    total_fu = fu1 + fu2 + fu3
 
+    # Catatan satuan: SEMUA kartu di halaman ini dihitung per BATCH (bukan orang).
+    # 1 batch = 1 event pengiriman ke satu perusahaan (baris tracking_company),
+    # bisa berisi banyak kandidat. Funnel di bawah baru per-individu.
+    st.caption("Semua angka kartu di bawah berbasis **batch** — 1 batch = 1 pengiriman CDC ke satu perusahaan (bisa berisi banyak kandidat).")
+
+    # ===== PRIMARY (3 kartu): fokus respons perusahaan per batch =====
     kpi_row([
-        {"value": f"{n_ghosting:,}", "label": "Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
+        {"value": f"{n_ghosting:,}", "label": "Batch Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
          "highlight": True,
-         "help": "Aturan FAQ: >28 hari sejak send_date tanpa respons perusahaan."},
-        {"value": f"{total_tc:,}", "label": "Batch Terkirim"},
-        {"value": f"{int(followup_counts.get('FU 1', 0)):,}", "label": "Butuh FU 1"},
-        {"value": f"{int(followup_counts.get('FU 2', 0)):,}", "label": "Butuh FU 2"},
-        {"value": f"{int(followup_counts.get('FU 3', 0)):,}", "label": "Butuh FU 3"},
+         "help": "Aturan FAQ: >28 hari sejak send_date tanpa respons perusahaan. Dihitung per batch pengiriman."},
+        {"value": f"{total_tc:,}", "label": "Batch Terkirim", "sub": "total pengiriman ke perusahaan",
+         "help": "Jumlah event pengiriman (baris tracking_company yang punya send_date) dalam filter aktif."},
+        {"value": f"{total_fu:,}", "label": "Batch Butuh Follow-up", "sub": "belum direspons, masih dalam window FU",
+         "help": "Batch yang belum direspons dan masih dalam masa follow-up (7-28 hari sejak dikirim), relatif ke tanggal acuan."},
+    ])
+
+    # ===== SECONDARY (rincian tahap follow-up, angka kecil) =====
+    kpi_mini_row([
+        {"value": f"{fu1:,}", "label": "Butuh FU 1", "help": "7-14 hari sejak dikirim tanpa respons."},
+        {"value": f"{fu2:,}", "label": "Butuh FU 2", "help": "14-21 hari sejak dikirim tanpa respons."},
+        {"value": f"{fu3:,}", "label": "Butuh FU 3", "help": "21-28 hari sejak dikirim tanpa respons."},
     ])
 
     col_kiri, col_kanan = st.columns(2)
@@ -1947,15 +1974,31 @@ def page_kesiapan():
     pernah_dikirim = set(tracking_student["nim"].unique())
     eligible_nganggur = eligible[~eligible["nim"].isin(pernah_dikirim)]
 
+    total_terdaftar = student_all["nim"].nunique()
+    pernah_dikirim_n = len(pernah_dikirim)
+
+    st.caption(
+        f"Satuan halaman ini = **orang** (mahasiswa unik). Dari **{total_terdaftar:,}** terdaftar, "
+        f"**{pernah_dikirim_n:,}** pernah dikirim ke perusahaan; sisanya belum tersalurkan."
+    )
+
+    # ===== PRIMARY (3 kartu): stok mahasiswa dari yang terluas ke yang paling siap =====
     kpi_row([
         {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim", "highlight": True,
-         "sub": "supply belum tersalurkan",
-         "help": "Prioritas untuk dicarikan penempatan."},
-        {"value": f"{student_all['nim'].nunique():,}", "label": "Mahasiswa Terdaftar"},
-        {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini",
-         "help": "Status aktif + tersedia + CV ada + portofolio ada."},
-        {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV"},
-        {"value": f"{(porto_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya Portofolio"},
+         "sub": "supply belum tersalurkan (orang)",
+         "help": "Mahasiswa yang memenuhi syarat tapi belum pernah dikirim sama sekali. Prioritas dicarikan penempatan."},
+        {"value": f"{total_terdaftar:,}", "label": "Mahasiswa Terdaftar", "sub": "total orang di sistem",
+         "help": "Jumlah NIM unik di master student_all (seluruh mahasiswa terdaftar, bukan hanya yang dikirim)."},
+        {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini", "sub": "snapshot syarat lengkap",
+         "help": "Status aktif + tersedia + CV ada + portofolio ada, kondisi terkini."},
+    ])
+
+    # ===== SECONDARY (kelengkapan berkas, persentase) =====
+    kpi_mini_row([
+        {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV",
+         "help": "Persentase mahasiswa terdaftar yang sudah punya CV."},
+        {"value": f"{(porto_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya Portofolio",
+         "help": "Persentase mahasiswa terdaftar yang sudah punya portofolio."},
     ])
 
     col1, col2 = st.columns(2)
