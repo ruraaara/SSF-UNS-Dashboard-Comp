@@ -544,6 +544,35 @@ st.markdown(f"""
 .team-card .team-role {{ color: {COLOR_COCOA}; font-size: 0.78rem; font-weight: 600; margin-top: 2px; }}
 .team-card .team-nim {{ color: {tint(COLOR_DRAB_DARK, 0.4)}; font-size: 0.74rem; margin-top: 4px; }}
 
+.page-subtitle {{
+    color: {tint(COLOR_DRAB_DARK, 0.3)} !important;
+    font-size: 0.86rem;
+    margin: 2px 0 0 0;
+    line-height: 1.35;
+}}
+/* ===== Peta Alur Penempatan: strip langkah bertingkat sebagai anchor ===== */
+.alur {{ display: flex; align-items: stretch; flex-wrap: wrap; margin: 2px 0 2px 0; }}
+.alur-step {{
+    flex: 1; min-width: 120px; background: #FFFFFF;
+    border: 1px solid rgba(226, 120, 47, 0.18); border-radius: 12px;
+    padding: 9px 12px; text-align: center;
+}}
+.alur-step.alur-end {{
+    background: linear-gradient(135deg, {COLOR_OLIVE} 0%, {tint(COLOR_OLIVE, 0.15)} 100%);
+    border-color: {COLOR_OLIVE};
+}}
+.alur-num {{
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
+    font-size: 1.15rem; font-weight: 800; color: {COLOR_SIENNA}; line-height: 1.1;
+}}
+.alur-step.alur-end .alur-num {{ color: #FFFFFF; }}
+.alur-lbl {{ font-size: 0.7rem; color: {tint(COLOR_DRAB_DARK, 0.25)}; margin-top: 3px; font-weight: 600; }}
+.alur-step.alur-end .alur-lbl {{ color: #FBF4E8; }}
+.alur-sep {{
+    display: flex; align-items: center; justify-content: center;
+    color: {COLOR_COCOA}; font-size: 1.25rem; font-weight: 700; padding: 0 6px; min-width: 18px;
+}}
+
 /* ===== samakan TINGGI kartu berdampingan =====
    kolom Streamlit sudah stretch (flex), tapi isi kartu tingginya mengikuti
    konten. Paksa vertical-block + border-wrapper mengisi tinggi kolom supaya
@@ -611,6 +640,20 @@ def catatan_analis(points, title="Catatan Analis"):
         f'{items}</div>',
         unsafe_allow_html=True,
     )
+
+
+def alur_penempatan(steps):
+    """Strip 'Peta Alur Penempatan' sebagai anchor: langkah-langkah rantai
+    (angka + label) dipisah panah. Langkah terakhir (mis. Placement) ditandai.
+    steps: list of (angka_str, label, is_end_bool)."""
+    parts = []
+    for i, (val, lbl, is_end) in enumerate(steps):
+        if i > 0:
+            parts.append('<div class="alur-sep">&rsaquo;</div>')
+        cls = "alur-step alur-end" if is_end else "alur-step"
+        parts.append(f'<div class="{cls}"><div class="alur-num">{val}</div>'
+                     f'<div class="alur-lbl">{lbl}</div></div>')
+    st.markdown(f'<div class="alur">{"".join(parts)}</div>', unsafe_allow_html=True)
 
 
 def style_fig(fig, height=300):
@@ -1052,7 +1095,7 @@ _GSAP_HTML = """
 """
 
 
-def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False, bt: str = ""):
+def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_date: bool = False, bt: str = "", subtitle: str = ""):
     """Baris judul halaman: judul di kiri, tombol Filter (popover) di ujung
     kanan. Juga menyuntikkan animasi transisi dengan nama keyframe unik per
     halaman - nama yang berubah membuat animasi restart setiap pindah halaman.
@@ -1078,7 +1121,8 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     col_t, col_f = st.columns([8, 1], vertical_alignment="center")
     with col_t:
         badge = f'<span class="bt-badge">{bt}</span>' if bt else ""
-        st.markdown(f'<div class="page-title">{title}{badge}</div>', unsafe_allow_html=True)
+        sub = f'<div class="page-subtitle">{subtitle}</div>' if subtitle else ""
+        st.markdown(f'<div class="page-title">{title}{badge}</div>{sub}', unsafe_allow_html=True)
 
     tahun, prodi, jenis, ref_date = [], [], [], None
     if key is not None:
@@ -1134,7 +1178,9 @@ if "sync_date" in status_student.columns and status_student["sync_date"].notna()
 # TAB 1 - OVERVIEW
 # ---------------------------------------------------------------------------
 def page_overview():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Overview", key="overview")
+    tahun_f, prodi_f, jenis_f, _ = page_header(
+        "Overview", key="overview",
+        subtitle="Ringkasan seluruh alur penempatan, dari permintaan perusahaan sampai placement.")
     m = scope_master(tahun_f, prodi_f, jenis_f)
     tc_scope = scope_tc(tahun_f, jenis_f)
 
@@ -1145,10 +1191,25 @@ def page_overview():
     total_diminta = tc_scope["jumlah_permintaan"].sum() if "jumlah_permintaan" in tc_scope.columns else 0
     total_dikirim_batch = tc_scope["jumlah_dikirimkan"].sum() if "jumlah_dikirimkan" in tc_scope.columns else 0
     fulfillment_rate = (total_dikirim_batch / total_diminta * 100) if total_diminta and total_diminta > 0 else 0
+    slot_terisi = (total_placement / total_diminta * 100) if total_diminta and total_diminta > 0 else 0
 
     selesai = m[m["rejection"].isin(["Placement"] + REJECTION_STAGES)]
     lama_proses = selesai["lama_proses_hari"].mean() if "lama_proses_hari" in selesai.columns and selesai["lama_proses_hari"].notna().any() else None
     n_request_belum = int((tr_fulfill["belum_terpenuhi"] > 0).sum())
+
+    # ---- PETA ALUR PENEMPATAN (anchor): satu rantai yang menyambungkan semua
+    # angka di seluruh dashboard. Memakai total keseluruhan (bukan hasil filter)
+    # sebagai peta acuan bagaimana sistem mengalir. ----
+    total_posisi = talent_request["id_talent_req"].nunique()
+    total_slot = int(talent_request["headcount"].sum())
+    total_kandidat_all = len(tracking_student)
+    total_placement_all = int((tracking_student["rejection"] == "Placement").sum())
+    alur_penempatan([
+        (f"{total_posisi:,}", "Permintaan (Posisi)", False),
+        (f"{total_slot:,}", "Slot (Kursi)", False),
+        (f"{total_kandidat_all:,}", "Kandidat Dikirim", False),
+        (f"{total_placement_all:,}", "Placement", True),
+    ])
 
     # ---- Delta year-over-year: bandingkan 2 tahun PENUH terakhir ----
     # Tahun berjalan sering hanya terisi sebagian (data berhenti di tengah tahun),
@@ -1180,11 +1241,13 @@ def page_overview():
          "delta": delta_kand, "delta_label": delta_lbl,
          "help": "Jumlah proses seleksi kandidat pada rentang filter."},
         {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
-         "help": "Jumlah dikirim vs diminta. Di atas 100% berarti kandidat dikirim melebihi kuota (wajar untuk shortlist)."},
-        {"value": f"{lama_proses:.0f} hari" if lama_proses is not None else "-", "label": "Rata-rata Lama Proses",
-         "help": "Dari batch dikirim sampai keputusan terakhir."},
-        {"value": f"{n_request_belum:,}", "label": "Request Belum Terpenuhi",
-         "sub": "data master, di luar filter"},
+         "sub": "kandidat dikirim vs slot (nyaring)",
+         "help": "Kandidat dikirim dibagi slot diminta. Di atas 100% berarti dikirim lebih banyak dari kursi (wajar untuk shortlist). Ini mengukur pengiriman, BUKAN kursi terisi."},
+        {"value": f"{slot_terisi:.1f}%", "label": "Slot Terisi",
+         "sub": "placement vs slot diminta",
+         "help": "Placement dibagi slot diminta - seberapa banyak kursi yang benar-benar terisi."},
+        {"value": f"{n_request_belum:,}", "label": "Permintaan Belum Terpenuhi",
+         "sub": "posisi, data keseluruhan"},
     ])
 
     TARGET_SUCCESS = 25.0  # target internal success rate (%) untuk garis acuan
@@ -1341,7 +1404,8 @@ def page_overview():
 # ---------------------------------------------------------------------------
 def page_funnel():
     tahun_f, prodi_f, jenis_f, tanggal_acuan = page_header(
-        "Funnel & Ghosting", key="funnel", with_ref_date=True)
+        "Funnel & Ghosting", key="funnel", with_ref_date=True,
+        subtitle="Zona seleksi: perjalanan tiap kandidat (individu) dan respons perusahaan per batch pengiriman.")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     tc_status = scope_tc(tahun_f, jenis_f)
@@ -1490,15 +1554,19 @@ def page_funnel():
 # TAB 3 - MITRA
 # ---------------------------------------------------------------------------
 def page_mitra():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Mitra Perusahaan", key="mitra")
+    tahun_f, prodi_f, jenis_f, _ = page_header(
+        "Mitra Perusahaan", key="mitra",
+        subtitle="Zona perusahaan: siapa yang meminta talent, berapa banyak, dan seberapa terpenuhi.")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     kpi_row([
         {"value": f"{m[COMPANY_NAME_COL].nunique():,}", "label": "Perusahaan Aktif (filter)", "highlight": True,
          "help": "Perusahaan yang punya proses seleksi berjalan pada rentang filter."},
         {"value": f"{company['id_company'].nunique():,}", "label": "Perusahaan Mitra"},
-        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Total Talent Request"},
-        {"value": f"{m['nama_posisi'].nunique():,}" if "nama_posisi" in m.columns else "-", "label": "Posisi Dibuka (filter)"},
+        {"value": f"{talent_request['id_talent_req'].nunique():,}", "label": "Permintaan (Posisi)",
+         "help": "Jumlah talent request/lowongan dari perusahaan. Satu posisi bisa meminta beberapa kursi (slot)."},
+        {"value": f"{int(talent_request['headcount'].sum()):,}", "label": "Slot (Kursi)",
+         "help": "Total kursi yang diminta (jumlah headcount seluruh posisi)."},
     ])
 
     col1, col2 = st.columns(2)
@@ -1638,7 +1706,8 @@ def compute_mitra_segments() -> pd.DataFrame:
 
 
 def page_segmentasi():
-    page_header("Segmentasi Mitra")
+    page_header("Segmentasi Mitra",
+                subtitle="Zona perusahaan: pengelompokan mitra (RFM) untuk pengelolaan hubungan.")
     seg = compute_mitra_segments()
 
     counts = seg["segmen"].value_counts()
@@ -1775,7 +1844,8 @@ def compute_skill_gap() -> pd.DataFrame:
 
 
 def page_kesiapan():
-    page_header("Kesiapan Mahasiswa")
+    page_header("Kesiapan Mahasiswa",
+                subtitle="Zona mahasiswa (pasokan): siapa yang siap dan layak dikirim ke perusahaan.")
 
     ss = status_student
     status_norm = norm_text(ss["status"])
@@ -1987,7 +2057,8 @@ def page_kesiapan():
 # TAB 5 - MATCHING TALENT (data master terkini - tanpa filter)
 # ---------------------------------------------------------------------------
 def page_matching():
-    page_header("Matching Talent")
+    page_header("Matching Talent",
+                subtitle="Zona pencocokan: pasokan mahasiswa bertemu permintaan perusahaan.")
     match_summary = compute_match_summary()
     n_zero = int((match_summary["kandidat_final"] == 0).sum())
 
@@ -1997,13 +2068,14 @@ def page_matching():
     rasio = total_slot / n_siap if n_siap else 0
 
     kpi_row([
-        {"value": f"{n_siap:,}", "label": "Mahasiswa Siap & Tersedia", "highlight": True,
-         "sub": f"vs {total_slot:,} slot dibuka",
+        {"value": f"{n_siap:,}", "label": "Mahasiswa Siap", "highlight": True,
+         "sub": f"vs {total_slot:,} slot (kursi)",
          "help": "Mahasiswa aktif + tersedia - kolam nyata yang bisa dikirim, jauh di bawah total slot permintaan."},
-        {"value": f"{len(match_summary):,}", "label": "Total Talent Request"},
+        {"value": f"{len(match_summary):,}", "label": "Permintaan (Posisi)",
+         "help": "Jumlah talent request/lowongan yang perlu dicocokkan dengan kandidat."},
         {"value": f"{rasio:.1f}x", "label": "Slot per Mahasiswa Siap",
-         "help": f"{total_slot:,} slot diperebutkan oleh {n_siap:,} mahasiswa siap."},
-        {"value": f"{student_all['nim'].nunique():,}", "label": "Total Mahasiswa Terdaftar"},
+         "help": f"{total_slot:,} slot (kursi) diperebutkan oleh {n_siap:,} mahasiswa siap."},
+        {"value": f"{student_all['nim'].nunique():,}", "label": "Mahasiswa Terdaftar"},
     ])
 
     # ---- Kecocokan lokasi (BT-01: domisili vs kota untuk WFO/Hybrid) ----
@@ -2164,7 +2236,9 @@ def page_matching():
 # TAB 6 - LAPORAN & QUALITY CHECK
 # ---------------------------------------------------------------------------
 def page_laporan():
-    tahun_f, prodi_f, jenis_f, _ = page_header("Laporan", key="laporan")
+    tahun_f, prodi_f, jenis_f, _ = page_header(
+        "Laporan", key="laporan",
+        subtitle="Rekap hasil penempatan untuk evaluasi, plus kualitas dan kesegaran data.")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     with st.container(border=True):
