@@ -170,7 +170,7 @@ section[data-testid="stSidebar"] {{
     min-width: 255px !important;
     max-width: 255px !important;
 }}
-section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.55)}; }}
+section[data-testid="stSidebar"] * {{ color: {tint(COLOR_JASMINE, 0.72)}; }}
 .side-brand {{
     text-align: center;
     margin: 4px 0 14px 0;
@@ -251,7 +251,7 @@ div[data-testid="stPageLink"] a {{
 }}
 div[data-testid="stPageLink"] a p,
 div[data-testid="stPageLink"] a span {{
-    color: {tint(COLOR_JASMINE, 0.5)} !important;
+    color: {tint(COLOR_JASMINE, 0.72)} !important;
     font-weight: 600;
 }}
 div[data-testid="stPageLink"] a:hover {{
@@ -573,6 +573,38 @@ st.markdown(f"""
     color: {COLOR_COCOA}; font-size: 1.25rem; font-weight: 700; padding: 0 6px; min-width: 18px;
 }}
 
+/* ===== Peta Alur RINGKAS (breadcrumb tipis, tanpa kartu) =====
+   anchor peta alur dibuat setipis mungkin: hanya angka + label + panah,
+   supaya tidak memakan ruang dan mata langsung turun ke KPI utama. */
+.alur-tipis {{
+    display: flex; align-items: baseline; flex-wrap: wrap;
+    gap: 2px; margin: 2px 0 14px 0;
+}}
+.alur-tipis .at-step {{ display: inline-flex; align-items: baseline; gap: 6px; padding: 2px 2px; }}
+.alur-tipis .at-num {{
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
+    font-weight: 800; font-size: 1.05rem; color: {COLOR_SIENNA}; line-height: 1.1;
+}}
+.alur-tipis .at-num.at-end {{ color: {COLOR_OLIVE}; }}
+.alur-tipis .at-lbl {{ font-size: 0.76rem; color: {tint(COLOR_DRAB_DARK, 0.3)}; font-weight: 600; }}
+.alur-tipis .at-sep {{ color: {COLOR_COCOA}; font-size: 1.1rem; font-weight: 700; padding: 0 8px; }}
+
+/* ===== KPI mini (level 2 / sekunder): satu baris angka pendukung =====
+   permukaan ringan (bukan kartu penuh) supaya jelas kalah hierarki dari
+   3 kartu Primary di atasnya. */
+.kpi-mini-row {{ display: flex; gap: 12px; flex-wrap: wrap; margin: 0 0 16px 0; }}
+.kpi-mini {{
+    flex: 1; min-width: 120px;
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(226, 120, 47, 0.14);
+    border-radius: 10px; padding: 8px 12px 7px 12px; text-align: center;
+}}
+.kpi-mini .m-val {{
+    font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
+    font-weight: 800; font-size: 1.18rem; color: {COLOR_SEAL_BROWN}; line-height: 1.1;
+}}
+.kpi-mini .m-lbl {{ font-size: 0.7rem; color: {tint(COLOR_DRAB_DARK, 0.3)}; font-weight: 600; margin-top: 3px; }}
+
 /* ===== samakan TINGGI kartu berdampingan =====
    kolom Streamlit sudah stretch (flex), tapi isi kartu tingginya mengikuti
    konten. Paksa vertical-block + border-wrapper mengisi tinggi kolom supaya
@@ -654,6 +686,38 @@ def alur_penempatan(steps):
         parts.append(f'<div class="{cls}"><div class="alur-num">{val}</div>'
                      f'<div class="alur-lbl">{lbl}</div></div>')
     st.markdown(f'<div class="alur">{"".join(parts)}</div>', unsafe_allow_html=True)
+
+
+def alur_ringkas(steps):
+    """Versi TIPIS dari peta alur (breadcrumb): angka + label dipisah panah,
+    tanpa kartu. Dipakai sebagai anchor ringan di atas KPI utama supaya hemat
+    ruang (mendukung 5-second rule). steps: list of (angka_str, label, is_end)."""
+    parts = []
+    for i, (val, lbl, is_end) in enumerate(steps):
+        if i > 0:
+            parts.append('<span class="at-sep">&rsaquo;</span>')
+        num_cls = "at-num at-end" if is_end else "at-num"
+        parts.append(
+            f'<span class="at-step"><span class="{num_cls}">{val}</span>'
+            f'<span class="at-lbl">{lbl}</span></span>'
+        )
+    st.markdown(f'<div class="alur-tipis">{"".join(parts)}</div>', unsafe_allow_html=True)
+
+
+def kpi_mini_row(cards):
+    """Baris angka SEKUNDER (level 2) yang ringkas. Sengaja dibuat lebih kecil
+    dan ringan dari kpi_row agar hierarki visual jelas. cards: list of
+    {value, label, help?}."""
+    html = '<div class="kpi-mini-row">'
+    for c in cards:
+        help_attr = f' title="{c["help"]}"' if c.get("help") else ""
+        html += (
+            f'<div class="kpi-mini"{help_attr}>'
+            f'<div class="m-val">{c["value"]}</div>'
+            f'<div class="m-lbl">{c["label"]}</div></div>'
+        )
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
 
 
 def style_fig(fig, height=300):
@@ -1203,25 +1267,22 @@ def page_overview():
     mhs_placed_unik = int(m[m["rejection"] == "Placement"]["nim"].nunique()) if "nim" in m.columns else 0
     pct_orang_placed = (mhs_placed_unik / mhs_dikirim_unik * 100) if mhs_dikirim_unik else 0
 
-    # ---- PETA ALUR PENEMPATAN (anchor): satu rantai yang menyambungkan semua
-    # angka di seluruh dashboard. Memakai total keseluruhan (bukan hasil filter)
-    # sebagai peta acuan bagaimana sistem mengalir. ----
+    TARGET_SUCCESS = 25.0  # target internal success rate (%) untuk garis acuan
+
+    # ---- PETA ALUR PENEMPATAN (anchor tipis): satu rantai yang menyambungkan
+    # semua angka di seluruh dashboard. Memakai total keseluruhan (bukan hasil
+    # filter) sebagai peta acuan. Dirender sebagai breadcrumb tipis (bukan kartu
+    # besar) supaya mata langsung turun ke KPI utama. ----
     total_posisi = talent_request["id_talent_req"].nunique()
     total_slot = int(talent_request["headcount"].sum())
     total_kandidat_all = len(tracking_student)
     total_placement_all = int((tracking_student["rejection"] == "Placement").sum())
-    kandidat_orang_all = tracking_student["nim"].nunique()
-    placed_orang_all = tracking_student[tracking_student["rejection"] == "Placement"]["nim"].nunique()
-    alur_penempatan([
-        (f"{total_posisi:,}", "Permintaan (Posisi)", False),
-        (f"{total_slot:,}", "Slot (Kursi)", False),
+    alur_ringkas([
+        (f"{total_posisi:,}", "Permintaan", False),
+        (f"{total_slot:,}", "Slot", False),
         (f"{total_kandidat_all:,}", "Kandidat Dikirim", False),
         (f"{total_placement_all:,}", "Placement", True),
     ])
-    st.caption(
-        f"Kandidat Dikirim & Placement dihitung per PROSES (satu mahasiswa bisa dikirim/diterima lebih dari sekali). "
-        f"Dalam satuan ORANG: {kandidat_orang_all:,} mahasiswa dikirim, {placed_orang_all:,} mahasiswa dapat penempatan."
-    )
 
     # ---- Delta year-over-year: bandingkan 2 tahun PENUH terakhir ----
     # Tahun berjalan sering hanya terisi sebagian (data berhenti di tengah tahun),
@@ -1244,29 +1305,46 @@ def page_overview():
     delta_kand = _yoy(kand_by_year)
     delta_lbl = f"vs {yoy_pair[0]}" if yoy_pair else "vs tahun lalu"
 
+    # ===== LEVEL 1 - PRIMARY (3 kartu besar) =====
+    # Tiga angka paling penting untuk paham kondisi bisnis dalam 5 detik:
+    # berapa mahasiswa tertolong, seberapa efektif proses, seberapa penuh kursi.
     kpi_row([
         {"value": f"{mhs_placed_unik:,}", "label": "Mahasiswa Dapat Penempatan", "highlight": True,
          "sub": f"{pct_orang_placed:.0f}% dari mahasiswa dikirim (orang)",
-         "help": "Jumlah ORANG unik yang memperoleh minimal satu penempatan. Berbeda dari proses placement karena satu mahasiswa bisa diterima di lebih dari satu tempat."},
-        {"value": f"{total_placement:,}", "label": "Placement (Proses)",
-         "sub": f"{success_rate:.1f}% dari lamaran",
          "delta": delta_plc, "delta_label": delta_lbl,
-         "help": "Jumlah PROSES placement (satuan lamaran/proses seleksi, bukan orang). Satu orang bisa terhitung lebih dari sekali."},
-        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim (Proses)",
-         "sub": f"{mhs_dikirim_unik:,} orang unik",
+         "help": "Jumlah ORANG unik yang memperoleh minimal satu penempatan. Berbeda dari proses placement karena satu mahasiswa bisa diterima di lebih dari satu tempat."},
+        {"value": f"{success_rate:.1f}%", "label": "Success Rate",
+         "sub": f"{total_placement:,} placement dari {total_dikirim_individu:,} proses",
          "delta": delta_kand, "delta_label": delta_lbl,
-         "help": "Jumlah proses seleksi (lamaran). Satu mahasiswa dikirim ke rata-rata beberapa perusahaan."},
-        {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
-         "sub": "kandidat dikirim vs slot (nyaring)",
-         "help": "Kandidat dikirim dibagi slot diminta. Di atas 100% berarti dikirim lebih banyak dari kursi (wajar untuk shortlist). Ini mengukur pengiriman, BUKAN kursi terisi."},
+         "help": "Proses placement dibagi total proses seleksi (lamaran). Ukuran efektivitas pipeline."},
         {"value": f"{slot_terisi:.1f}%", "label": "Slot Terisi",
          "sub": "placement vs slot diminta",
          "help": "Placement dibagi slot diminta - seberapa banyak kursi yang benar-benar terisi."},
-        {"value": f"{n_request_belum:,}", "label": "Permintaan Belum Terpenuhi",
-         "sub": "posisi, data keseluruhan"},
     ])
 
-    TARGET_SUCCESS = 25.0  # target internal success rate (%) untuk garis acuan
+    # ===== Insight ringkas: beri konteks SEBELUM mata turun ke chart =====
+    top_reject = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts()
+    top_reject_name = top_reject.index[0].replace("Rejection ", "") if len(top_reject) else "-"
+    catatan_analis([
+        f"Dari <b>{total_dikirim_individu:,}</b> proses pengiriman, <b>{total_placement:,}</b> berakhir placement "
+        f"(success rate <b>{success_rate:.1f}%</b>, {'di atas' if success_rate >= TARGET_SUCCESS else 'masih di bawah'} "
+        f"target internal {TARGET_SUCCESS:.0f}%).",
+        f"Penolakan paling banyak di tahap <b>{top_reject_name}</b> - jadikan titik prioritas pendampingan.",
+        f"Fulfillment <b>{fulfillment_rate:.1f}%</b> (dikirim melebihi kuota, wajar untuk shortlist), "
+        f"namun masih ada <b>{n_request_belum:,}</b> permintaan yang belum terpenuhi.",
+    ])
+
+    # ===== LEVEL 2 - SECONDARY (angka pendukung, satu baris ringkas) =====
+    kpi_mini_row([
+        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim (Proses)",
+         "help": "Jumlah proses seleksi (lamaran). Satu mahasiswa bisa dikirim ke beberapa perusahaan."},
+        {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
+         "help": "Kandidat dikirim dibagi slot diminta. Di atas 100% berarti dikirim lebih banyak dari kursi (wajar untuk shortlist). Mengukur pengiriman, BUKAN kursi terisi."},
+        {"value": f"{n_request_belum:,}", "label": "Permintaan Belum Terpenuhi",
+         "help": "Jumlah posisi dengan pengiriman di bawah headcount (data keseluruhan)."},
+        {"value": f"{mhs_dikirim_unik:,}", "label": "Mahasiswa Unik Dikirim",
+         "help": "Jumlah ORANG unik yang pernah dikirim (bukan proses)."},
+    ])
 
     col_kiri, col_kanan = st.columns([2, 1])
     with col_kiri:
@@ -1333,7 +1411,9 @@ def page_overview():
             fig_donut.update_traces(textinfo="percent", textfont_size=11)
             show_chart(fig_donut, height=310)
 
-    with st.container(border=True):
+    # ---- Detail lanjutan disembunyikan default (expanded=False): Overview
+    # tetap ringkas 2 chart; yang ingin membedah alur bisa membuka di sini. ----
+    with st.expander("Detail perjalanan kandidat (waterfall)", expanded=False):
         section("Perjalanan Kandidat: dari Dikirim sampai Placement", "Berapa kandidat gugur di tiap titik hingga tersisa placement.")
         wf_vals = {
             "Rej. Screening CV": -int((m["rejection"] == "Rejection Screening CV").sum()),
@@ -1358,7 +1438,7 @@ def page_overview():
         show_chart(fig_wf, height=290)
 
     # ---- SANKEY: alur bidang studi -> jenis penempatan -> hasil akhir ----
-    with st.container(border=True):
+    with st.expander("Alur bidang studi \u2192 jenis penempatan \u2192 hasil akhir (sankey)", expanded=False):
         section("Alur Kandidat: Bidang Studi \u2192 Jenis Penempatan \u2192 Hasil Akhir")
         sk = m.copy()
         sk["hasil"] = status_map.values
@@ -1402,18 +1482,6 @@ def page_overview():
             show_chart(fig_sk, height=300)
         else:
             insight("Data bidang studi / jenis penempatan tidak lengkap untuk alur ini.", kind="error")
-
-    top_reject = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts()
-    top_reject_name = top_reject.index[0].replace("Rejection ", "") if len(top_reject) else "-"
-    catatan_analis([
-        f"Dari <b>{total_dikirim_individu:,}</b> kandidat dikirim, <b>{total_placement:,}</b> berhasil "
-        f"placement (success rate <b>{success_rate:.1f}%</b>).",
-        f"Success rate {'di atas' if success_rate >= TARGET_SUCCESS else 'masih di bawah'} "
-        f"target internal {TARGET_SUCCESS:.0f}%.",
-        f"Penolakan paling banyak terjadi di tahap <b>{top_reject_name}</b> - jadi fokus pendampingan.",
-        f"Fulfillment <b>{fulfillment_rate:.1f}%</b>: kandidat dikirim melebihi kuota (wajar untuk shortlist), "
-        "tapi tetap ada <b>request belum terpenuhi</b> yang perlu dikejar.",
-    ])
 
 # ---------------------------------------------------------------------------
 # TAB 2 - FUNNEL & GHOSTING
