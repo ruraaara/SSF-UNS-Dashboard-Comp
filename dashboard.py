@@ -1197,6 +1197,12 @@ def page_overview():
     lama_proses = selesai["lama_proses_hari"].mean() if "lama_proses_hari" in selesai.columns and selesai["lama_proses_hari"].notna().any() else None
     n_request_belum = int((tr_fulfill["belum_terpenuhi"] > 0).sum())
 
+    # ---- Level ORANG (bukan proses): satu mahasiswa bisa dikirim/diterima >1x.
+    # Angka orang unik ini yang paling intuitif untuk "berapa mahasiswa tertolong". ----
+    mhs_dikirim_unik = m["nim"].nunique() if "nim" in m.columns else 0
+    mhs_placed_unik = int(m[m["rejection"] == "Placement"]["nim"].nunique()) if "nim" in m.columns else 0
+    pct_orang_placed = (mhs_placed_unik / mhs_dikirim_unik * 100) if mhs_dikirim_unik else 0
+
     # ---- PETA ALUR PENEMPATAN (anchor): satu rantai yang menyambungkan semua
     # angka di seluruh dashboard. Memakai total keseluruhan (bukan hasil filter)
     # sebagai peta acuan bagaimana sistem mengalir. ----
@@ -1204,12 +1210,18 @@ def page_overview():
     total_slot = int(talent_request["headcount"].sum())
     total_kandidat_all = len(tracking_student)
     total_placement_all = int((tracking_student["rejection"] == "Placement").sum())
+    kandidat_orang_all = tracking_student["nim"].nunique()
+    placed_orang_all = tracking_student[tracking_student["rejection"] == "Placement"]["nim"].nunique()
     alur_penempatan([
         (f"{total_posisi:,}", "Permintaan (Posisi)", False),
         (f"{total_slot:,}", "Slot (Kursi)", False),
         (f"{total_kandidat_all:,}", "Kandidat Dikirim", False),
         (f"{total_placement_all:,}", "Placement", True),
     ])
+    st.caption(
+        f"Kandidat Dikirim & Placement dihitung per PROSES (satu mahasiswa bisa dikirim/diterima lebih dari sekali). "
+        f"Dalam satuan ORANG: {kandidat_orang_all:,} mahasiswa dikirim, {placed_orang_all:,} mahasiswa dapat penempatan."
+    )
 
     # ---- Delta year-over-year: bandingkan 2 tahun PENUH terakhir ----
     # Tahun berjalan sering hanya terisi sebagian (data berhenti di tengah tahun),
@@ -1233,13 +1245,17 @@ def page_overview():
     delta_lbl = f"vs {yoy_pair[0]}" if yoy_pair else "vs tahun lalu"
 
     kpi_row([
-        {"value": f"{total_placement:,}", "label": "Placement Berhasil",
-         "sub": f"{success_rate:.1f}% dari kandidat dikirim", "highlight": True,
+        {"value": f"{mhs_placed_unik:,}", "label": "Mahasiswa Dapat Penempatan", "highlight": True,
+         "sub": f"{pct_orang_placed:.0f}% dari mahasiswa dikirim (orang)",
+         "help": "Jumlah ORANG unik yang memperoleh minimal satu penempatan. Berbeda dari proses placement karena satu mahasiswa bisa diterima di lebih dari satu tempat."},
+        {"value": f"{total_placement:,}", "label": "Placement (Proses)",
+         "sub": f"{success_rate:.1f}% dari lamaran",
          "delta": delta_plc, "delta_label": delta_lbl,
-         "help": "Success rate = placement dibagi kandidat dikirim."},
-        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim",
+         "help": "Jumlah PROSES placement (satuan lamaran/proses seleksi, bukan orang). Satu orang bisa terhitung lebih dari sekali."},
+        {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim (Proses)",
+         "sub": f"{mhs_dikirim_unik:,} orang unik",
          "delta": delta_kand, "delta_label": delta_lbl,
-         "help": "Jumlah proses seleksi kandidat pada rentang filter."},
+         "help": "Jumlah proses seleksi (lamaran). Satu mahasiswa dikirim ke rata-rata beberapa perusahaan."},
         {"value": f"{fulfillment_rate:.1f}%", "label": "Fulfillment Rate",
          "sub": "kandidat dikirim vs slot (nyaring)",
          "help": "Kandidat dikirim dibagi slot diminta. Di atas 100% berarti dikirim lebih banyak dari kursi (wajar untuk shortlist). Ini mengukur pengiriman, BUKAN kursi terisi."},
