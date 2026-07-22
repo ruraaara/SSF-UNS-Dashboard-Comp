@@ -248,12 +248,20 @@ section[data-testid="stSidebar"] div[data-testid="stSidebarContent"] {{
     0%, 100% {{ transform: translateX(-50%) rotate(-4deg); }}
     50% {{ transform: translateX(-50%) rotate(5deg) translateY(5px); }}
 }}
+/* blok header halaman: judul + subtitle dibungkus dan diberi aksen bar kiri
+   supaya jelas "ini kepala halaman" (bukan teks isi yang ngambang) */
+.page-head {{
+    border-left: 4px solid {COLOR_COCOA};
+    padding-left: 13px;
+    margin: 2px 0 4px 0;
+}}
 .page-title {{
     font-family: 'Nohemi', 'Space Grotesk', 'Inter', sans-serif;
-    font-size: 1.45rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: {COLOR_SEAL_BROWN};
     margin: 0;
+    line-height: 1.15;
 }}
 div[data-testid="stPageLink"] a {{
     border-radius: 12px;
@@ -1196,7 +1204,7 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     with col_t:
         badge = f'<span class="bt-badge">{bt}</span>' if bt else ""
         sub = f'<div class="page-subtitle">{subtitle}</div>' if subtitle else ""
-        st.markdown(f'<div class="page-title">{title}{badge}</div>{sub}', unsafe_allow_html=True)
+        st.markdown(f'<div class="page-head"><div class="page-title">{title}{badge}</div>{sub}</div>', unsafe_allow_html=True)
 
     tahun, prodi, jenis, ref_date = [], [], [], None
     if key is not None:
@@ -1499,7 +1507,7 @@ def page_overview():
 def page_funnel():
     tahun_f, prodi_f, jenis_f, tanggal_acuan = page_header(
         "Funnel & Ghosting", key="funnel", with_ref_date=True,
-        subtitle="Zona seleksi: perjalanan tiap kandidat (individu) dan respons perusahaan per batch pengiriman.")
+        subtitle="Zona seleksi. Kartu KPI dihitung per batch (1 batch = 1 pengiriman ke satu perusahaan); funnel di bawah per individu.")
     m = scope_master(tahun_f, prodi_f, jenis_f)
 
     tc_status = scope_tc(tahun_f, jenis_f)
@@ -1518,11 +1526,7 @@ def page_funnel():
     fu3 = int(followup_counts.get("FU 3", 0))
     total_fu = fu1 + fu2 + fu3
 
-    # Catatan satuan: SEMUA kartu di halaman ini dihitung per BATCH (bukan orang).
-    # 1 batch = 1 event pengiriman ke satu perusahaan (baris tracking_company),
-    # bisa berisi banyak kandidat. Funnel di bawah baru per-individu.
-    st.caption("Semua angka kartu di bawah berbasis **batch** — 1 batch = 1 pengiriman CDC ke satu perusahaan (bisa berisi banyak kandidat).")
-
+    # (Definisi satuan "batch" sudah dijelaskan di subtitle header halaman.)
     # ===== PRIMARY (3 kartu): fokus respons perusahaan per batch =====
     kpi_row([
         {"value": f"{n_ghosting:,}", "label": "Batch Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
@@ -1956,7 +1960,7 @@ def compute_skill_gap() -> pd.DataFrame:
 
 def page_kesiapan():
     page_header("Kesiapan Mahasiswa",
-                subtitle="Zona mahasiswa (pasokan): siapa yang siap dan layak dikirim ke perusahaan.")
+                subtitle="Zona mahasiswa (pasokan), satuan orang/mahasiswa unik: siapa yang siap dan layak dikirim ke perusahaan.")
 
     ss = status_student
     status_norm = norm_text(ss["status"])
@@ -1975,22 +1979,18 @@ def page_kesiapan():
     eligible_nganggur = eligible[~eligible["nim"].isin(pernah_dikirim)]
 
     total_terdaftar = student_all["nim"].nunique()
-    pernah_dikirim_n = len(pernah_dikirim)
 
-    st.caption(
-        f"Satuan halaman ini = **orang** (mahasiswa unik). Dari **{total_terdaftar:,}** terdaftar, "
-        f"**{pernah_dikirim_n:,}** pernah dikirim ke perusahaan; sisanya belum tersalurkan."
-    )
-
+    # (Satuan "orang" sudah dijelaskan di subtitle header; angka 25rb terdaftar
+    # muncul sebagai kartu di bawah, jadi tak perlu caption terpisah.)
     # ===== PRIMARY (3 kartu): stok mahasiswa dari yang terluas ke yang paling siap =====
     kpi_row([
-        {"value": f"{len(eligible_nganggur):,}", "label": "Layak tapi Belum Pernah Dikirim", "highlight": True,
-         "sub": "supply belum tersalurkan (orang)",
-         "help": "Mahasiswa yang memenuhi syarat tapi belum pernah dikirim sama sekali. Prioritas dicarikan penempatan."},
+        {"value": f"{len(eligible):,}", "label": "Mahasiswa Siap Kirim", "highlight": True,
+         "sub": "aktif + tersedia + CV + portofolio",
+         "help": "Mahasiswa yang benar-benar siap dikirim sekarang: status aktif, tersedia, serta CV dan portofolio lengkap. Ini angka utama 'kesiapan'."},
         {"value": f"{total_terdaftar:,}", "label": "Mahasiswa Terdaftar", "sub": "total orang di sistem",
-         "help": "Jumlah NIM unik di master student_all (seluruh mahasiswa terdaftar, bukan hanya yang dikirim)."},
-        {"value": f"{len(eligible):,}", "label": "Layak Kirim Saat Ini", "sub": "snapshot syarat lengkap",
-         "help": "Status aktif + tersedia + CV ada + portofolio ada, kondisi terkini."},
+         "help": "Jumlah NIM unik di master student_all (seluruh mahasiswa terdaftar, bukan hanya yang siap/dikirim)."},
+        {"value": f"{len(eligible_nganggur):,}", "label": "Siap Kirim, Belum Tersalurkan", "sub": "sudah siap tapi belum pernah dikirim",
+         "help": "Mahasiswa yang sudah memenuhi semua syarat tapi belum pernah dikirim sama sekali. Prioritas dicarikan penempatan."},
     ])
 
     # ===== SECONDARY (kelengkapan berkas, persentase) =====
@@ -2004,7 +2004,7 @@ def page_kesiapan():
     col1, col2 = st.columns(2)
     with col1:
         with st.container(border=True):
-            section("Demand vs Supply dari Waktu ke Waktu", "Demand = jumlah kebutuhan (headcount) perusahaan. Supply = perkiraan mahasiswa yang siap magang.")
+            section("Mahasiswa Siap vs Kebutuhan Perusahaan (per waktu)", "Hijau = perkiraan mahasiswa siap magang (supply). Oranye = kebutuhan headcount perusahaan (demand).")
             col_prodi, col_gran = st.columns([3, 2])
             prodi_pilih = col_prodi.selectbox(
                 "Fokus jurusan / bidang studi",
@@ -2047,7 +2047,7 @@ def page_kesiapan():
                     fill="tozeroy", fillcolor="rgba(107, 122, 61, 0.30)",
                 ))
                 fig_ts.add_trace(go.Scatter(
-                    x=x, y=d_full, name="Headcount Diminta",
+                    x=x, y=d_full, name="Kebutuhan Perusahaan",
                     mode="lines", line=dict(color=COLOR_COCOA, width=2.5, shape="spline"),
                     fill="tozeroy", fillcolor="rgba(226, 120, 47, 0.35)",
                 ))
@@ -2060,7 +2060,7 @@ def page_kesiapan():
                 show_chart(fig_ts, height=280)
     with col2:
         with st.container(border=True):
-            section("Ketersediaan & Status Keaktifan Mahasiswa", "Sebaran mahasiswa menurut ketersediaan dan status keaktifan.")
+            section("Dari Mana Mahasiswa Siap: Ketersediaan & Status", "Kolom 'Available' = tersedia untuk dikirim (kolam calon 'Siap Kirim'). Warna = status keaktifan.")
             elig_ct = ss.groupby(["ketersediaan", "status"]).size().reset_index(name="jumlah")
             fig_elig = px.bar(elig_ct, x="ketersediaan", y="jumlah", color="status",
                               color_discrete_sequence=PALETTE_SEQUENTIAL)
@@ -2248,7 +2248,7 @@ def page_matching():
     ])
 
     with st.container(border=True):
-        section("Kandidat Memenuhi Syarat per Talent Request")
+        section("Kandidat Cocok per Talent Request", "Mahasiswa siap yang memenuhi kriteria (prodi, semester, kelayakan) tiap posisi.")
 
         colp1, colp2 = st.columns(2)
         comp_counts = match_summary.groupby("company_name").size()
@@ -2339,10 +2339,10 @@ def page_matching():
                 show_cols = base_cols
                 ket = "urutan default"
 
-            st.markdown(f"**{len(candidates):,} kandidat memenuhi syarat** menampilkan {len(view)} teratas menurut {ket}:")
+            st.markdown(f"**{len(candidates):,} kandidat cocok** menampilkan {len(view)} teratas menurut {ket}:")
             st.dataframe(view[show_cols], width="stretch", hide_index=True, height=430, column_config=col_cfg)
 
-    with st.expander(f"Ringkasan jumlah kandidat memenuhi syarat - semua {len(match_summary):,} talent request", icon=":material/table_view:"):
+    with st.expander(f"Ringkasan jumlah kandidat cocok - semua {len(match_summary):,} talent request", icon=":material/table_view:"):
         st.caption(
             "Kolom bertahap memperlihatkan di tahap mana kandidat menyusut: cocok prodi, lalu + minimum semester, "
             "lalu + aktif & tersedia (kandidat final)."
