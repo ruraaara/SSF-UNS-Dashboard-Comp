@@ -1725,7 +1725,7 @@ def page_segmentasi():
     n_pasif = int(counts.get("Mitra Pasif", 0))
     n_bermasalah = int((seg["ghosting_rate"] >= 20).sum())
 
-   kpi_row([
+    kpi_row([
     {"value": f"{n_andalan:,}", "label": "Mitra Utama", "highlight": True,
      "sub": "aktif & frekuensi tinggi",
      "help": "Mitra dengan frekuensi permintaan talent tinggi dan status interaksi masih aktif."},
@@ -1763,7 +1763,7 @@ def page_segmentasi():
             show_chart(fig_bar, height=360)
 
     top_ghost = seg.sort_values("ghosting_rate", ascending=False).iloc[0] if len(seg) else None
-   catatan_analis([
+    catatan_analis([
     f"<b>{n_andalan:,} Mitra Utama</b> merupakan mitra dengan tingkat interaksi tertinggi dan aktif. "
     "Disarankan untuk memprioritaskan pemenuhan kebutuhan talent dan menjaga kemitraan secara berkelanjutan.",
     
@@ -2333,7 +2333,7 @@ def page_laporan():
         mcol1.metric("Pembaruan Terakhir", ref_txt)
         mcol2.metric("Diperbarui 6 Bulan Terakhir", f"{n_fresh:,}",
                      help=f"{pct_fresh:.0f}% dari total data.")
-       mcol3.metric("Data Belum Terdaftar", f"{n_belum_sync:,}",
+        mcol3.metric("Data Belum Terdaftar", f"{n_belum_sync:,}",
              help="Jumlah mahasiswa terdaftar yang belum memiliki catatan profil kesiapan di sistem. Indikator ini mencerminkan kelengkapan data, bukan status penempatan atau penolakan.")
 
         sync_bulan = status_student.copy()
