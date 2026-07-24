@@ -17,7 +17,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-
+# ---------------------------------------------------------------------------
+# PALET WARNA SEMANTIK
+# ---------------------------------------------------------------------------
 COLOR_SIENNA = "#872408"       # negatif / ghosting / rejection
 COLOR_COCOA = "#E2782F"        # aksen utama
 COLOR_JASMINE = "#F7D475"      # highlight / pembanding netral
@@ -89,7 +91,8 @@ REJECTION_TO_RANK = {
     "Ghosting": 0,
 }
 
-
+# STYLE: CSS custom bento box. Font Nohemi/Inter, latar krem, permukaan
+# utama pakai !important supaya tahan dark mode.
 PAGE_BG_GRAD = "linear-gradient(165deg, #FBF6EC 0%, #F6EFE3 45%, #EEDFC8 100%)"
 CARD_BG = "#FFFFFF"
 
@@ -456,7 +459,8 @@ div[data-testid="stAlertContainer"] p, div[data-testid="stAlert"] p {{
 """, unsafe_allow_html=True)
 
 
-
+# CSS tambahan: badge Business Task, kotak "Catatan Analis" (gaya Analyst's
+# Note), delta KPI naik/turun, dan kartu profil tim.
 st.markdown(f"""
 <style>
 .bt-badge {{
@@ -703,7 +707,8 @@ def style_fig(fig, height=300):
     has_legend = len(fig.data) > 1 or any(tr.type == "pie" for tr in fig.data)
     top_margin = 38 if has_title else (34 if has_legend else 14)
 
-  
+    # legend dengan banyak kategori dipindah ke BAWAH chart supaya tidak
+    # bertabrakan dengan judul (mis. rekap 18 program studi)
     n_legend = 0
     for tr in fig.data:
         if getattr(tr, "showlegend", True) is False:
@@ -732,10 +737,11 @@ def style_fig(fig, height=300):
         hoverlabel=dict(bgcolor="white", font_size=11),
         height=height,
     )
-   
+    # angka sumbu ditulis penuh dgn pemisah ribuan (mis. 8,000 bukan "8k")
     fig.update_yaxes(tickformat=",", separatethousands=True)
     fig.update_xaxes(separatethousands=True)
-   
+    # title_font hanya diset bila chart punya judul - plotly.js merender
+    # teks "undefined" kalau properti title diisi tanpa title text.
     if has_title:
         fig.update_layout(title_font=dict(size=13, color=COLOR_SEAL_BROWN))
     return fig
@@ -789,8 +795,13 @@ def parse_bulan_masuk(x):
         return pd.NaT
 
 
-
-@st.cache_resource(show_spinner="Menyiapkan data...")
+# ---------------------------------------------------------------------------
+# LOAD + PREPARE DATA (SEKALI SAJA)
+# Semua pembacaan CSV, pembersihan tipe, dan merge dilakukan dalam satu fungsi
+# ber-cache_resource: rerun halaman tidak mengulang komputasi berat apa pun.
+# Konsekuensi cache_resource: konsumen WAJIB .copy() sebelum mengubah frame.
+# ---------------------------------------------------------------------------
+@st.cache_resource(show_spinner="Menyiapkan data (hanya sekali)...")
 def load_all() -> dict:
     company = pd.read_csv("cleaned_company.csv")
     talent_request = pd.read_csv("cleaned_talent_request.csv")
@@ -830,13 +841,13 @@ def load_all() -> dict:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-   
+    # ---- tahap terjauh tiap kandidat (dasar funnel & sinyal respons) ----
     rank = tracking_student["progress_student"].map(PROGRESS_TO_RANK)
     mask_rejected = tracking_student["progress_student"].eq("Rejected")
     rank = rank.mask(mask_rejected, tracking_student["rejection"].map(REJECTION_TO_RANK))
     tracking_student["stage_reached"] = rank.fillna(0).astype(int)
 
-    
+    # ---- MASTER (prinsip ERD: nama perusahaan dari master COMPANY) ----
     master = tracking_student.merge(tracking_company, on="id_tracking_company", how="left", suffixes=("", "_tc"))
     master = master.merge(company, on="id_company", how="left", suffixes=("", "_co"))
     master = master.merge(talent_request, on="id_talent_req", how="left", suffixes=("", "_tr"))
@@ -847,12 +858,13 @@ def load_all() -> dict:
     if "send_date" in master.columns:
         master["lama_proses_hari"] = (master["last_update"] - master["send_date"]).dt.days
 
-    
+    # ---- BATCH PENGIRIMAN (basis ghosting BT-05) ----
     tc_base = tracking_company[tracking_company["send_date"].notna()].copy()
     tc_base = tc_base.merge(company[["id_company", "company_name"]], on="id_company", how="left")
     tc_base["tahun_tc"] = tc_base["send_date"].dt.year
 
-   
+    # Batch dianggap direspon bila ada mahasiswa lolos screening atau sudah
+    # ada keputusan (placement/rejection).
     decided = tracking_student["rejection"].isin(["Placement"] + REJECTION_STAGES)
     resp = (
         tracking_student.assign(responded=(tracking_student["stage_reached"] >= 1) | decided)
@@ -864,7 +876,7 @@ def load_all() -> dict:
     if pd.isna(default_ref):
         default_ref = pd.Timestamp(datetime.now().date())
 
-   
+    # pool mahasiswa + status kesiapan (untuk matching & ML)
     pool = student_all.merge(status_student, on="nim", how="inner", suffixes=("_student", "_status"))
     prodi_col = resolve_col(pool, "program_studi") or "program_studi"
     semester_col = resolve_col(pool, "semester") or "semester"
@@ -874,13 +886,14 @@ def load_all() -> dict:
         & norm_text(pool["status"]).isin(VAL_STATUS_AKTIF)
     )
 
-   
+    # dimensi waktu untuk demand vs supply per bulan
     if "bulan_masuk" in student_all.columns:
         student_all["masuk_dt"] = student_all["bulan_masuk"].map(parse_bulan_masuk)
     else:
         student_all["masuk_dt"] = pd.NaT
 
-    
+    # estimasi kapan mahasiswa siap magang: bulan masuk + (semester magang - 1) x 6 bulan;
+    # semester magang dari histori, fallback median (5).
     med_sem_global = tracking_student["internship_semester"].median()
     if pd.isna(med_sem_global):
         med_sem_global = 5
@@ -896,10 +909,11 @@ def load_all() -> dict:
     ].copy()
     dm["bulan"] = dm["request_date"].dt.to_period("M").dt.to_timestamp()
 
-  
+    # total demand per bulan: tiap posisi dihitung sekali (untuk filter "Semua bidang")
     demand_monthly_total = dm.groupby("bulan")["headcount"].sum().reset_index()
 
-   
+    # demand per bidang: headcount penuh tiap posisi yang menerima bidang itu,
+    # jadi angka antar-bidang tidak untuk dijumlahkan.
     dmb = dm.copy()
     dmb["bidang_norm"] = dmb["bidang_studi_dibutuhkan"].astype(str).str.split(",")
     dmb = dmb.explode("bidang_norm")
@@ -907,7 +921,7 @@ def load_all() -> dict:
     dmb = dmb[dmb["bidang_norm"] != ""]
     demand_monthly = dmb.groupby(["bulan", "bidang_norm"])["headcount"].sum().reset_index()
 
-    
+    # pemenuhan talent request (dipakai Overview & Mitra)
     tr_fulfill = talent_request.merge(
         tracking_company.groupby("id_talent_req")["jumlah_dikirimkan"].sum().reset_index(),
         on="id_talent_req", how="left",
@@ -951,7 +965,11 @@ DEFAULT_REF_DATE = DATA["default_ref_date"]
 COMPANY_NAME_COL = "company_name" if "company_name" in master.columns else "company"
 
 
-
+# ---------------------------------------------------------------------------
+# MATCH SUMMARY (VEKTORISASI)
+# Jumlah kandidat per (prodi, ambang semester) dihitung SEKALI sebagai matriks
+# lookup; tiap talent request tinggal menjumlahkan dari matriks itu.
+# ---------------------------------------------------------------------------
 @st.cache_data(show_spinner="Menghitung ringkasan kecocokan (hanya sekali)...")
 def compute_match_summary() -> pd.DataFrame:
     pool = DATA["pool"]
@@ -995,7 +1013,9 @@ def compute_match_summary() -> pd.DataFrame:
 
 
 
-
+# ---------------------------------------------------------------------------
+# FILTER - di dalam POPOVER per tab supaya hemat ruang vertikal (no-scroll)
+# ---------------------------------------------------------------------------
 FILTER_TAHUN = sorted(int(t) for t in master["tahun_update"].dropna().unique())
 FILTER_PRODI = sorted(student_all["program_studi"].dropna().unique().tolist()) if "program_studi" in student_all.columns else []
 FILTER_JENIS = sorted(talent_request["jenis_penempatan"].dropna().unique().tolist()) if "jenis_penempatan" in talent_request.columns else []
@@ -1006,7 +1026,8 @@ def run_gsap_animations(slug: str):
     <script> di markdown, jadi JS dijalankan lewat components.html - iframe
     same-origin yang boleh memanipulasi DOM halaman induk. Kalau CDN gagal
     dimuat, halaman tetap tampil normal tanpa animasi (graceful fallback)."""
-   
+    # st.iframe menggantikan components.html (dihapus Streamlit per Jun 2026);
+    # fallback ke components.html untuk versi lama.
     _html_embed = getattr(st, "iframe", components.html)
     try:
         _current = nav.url_path or ""
@@ -1112,7 +1133,8 @@ def page_header(title: str, key: str = None, with_prodi: bool = True, with_ref_d
     """Judul halaman + tombol Filter, plus animasi transisi per halaman."""
     slug = "".join(ch for ch in (key or title).lower() if ch.isalnum())
 
-  
+    # keyframe unik per halaman supaya animasi restart tiap pindah tab.
+    # Tidak butuh JS/GSAP (yang gagal menyentuh DOM dari iframe di Streamlit Cloud).
     st.markdown(
         "<style>"
         f"@keyframes sweep_{slug} {{ from {{ opacity: 0; transform: translateX(80px); }} "
@@ -1171,9 +1193,10 @@ def scope_tc(tahun, jenis) -> pd.DataFrame:
     return tcc[mask].copy()
 
 
-
+# ---------------------------------------------------------------------------
 # HEADER
-
+# ---------------------------------------------------------------------------
+# info sinkronisasi ditampilkan di bagian paling bawah sidebar
 LAST_SYNC_TXT = ""
 if "sync_date" in status_student.columns and status_student["sync_date"].notna().any():
     LAST_SYNC_TXT = f"Data terakhir diperbarui: {status_student['sync_date'].max().strftime('%d %B %Y')}"
@@ -1203,13 +1226,16 @@ def page_overview():
     lama_proses = selesai["lama_proses_hari"].mean() if "lama_proses_hari" in selesai.columns and selesai["lama_proses_hari"].notna().any() else None
     n_request_belum = int((tr_fulfill["belum_terpenuhi"] > 0).sum())
 
-  
+    # ---- Level ORANG (bukan proses): satu mahasiswa bisa dikirim/diterima >1x.
+    # Angka orang unik ini yang paling intuitif untuk "berapa mahasiswa tertolong". ----
     mhs_dikirim_unik = m["nim"].nunique() if "nim" in m.columns else 0
     mhs_placed_unik = int(m[m["rejection"] == "Placement"]["nim"].nunique()) if "nim" in m.columns else 0
     pct_orang_placed = (mhs_placed_unik / mhs_dikirim_unik * 100) if mhs_dikirim_unik else 0
 
-    TARGET_SUCCESS = 25.0  
-    
+    # ---- PETA ALUR PENEMPATAN (anchor tipis): satu rantai yang menyambungkan
+    # semua angka di seluruh dashboard. Memakai total keseluruhan (bukan hasil
+    # filter) sebagai peta acuan. Dirender sebagai breadcrumb tipis (bukan kartu
+    # besar) supaya mata langsung turun ke KPI utama. ----
     total_posisi = talent_request["id_talent_req"].nunique()
     total_slot = int(talent_request["headcount"].sum())
     total_kandidat_all = len(tracking_student)
@@ -1221,7 +1247,10 @@ def page_overview():
         (f"{total_placement_all:,}", "Placement", True),
     ])
 
-   
+    # ---- Delta year-over-year: bandingkan 2 tahun PENUH terakhir ----
+    # Tahun berjalan sering hanya terisi sebagian (data berhenti di tengah tahun),
+    # jadi tahun dengan volume < 40% tahun tersibuk dianggap parsial dan dilewati
+    # agar delta tidak menyesatkan (mis. 2025 yang datanya baru sampai Januari).
     vol_by_year = m.groupby("tahun_update")["id_tracking_student"].nunique()
     vol_by_year = vol_by_year[vol_by_year.index.notna()]
     tahun_penuh = sorted(int(y) for y in vol_by_year.index if vol_by_year[y] >= 0.4 * vol_by_year.max())
@@ -1239,7 +1268,9 @@ def page_overview():
     delta_kand = _yoy(kand_by_year)
     delta_lbl = f"vs {yoy_pair[0]}" if yoy_pair else "vs tahun lalu"
 
-   
+    # ===== LEVEL 1 - PRIMARY (3 kartu besar) =====
+    # Tiga angka paling penting untuk paham kondisi bisnis dalam 5 detik:
+    # berapa mahasiswa tertolong, seberapa efektif proses, seberapa penuh kursi.
     kpi_row([
         {"value": f"{mhs_placed_unik:,}", "label": "Mahasiswa Dapat Penempatan", "highlight": True,
          "sub": f"{pct_orang_placed:.0f}% dari mahasiswa dikirim (orang)",
@@ -1254,19 +1285,19 @@ def page_overview():
          "help": "Placement dibagi slot diminta, seberapa banyak kursi yang terisi."},
     ])
 
-   
+    # ===== Insight ringkas: beri konteks SEBELUM mata turun ke chart =====
     top_reject = m[m["rejection"].isin(REJECTION_STAGES)]["rejection"].value_counts()
     top_reject_name = top_reject.index[0].replace("Rejection ", "") if len(top_reject) else "-"
     catatan_analis([
-        f"Dari <b>{total_dikirim_individu:,}</b> proses pengiriman, <b>{total_placement:,}</b> berakhir placement "
-        f"(success rate <b>{success_rate:.1f}%</b>, {'di atas' if success_rate >= TARGET_SUCCESS else 'masih di bawah'} "
-        f"target internal {TARGET_SUCCESS:.0f}%).",
-        f"Penolakan paling banyak di tahap <b>{top_reject_name}</b>, jadikan titik prioritas pendampingan.",
-        f"Fulfillment <b>{fulfillment_rate:.1f}%</b> (dikirim melebihi kuota, wajar untuk shortlist), "
-        f"namun masih ada <b>{n_request_belum:,}</b> permintaan yang belum terpenuhi.",
+        f"Dari <b>{total_dikirim_individu:,}</b> proses pengiriman, <b>{total_placement:,}</b> di antaranya "
+        f"berujung pada penempatan, dengan tingkat keberhasilan <b>{success_rate:.1f}%</b>.",
+        f"Penolakan paling banyak terjadi pada tahap <b>{top_reject_name}</b>, sehingga tahap ini sebaiknya "
+        "menjadi prioritas pendampingan.",
+        f"Jumlah kandidat yang dikirim mencapai <b>{fulfillment_rate:.1f}%</b> dari kebutuhan (wajar karena banyak "
+        f"kandidat dikirim untuk satu posisi), namun masih ada <b>{n_request_belum:,}</b> permintaan yang belum terpenuhi.",
     ])
 
-   
+    # ===== LEVEL 2 - SECONDARY (angka pendukung, satu baris ringkas) =====
     kpi_mini_row([
         {"value": f"{total_dikirim_individu:,}", "label": "Kandidat Dikirim (Proses)",
          "help": "Jumlah proses seleksi (lamaran). Satu mahasiswa bisa dikirim ke beberapa perusahaan."},
@@ -1301,13 +1332,6 @@ def page_overview():
                 mode="lines+markers", line=dict(color=COLOR_SEAL_BROWN, width=2.5),
                 marker=dict(color=COLOR_SIENNA, size=6),
             ), secondary_y=True)
-            # garis target success rate (acuan evaluasi internal)
-            if len(per_bulan) > 0:
-                fig_combo.add_hline(
-                    y=TARGET_SUCCESS, line_dash="dot", line_color=COLOR_OLIVE, line_width=2,
-                    annotation_text=f"Target {TARGET_SUCCESS:.0f}%", annotation_position="top left",
-                    annotation_font_color=COLOR_OLIVE, secondary_y=True,
-                )
             fig_combo.update_yaxes(title_text=None, secondary_y=False)
             fig_combo.update_yaxes(title_text=None, secondary_y=True, rangemode="tozero")
             # elemen dinamis: tombol rentang waktu
@@ -1343,7 +1367,8 @@ def page_overview():
             fig_donut.update_traces(textinfo="percent", textfont_size=11)
             show_chart(fig_donut, height=310)
 
- 
+    # ---- Detail lanjutan disembunyikan default (expanded=False): Overview
+    # tetap ringkas 2 chart; yang ingin membedah alur bisa membuka di sini. ----
     with st.expander("Detail perjalanan kandidat", expanded=False):
         section("Perjalanan Kandidat: dari Dikirim sampai Placement", "Berapa kandidat gugur di tiap titik hingga tersisa placement.")
         wf_vals = {
@@ -1439,7 +1464,8 @@ def page_funnel():
     fu3 = int(followup_counts.get("FU 3", 0))
     total_fu = fu1 + fu2 + fu3
 
-  
+    # (Definisi satuan "batch" sudah dijelaskan di subtitle header halaman.)
+    # ===== PRIMARY (3 kartu): fokus respons perusahaan per batch =====
     kpi_row([
         {"value": f"{n_ghosting:,}", "label": "Batch Ghosting", "sub": f"{ghosting_rate:.1f}% dari batch terkirim",
          "highlight": True,
@@ -1450,7 +1476,7 @@ def page_funnel():
          "help": "Batch yang belum direspons dan masih dalam masa follow-up (7-28 hari sejak dikirim), relatif ke tanggal acuan."},
     ])
 
-  
+    # ===== SECONDARY (rincian tahap follow-up, angka kecil) =====
     kpi_mini_row([
         {"value": f"{fu1:,}", "label": "Butuh FU 1", "help": "7-14 hari sejak dikirim tanpa respons."},
         {"value": f"{fu2:,}", "label": "Butuh FU 2", "help": "14-21 hari sejak dikirim tanpa respons."},
@@ -1491,7 +1517,7 @@ def page_funnel():
                 "Prioritaskan pendampingan di tahap ini. "
                 f"Ghosting: <b>{n_ghosting:,} batch</b> ({ghosting_rate:.1f}%).", kind="warning")
 
-    
+    # ---- HEATMAP: kapan setiap tahap seleksi paling ramai? ----
     with st.container(border=True):
         section("Volume Aktivitas Seleksi per Bulan dan Tahap", "Makin gelap = makin banyak aktivitas di bulan dan tahap itu.")
         hm = m.dropna(subset=["last_update"]).copy()
@@ -1667,7 +1693,7 @@ def page_mitra():
         )
 
 # ---------------------------------------------------------------------------
-# SEGMENTASI MITRA 
+# SEGMENTASI MITRA (RFM-style) - mengelompokkan perusahaan mitra untuk BT-03/BT-04
 # ---------------------------------------------------------------------------
 SEG_COLORS = {
     "Mitra Andalan": COLOR_OLIVE,
@@ -1782,14 +1808,14 @@ def page_segmentasi():
 
     top_ghost = seg.sort_values("ghosting_rate", ascending=False).iloc[0] if len(seg) else None
     catatan_analis([
-        f"<b>{n_andalan:,} Mitra Andalan</b> jadi tulang punggung: sering minta talent dan masih aktif, "
-        "jaga hubungan dan prioritaskan pemenuhannya.",
-        f"<b>{n_pasif:,} Mitra Pasif</b> dulu aktif tapi lama menghilang, layak didekati lagi "
-        "(hubungi ulang, tawarkan kerja sama baru).",
-        f"<b>{n_bermasalah:,} mitra rawan ghosting</b> (ghosting rate &ge; 20%)"
+        f"<b>{n_andalan:,} Mitra Andalan</b> merupakan mitra paling bernilai: sering meminta talent dan masih "
+        "aktif. Jaga hubungan baik dan prioritaskan pemenuhan permintaannya.",
+        f"<b>{n_pasif:,} Mitra Pasif</b> dulu aktif tetapi sudah lama tidak meminta talent. Sebaiknya dihubungi "
+        "kembali dan ditawari kerja sama baru.",
+        f"<b>{n_bermasalah:,} mitra rawan ghosting</b> (tingkat ghosting &ge; 20%)"
         + (f", tertinggi <b>{top_ghost['company_name']}</b> ({top_ghost['ghosting_rate']:.0f}%)." if top_ghost is not None else ".")
-        + " Perlu aturan follow-up lebih tegas.",
-        "Mitra dikelompokkan dari seberapa sering dan seberapa baru mereka minta talent, serta total kebutuhannya.",
+        + " Perlu prosedur follow-up yang lebih tegas.",
+        "Pengelompokan mitra didasarkan pada seberapa sering dan seberapa baru mereka meminta talent, serta total kebutuhannya.",
     ])
 
     with st.expander("Tabel lengkap segmentasi mitra dan unduh CSV", icon=":material/table_view:"):
@@ -1811,7 +1837,7 @@ def page_segmentasi():
 
 
 # ---------------------------------------------------------------------------
-# TAB 4 - KESIAPAN
+# TAB 4 - KESIAPAN (data master terkini - tanpa filter)
 # ---------------------------------------------------------------------------
 @st.cache_data(show_spinner=False)
 def compute_prodi_profile() -> pd.DataFrame:
@@ -1891,7 +1917,9 @@ def page_kesiapan():
 
     total_terdaftar = student_all["nim"].nunique()
 
-  
+    # (Satuan "orang" sudah dijelaskan di subtitle header; angka 25rb terdaftar
+    # muncul sebagai kartu di bawah, jadi tak perlu caption terpisah.)
+    # ===== PRIMARY (3 kartu): stok mahasiswa dari yang terluas ke yang paling siap =====
     kpi_row([
         {"value": f"{len(eligible):,}", "label": "Mahasiswa Siap Kirim", "highlight": True,
          "sub": "aktif + tersedia + CV + portofolio",
@@ -1902,7 +1930,7 @@ def page_kesiapan():
          "help": "Mahasiswa yang sudah memenuhi semua syarat tapi belum pernah dikirim sama sekali. Prioritas dicarikan penempatan."},
     ])
 
-    
+    # ===== SECONDARY (kelengkapan berkas, persentase) =====
     kpi_mini_row([
         {"value": f"{(cv_norm.isin(VAL_ADA).mean() * 100):.0f}%", "label": "Punya CV",
          "help": "Persentase mahasiswa terdaftar yang sudah punya CV."},
@@ -2338,9 +2366,9 @@ def page_laporan():
         ref_txt = ref_quality.strftime("%d %b %Y") if pd.notna(ref_quality) else "-"
         rentang_txt = (f"{sync_min.strftime('%b %Y')} sampai {ref_quality.strftime('%b %Y')}"
                        if pd.notna(sync_min) and pd.notna(ref_quality) else "-")
-        section("Kesegaran Data Mahasiswa",
-                f"Data dianalisis sampai pembaruan terakhir ({ref_txt}), bukan hari ini. "
-                f"Data masuk bertahap dari {rentang_txt}.")
+        section("Seberapa Baru Data Mahasiswa",
+                f"Bagian ini soal kapan data mahasiswa terakhir diperbarui, bukan hasil penempatan. "
+                f"Semua angka memakai data sampai {ref_txt}, bukan kondisi hari ini.")
         age_days = (ref_quality - status_student["sync_date"]).dt.days if "sync_date" in status_student.columns else pd.Series(dtype=float)
         n_fresh = int((age_days <= FRESH_DAYS).sum()) if age_days.notna().any() else 0
         pct_fresh = (n_fresh / len(status_student) * 100) if len(status_student) else 0
@@ -2353,7 +2381,8 @@ def page_laporan():
         mcol1.metric("Pembaruan Terakhir", ref_txt)
         mcol2.metric("Diperbarui 6 Bulan Terakhir", f"{n_fresh:,}",
                      help=f"{pct_fresh:.0f}% dari total data.")
-        mcol3.metric("Belum Punya Data Status", f"{n_belum_sync:,}")
+        mcol3.metric("Belum Ada Data Kesiapan", f"{n_belum_sync:,}",
+                     help="Mahasiswa terdaftar yang sama sekali belum punya catatan data kesiapan. Bukan soal penempatan atau penolakan.")
 
         sync_bulan = status_student.copy()
         sync_bulan["bulan_sync"] = sync_bulan["sync_date"].dt.to_period("M").astype(str)
@@ -2369,11 +2398,15 @@ def page_laporan():
         f"Data dianalisis sampai pembaruan terakhir <b>{ref_txt}</b>, bukan kondisi hari ini.",
         f"Data masuk bertahap dari {rentang_txt}, jadi wajar hanya <b>{n_fresh:,}</b> ({pct_fresh:.0f}%) "
         "yang diperbarui dalam 6 bulan terakhir. Pembaruan berkala tetap perlu.",
-        f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data status kesiapan sama sekali.",
-        "Rekap placement bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
+        f"<b>{n_belum_sync:,}</b> mahasiswa belum punya data kesiapan sama sekali.",
+        "Rekap penempatan bisa dipecah per program studi, perusahaan, dan jenis penempatan, lalu diunduh CSV.",
     ])
 
-
+# ---------------------------------------------------------------------------
+# NAVIGASI SIDEBAR (menggantikan tabs) - logo di atas, teks CDC di bawah logo,
+# lalu menu halaman. position="hidden" agar nav bawaan tidak dobel dengan
+# menu custom di bawah.
+# ---------------------------------------------------------------------------
 PAGES = [
     st.Page(page_overview, title="Overview", icon=":material/monitoring:", default=True),
     st.Page(page_funnel, title="Funnel & Ghosting", icon=":material/filter_alt:"),
@@ -2385,7 +2418,12 @@ PAGES = [
 ]
 nav = st.navigation(PAGES, position="hidden")
 
-
+# CSS penanda menu aktif disuntik dinamis berdasarkan halaman terpilih.
+# Efek "tab menyatu": pill terang menempel ke tepi kanan sidebar dan
+# menyambung ke area konten, dengan lekukan cekung di atas & bawah
+# (pseudo-element lingkaran transparan + box-shadow berwarna latar konten).
+# href yang dirender Streamlit: "" untuk halaman default, "page_xxx"
+# (tanpa garis miring) untuk lainnya - hasil inspeksi DOM langsung.
 _current_href = nav.url_path or ""
 _ACTIVE_BG = "#FBF2E0"  # samakan dengan warna dasar latar konten
 st.markdown(
